@@ -4,5 +4,6 @@
     <string name="app_name">RageDice</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
+    <string name="roll_dice_button">Roll the dice!</string>
 
 </resources>
