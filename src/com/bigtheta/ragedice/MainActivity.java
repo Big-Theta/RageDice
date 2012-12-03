@@ -3,18 +3,38 @@ package com.bigtheta.ragedice;
 import java.util.Random;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
-
-    @Override
+	int[] mDiceImgs;
+	int mNumPlayers;
+	int mPlayerNum;
+	
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mDiceImgs = new int[6];
+        mDiceImgs[0] = R.drawable.alea_1_transbg;
+        mDiceImgs[1] = R.drawable.alea_2_transbg;
+        mDiceImgs[2] = R.drawable.alea_3_transbg;
+        mDiceImgs[3] = R.drawable.alea_4_transbg;
+        mDiceImgs[4] = R.drawable.alea_5_transbg;
+        mDiceImgs[5] = R.drawable.alea_6_transbg;
+        mNumPlayers = 2;
+        mPlayerNum = 1;
+        // Initialize the dice images
+        rollDice(null);
+    	ImageView red_die = (ImageView)findViewById(R.id.red_die);
+    	red_die.setBackgroundColor(0xFFFF0000);
+    	ImageView yellow_die = (ImageView)findViewById(R.id.yellow_die);
+    	yellow_die.setBackgroundColor(0xFFFFFF00);
     }
 
     @Override
@@ -26,36 +46,23 @@ public class MainActivity extends Activity {
     
     public void rollSingleDie(ImageView die) {
     	Random rand = new Random();
-    	
-    	switch (rand.nextInt(6) + 1) {
-    	case 1:
-    		die.setImageResource(R.drawable.alea_1);
-    		break;
-    	case 2:
-    		die.setImageResource(R.drawable.alea_2);
-    		break;
-    	case 3:
-    		die.setImageResource(R.drawable.alea_3);
-    		break;
-    	case 4:
-    		die.setImageResource(R.drawable.alea_4);
-    		break;
-    	case 5:
-    		die.setImageResource(R.drawable.alea_5);
-    		break;
-   		default:
-    		die.setImageResource(R.drawable.alea_6);
-    		break;
+    	die.setImageResource(mDiceImgs[rand.nextInt(6)]);
+    }
+    
+    public void nextPlayer() {
+    	if (mNumPlayers > 1) {
+    		mPlayerNum %= mNumPlayers;
+    		mPlayerNum++;
+    		TextView player = (TextView)findViewById(R.id.player_number);
+    		player.setText(Integer.toString(mPlayerNum));
     	}
     }
     
     public void rollDice(View view) {
-    	ImageView iv1 = (ImageView)findViewById(R.id.dice_result_1);
-    	ImageView iv2 = (ImageView)findViewById(R.id.dice_result_2);
-    	
-    	//iv1.setColorFilter(0xCD0000, PorterDuff.Mode.LIGHTEN);
-    	//iv1.setColorFilter(0xCD0000, PorterDuff.Mode.DARKEN);
-    	rollSingleDie(iv1);
-    	rollSingleDie(iv2);
+    	nextPlayer();
+    	ImageView red_die = (ImageView)findViewById(R.id.red_die);
+    	ImageView yellow_die = (ImageView)findViewById(R.id.yellow_die);
+    	rollSingleDie(red_die);
+    	rollSingleDie(yellow_die);
     }
 }
