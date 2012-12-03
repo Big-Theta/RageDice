@@ -3,6 +3,7 @@ package com.bigtheta.ragedice;
 import java.util.Random;
 
 import android.app.Activity;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -22,56 +23,39 @@ public class MainActivity extends Activity {
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
-
-    public void rollDice(View view) {
+    
+    public void rollSingleDie(ImageView die) {
     	Random rand = new Random();
+    	
+    	switch (rand.nextInt(6) + 1) {
+    	case 1:
+    		die.setImageResource(R.drawable.alea_1);
+    		break;
+    	case 2:
+    		die.setImageResource(R.drawable.alea_2);
+    		break;
+    	case 3:
+    		die.setImageResource(R.drawable.alea_3);
+    		break;
+    	case 4:
+    		die.setImageResource(R.drawable.alea_4);
+    		break;
+    	case 5:
+    		die.setImageResource(R.drawable.alea_5);
+    		break;
+   		default:
+    		die.setImageResource(R.drawable.alea_6);
+    		break;
+    	}
+    }
+    
+    public void rollDice(View view) {
     	ImageView iv1 = (ImageView)findViewById(R.id.dice_result_1);
-    	
-    	Integer imageSelect;
-    	
-    	imageSelect = rand.nextInt(6) + 1;
-    	switch (imageSelect) {
-    	case 1:
-    		iv1.setImageResource(R.drawable.alea_1);
-    		break;
-    	case 2:
-    		iv1.setImageResource(R.drawable.alea_2);
-    		break;
-    	case 3:
-    		iv1.setImageResource(R.drawable.alea_3);
-    		break;
-    	case 4:
-    		iv1.setImageResource(R.drawable.alea_4);
-    		break;
-    	case 5:
-    		iv1.setImageResource(R.drawable.alea_5);
-    		break;
-   		default:
-    		iv1.setImageResource(R.drawable.alea_6);
-    		break;
-    	}
-    	
     	ImageView iv2 = (ImageView)findViewById(R.id.dice_result_2);
-    	imageSelect = rand.nextInt(6) + 1;
-    	switch (imageSelect) {
-    	case 1:
-    		iv2.setImageResource(R.drawable.alea_1);
-    		break;
-    	case 2:
-    		iv2.setImageResource(R.drawable.alea_2);
-    		break;
-    	case 3:
-    		iv2.setImageResource(R.drawable.alea_3);
-    		break;
-    	case 4:
-    		iv2.setImageResource(R.drawable.alea_4);
-    		break;
-    	case 5:
-    		iv2.setImageResource(R.drawable.alea_5);
-    		break;
-   		default:
-    		iv2.setImageResource(R.drawable.alea_6);
-    		break;
-    	}
+    	
+    	//iv1.setColorFilter(0xCD0000, PorterDuff.Mode.LIGHTEN);
+    	//iv1.setColorFilter(0xCD0000, PorterDuff.Mode.DARKEN);
+    	rollSingleDie(iv1);
+    	rollSingleDie(iv2);
     }
 }
