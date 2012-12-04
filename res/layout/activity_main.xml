@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
@@ -12,8 +13,9 @@
     
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/player_number" >
+        android:layout_height="wrap_content"
+        android:layout_below="@id/player_number"
+        android:id="@+id/dice_box" >
         
 	    <ImageView
 	        android:id="@+id/red_die"
@@ -29,6 +31,13 @@
 	        android:layout_weight="1"
 	        android:contentDescription="@string/yellow_die" />
 	</LinearLayout>
+	
+    <TextView 
+        android:id="@+id/dice_results"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/dice_box"
+        />
 
     <Button
         android:layout_width="wrap_content"
