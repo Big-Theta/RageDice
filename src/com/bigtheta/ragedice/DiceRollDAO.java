@@ -6,9 +6,9 @@ import java.util.List;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 
 public class DiceRollDAO {
 
@@ -52,12 +52,35 @@ public class DiceRollDAO {
 	    database.delete(MySQLiteHelper.TABLE_DICE_ROLLS, MySQLiteHelper.COLUMN_ID
 	        + " = " + id, null);
 	  }
+	  
+	  public void deleteAllDiceRolls() {
+		  database.delete(MySQLiteHelper.TABLE_DICE_ROLLS, null, null);
+	  }
 
+	  public int getCountForRoll(int roll) {
+		  /*
+		  String query = 
+			  "SELECT count(" + dbHelper.COLUMN_ROLL_RESULT + " ) " +
+			  "AS my_count " +
+			  "FROM " + dbHelper.TABLE_DICE_ROLLS + " " +
+			  "WHERE " + dbHelper.COLUMN_ROLL_RESULT + "=" + Integer.toString(roll);
+		  */
+		  return (int)DatabaseUtils.queryNumEntries(database, dbHelper.TABLE_DICE_ROLLS,
+				  									dbHelper.COLUMN_ROLL_RESULT + "=" + Integer.toString(roll));
+	  }
+	  
+	  public DiceRoll getLastDiceRoll() {
+		  Cursor cursor = database.query(MySQLiteHelper.TABLE_DICE_ROLLS,
+				  						 allColumns, null, null, null, null, null);
+		  cursor.moveToPosition(cursor.getCount() - 1);
+		  return cursorToDiceRoll(cursor);
+	  }
+	  
 	  public List<DiceRoll> getAllDiceRolls() {
 	    List<DiceRoll> diceRolls = new ArrayList<DiceRoll>();
 
 	    Cursor cursor = database.query(MySQLiteHelper.TABLE_DICE_ROLLS,
-	        allColumns, null, null, null, null, null);
+	    							   allColumns, null, null, null, null, null);
 
 	    cursor.moveToFirst();
 	    while (!cursor.isAfterLast()) {

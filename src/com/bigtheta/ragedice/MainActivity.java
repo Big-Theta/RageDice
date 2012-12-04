@@ -76,33 +76,46 @@ public class MainActivity extends Activity {
     	return die_select + 1;
     }
     
-    public void nextPlayer() {
-    	if (mNumPlayers > 1) {
+    public void nextPlayer(Boolean goForward) {
+    	if (mNumPlayers > 1 && goForward) {
     		mPlayerNum %= mNumPlayers;
     		mPlayerNum++;
-    		TextView player = (TextView)findViewById(R.id.player_number);
-    		player.setText("Player " + Integer.toString(mPlayerNum));
+    	} else {
+    		mPlayerNum--;
+    		if (mPlayerNum == 0) {
+    			mPlayerNum += mNumPlayers;
+    		}
     	}
+		TextView player = (TextView)findViewById(R.id.player_number);
+		player.setText("Player " + Integer.toString(mPlayerNum));
     }
     
     public void showTotals() {
-    	List<DiceRoll> diceRolls = mDiceRollDAO.getAllDiceRolls();
-    	int[] results = new int[13];  // Will ignore 0 and 1.
-    	for (DiceRoll roll : diceRolls) {
-    		results[(int)roll.getRollResult()]++;
-    	}
-    	
-    	String resultsStr = null;
+    	String resultsStr = "";
     	for (int i = 2; i <= 12; i++) {
-    		resultsStr += "Num " + Integer.toString(i) + " : " + Integer.toString(results[i]) + "\n";
+    		resultsStr += "Num " + Integer.toString(i) +
+    					  " : " + Integer.toString(mDiceRollDAO.getCountForRoll(i)) + "\n";
     	}
     	TextView results_view = (TextView)findViewById(R.id.dice_results);
     	results_view.setText(resultsStr);
     }
     
+    public void resetDiceRolls(View view) {
+    	mDiceRollDAO.deleteAllDiceRolls();
+    	mPlayerNum = 1;
+    	showTotals();
+    }
+    
+    public void undoDiceRoll(View view) {
+    	// TODO: Check if the rolls are empty. This crashes otherwise.
+    	mDiceRollDAO.deleteDiceRoll(mDiceRollDAO.getLastDiceRoll());
+    	nextPlayer(false);
+		showTotals();
+    }
+    	
     public void rollDice(View view) {
     	int die_roll_result = 0;
-    	nextPlayer();
+    	nextPlayer(true);
     	ImageView red_die = (ImageView)findViewById(R.id.red_die);
     	ImageView yellow_die = (ImageView)findViewById(R.id.yellow_die);
     	die_roll_result += rollSingleDie(red_die);
