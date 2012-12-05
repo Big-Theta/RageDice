@@ -69,14 +69,14 @@ public class MainActivity extends Activity {
         return true;
     }
     
-    public int rollSingleDie(ImageView die) {
+    protected int rollSingleDie(ImageView die) {
     	Random rand = new Random();
     	int die_select = rand.nextInt(6);
     	die.setImageResource(mDiceImgs[die_select]);
     	return die_select + 1;
     }
     
-    public void nextPlayer(Boolean goForward) {
+    protected void nextPlayer(Boolean goForward) {
     	if (mNumPlayers > 1 && goForward) {
     		mPlayerNum %= mNumPlayers;
     		mPlayerNum++;
@@ -90,7 +90,7 @@ public class MainActivity extends Activity {
 		player.setText("Player " + Integer.toString(mPlayerNum));
     }
     
-    public void showTotals() {
+    protected void showTotals() {
     	String resultsStr = "";
     	for (int i = 2; i <= 12; i++) {
     		resultsStr += "Num " + Integer.toString(i) +

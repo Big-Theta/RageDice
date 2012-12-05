@@ -111,7 +111,7 @@ public class DiceRollDAO {
 			  }
 		  }
 		  
-		  KolmogorovSmirnovDistribution dist = new KolmogorovSmirnovDistribution(numRolls);
+		  KolmogorovSmirnovDistribution dist = new KolmogorovSmirnovDistribution(numRolls);  // 11 == num possibilities
 		  
 		  return dist.cdf(d);
 	  }

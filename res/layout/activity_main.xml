@@ -31,7 +31,13 @@
 	        android:layout_weight="1"
 	        android:contentDescription="@string/yellow_die" />
 	</LinearLayout>
-
+ 
+    <TextView
+        android:id="@+id/dice_results"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/dice_box" />
+    
     <Button
         android:id="@+id/reset_button"
         android:layout_width="wrap_content"
@@ -42,15 +48,6 @@
         android:text="@string/reset_button" />
 
     <Button
-        android:id="@+id/roll_dice_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:onClick="rollDice"
-        android:text="@string/roll_dice_button" />
-
-    <Button
         android:id="@+id/undo_dice_roll_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -58,11 +55,14 @@
         android:layout_alignParentRight="true"
         android:onClick="undoDiceRoll"
         android:text="@string/undo_dice_roll_button" />
-
-    <TextView
-        android:id="@+id/dice_results"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentLeft="true" />
+    
+    <Button
+        android:id="@+id/roll_dice_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:onClick="rollDice"
+        android:text="@string/roll_dice_button" />
 
 </RelativeLayout>
