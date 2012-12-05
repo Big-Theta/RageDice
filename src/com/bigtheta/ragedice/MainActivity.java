@@ -96,6 +96,7 @@ public class MainActivity extends Activity {
     		resultsStr += "Num " + Integer.toString(i) +
     					  " : " + Integer.toString(mDiceRollDAO.getCountForRoll(i)) + "\n";
     	}
+    	resultsStr += "Prob:" + Double.toString(mDiceRollDAO.calculateKSProbability());
     	TextView results_view = (TextView)findViewById(R.id.dice_results);
     	results_view.setText(resultsStr);
     }
