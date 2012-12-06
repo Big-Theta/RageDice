@@ -107,7 +107,6 @@ public class MainActivity extends Activity {
     }
     	
     public void rollDice(View view) {
-    	for (int i = 0; i < 50; i++) {
     	int die_roll_result = 0;
     	nextPlayer(true);
     	ImageView red_die = (ImageView)findViewById(R.id.red_die);
@@ -115,7 +114,6 @@ public class MainActivity extends Activity {
     	die_roll_result += rollSingleDie(red_die);
     	die_roll_result += rollSingleDie(yellow_die);
     	mDiceRollDAO.createDiceRoll(die_roll_result);
-    	}
     	showTotals();
     }
 }
