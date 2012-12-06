@@ -1,6 +1,5 @@
 package com.bigtheta.ragedice;
 
-import java.util.List;
 import java.util.Random;
 
 import android.app.Activity;
@@ -9,6 +8,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 
 public class MainActivity extends Activity {
 	private int[] mDiceImgs;
@@ -44,16 +44,6 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		mDiceRollDAO.open();
-		/*
-	    List<DiceRoll> rolls = mDiceRollDAO.getAllDiceRolls();
-
-	    // Use the SimpleCursorAdapter to show the
-	    // elements in a ListView
-	    // XXX
-	    ArrayAdapter<DiceRoll> adapter = new ArrayAdapter<DiceRoll>(this,
-	        android.R.layout.simple_list_item_1, rolls);
-	    setListAdapter(adapter);
-		*/
 	}
 	
 	@Override
@@ -94,9 +84,11 @@ public class MainActivity extends Activity {
     	String resultsStr = "";
     	for (int i = 2; i <= 12; i++) {
     		resultsStr += "Num " + Integer.toString(i) +
-    					  " : " + Integer.toString(mDiceRollDAO.getCountForRoll(i)) + "\n";
+    					  " : " + Integer.toString(mDiceRollDAO.getCountForRoll(i)) +
+    					  " -- " + Double.toString(mDiceRollDAO.getExpectedCount(i)) + "\n";
     	}
-    	resultsStr += "Prob:" + Double.toString(mDiceRollDAO.calculateKSProbability());
+    	resultsStr += "Prob1:" + Double.toString(mDiceRollDAO.calculateKSProbability());
+    	resultsStr += "\nProb2:" + Double.toString(mDiceRollDAO.calculateKSProbabilityMaximized());
     	TextView results_view = (TextView)findViewById(R.id.dice_results);
     	results_view.setText(resultsStr);
     }
@@ -115,6 +107,7 @@ public class MainActivity extends Activity {
     }
     	
     public void rollDice(View view) {
+    	for (int i = 0; i < 50; i++) {
     	int die_roll_result = 0;
     	nextPlayer(true);
     	ImageView red_die = (ImageView)findViewById(R.id.red_die);
@@ -122,6 +115,7 @@ public class MainActivity extends Activity {
     	die_roll_result += rollSingleDie(red_die);
     	die_roll_result += rollSingleDie(yellow_die);
     	mDiceRollDAO.createDiceRoll(die_roll_result);
+    	}
     	showTotals();
     }
 }
