@@ -31,7 +31,7 @@
 	        android:layout_weight="1"
 	        android:contentDescription="@string/yellow_die" />
 	</LinearLayout>
- 
+
     <TextView
         android:id="@+id/dice_results"
         android:layout_width="fill_parent"

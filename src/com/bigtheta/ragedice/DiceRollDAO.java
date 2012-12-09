@@ -15,7 +15,6 @@ import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-
 public class DiceRollDAO {
 
 	  // Database fields
