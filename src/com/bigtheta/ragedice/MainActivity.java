@@ -14,7 +14,7 @@ public class MainActivity extends Activity {
     private int[] mDiceImgs;
     private int mNumPlayers;
     private int mPlayerNum;
-    private DiceRollDAO mDiceRollDAO;
+    private DiceDAO mDiceDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
         ImageView yellow_die = (ImageView)findViewById(R.id.yellow_die);
         yellow_die.setBackgroundColor(0xFFFFFF00);
 
-        mDiceRollDAO = new DiceRollDAO(this);
+        mDiceDAO = new DiceDAO(this);
 
         View mainView = (View)findViewById(R.id.activity_main_view);
         mainView.setBackgroundColor(0xFF818181);
@@ -43,13 +43,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        mDiceRollDAO.open();
+        mDiceDAO.open();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mDiceRollDAO.close();
+        mDiceDAO.close();
     }
 
     @Override
@@ -84,24 +84,24 @@ public class MainActivity extends Activity {
         String resultsStr = "";
         for (int i = 2; i <= 12; i++) {
             resultsStr += "Num " + Integer.toString(i) +
-                " : " + Integer.toString(mDiceRollDAO.getCountForRoll(i)) +
-                " -- " + Double.toString(mDiceRollDAO.getExpectedCount(i)) + "\n";
+                " : " + Integer.toString(mDiceDAO.getCountForRoll(i)) +
+                " -- " + Double.toString(mDiceDAO.getExpectedCount(i)) + "\n";
         }
-        resultsStr += "Prob1:" + Double.toString(mDiceRollDAO.calculateKSProbability());
-        resultsStr += "\nProb2:" + Double.toString(mDiceRollDAO.calculateKSProbabilityMaximized());
+        resultsStr += "Prob1:" + Double.toString(mDiceDAO.calculateKSProbability());
+        resultsStr += "\nProb2:" + Double.toString(mDiceDAO.calculateKSProbabilityMaximized());
         TextView results_view = (TextView)findViewById(R.id.dice_results);
         results_view.setText(resultsStr);
     }
 
     public void resetDiceRolls(View view) {
-        mDiceRollDAO.deleteAllDiceRolls();
+        mDiceDAO.deleteAllDiceRolls();
         mPlayerNum = 1;
         showTotals();
     }
 
     public void undoDiceRoll(View view) {
         // TODO: Check if the rolls are empty. This crashes otherwise.
-        mDiceRollDAO.deleteDiceRoll(mDiceRollDAO.getLastDiceRoll());
+        mDiceDAO.deleteDiceRoll(mDiceDAO.getLastDiceRoll());
         nextPlayer(false);
         showTotals();
     }
@@ -113,7 +113,7 @@ public class MainActivity extends Activity {
         ImageView yellow_die = (ImageView)findViewById(R.id.yellow_die);
         die_roll_result += rollSingleDie(red_die);
         die_roll_result += rollSingleDie(yellow_die);
-        mDiceRollDAO.createDiceRoll(die_roll_result);
+        mDiceDAO.createDiceRoll(die_roll_result);
         showTotals();
     }
 }

@@ -15,20 +15,38 @@ import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-public class DiceRollDAO {
+public class DiceDAO {
 
     // Database fields
     private SQLiteDatabase database;
     private MySQLiteHelper dbHelper;
-    private String[] allColumns = {
+
+    private String[] tablePlayerColumns = {
         MySQLiteHelper.COLUMN_ID,
-        MySQLiteHelper.COLUMN_ROLL_RESULT
+        MySQLiteHelper.COLUMN_PLAYER_NUMBER,
+        MySQLiteHelper.COLUMN_PLAYER_NAME
     };
 
-    private int cache_last_updated_on_roll = 0;
-    private int[] cache_dice_rolls = new int[13];
+    private String[] tableDiceRollColumns = {
+        MySQLiteHelper.COLUMN_ID,
+        MySQLiteHelper.COLUMN_ROLL_TOTAL,
+        MySQLiteHelper.COLUMN_PLAYER_ID
+    };
 
-    public DiceRollDAO(Context context) {
+    private String[] tableDieDescriptionColumns = {
+        MySQLiteHelper.COLUMN_NUM_LOW_FACE,
+        MySQLiteHelper.COLUMN_NUM_HIGH_FACE,
+        MySQLiteHelper.COLUMN_BASE_IDENTIFIER_NAME,
+        MySQLiteHelper.COLUMN_BACKGROUND_COLOR
+    };
+
+    private String[] tableDieResultColumns = {
+        MySQLiteHelper.COLUMN_DICE_ROLL_ID,
+        MySQLiteHelper.COLUMN_DIE_DESCRIPTION_ID,
+        MySQLiteHelper.COLUMN_DIE_RESULT
+    };
+
+    public DiceDAO(Context context) {
         dbHelper = new MySQLiteHelper(context);
     }
 
@@ -52,15 +70,10 @@ public class DiceRollDAO {
         DiceRoll newDiceRoll = cursorToDiceRoll(cursor);
         cursor.close();
 
-        cache_dice_rolls[rollResult]++;
-        cache_last_updated_on_roll++;
-
         return newDiceRoll;
     }
 
     public void deleteDiceRoll(DiceRoll roll) {
-        cache_dice_rolls[(int)roll.getRollResult()]--;
-        cache_last_updated_on_roll--;
         long id = roll.getId();
         System.out.println("DiceRoll deleted with id: " + id);
         database.delete(MySQLiteHelper.TABLE_DICE_ROLLS, MySQLiteHelper.COLUMN_ID
@@ -72,24 +85,25 @@ public class DiceRollDAO {
     }
 
     public int getCountForRoll(int roll) {
-        if (cache_last_updated_on_roll == getNumDiceRolls()) {
-            return cache_dice_rolls[roll];
-        } else {  // This shouldn't happen often, but it could on resets or
-            // unrolls.
-            for (int i = 0; i <= 12; i++) {
-                cache_dice_rolls[i] = 0;
-            }
-            for (DiceRoll dr : getAllDiceRolls()) {
-                cache_dice_rolls[(int)dr.getRollResult()]++;
-            }
-            cache_last_updated_on_roll = getNumDiceRolls();
+//      if (cache_last_updated_on_roll == getNumDiceRolls()) {
+//          return cache_dice_rolls[roll];
+//      } else {  // This shouldn't happen often, but it could on resets or
+//          // unrolls.
+//          for (int i = 0; i <= 12; i++) {
+//              cache_dice_rolls[i] = 0;
+//          }
+//          for (DiceRoll dr : getAllDiceRolls()) {
+//              cache_dice_rolls[(int)dr.getRollResult()]++;
+//          }
+//          cache_last_updated_on_roll = getNumDiceRolls();
 
-        }
-        return cache_dice_rolls[roll];
-        /*
-           return (int)DatabaseUtils.queryNumEntries(database, dbHelper.TABLE_DICE_ROLLS,
-           dbHelper.COLUMN_ROLL_RESULT + "=" + Integer.toString(roll));
-           */
+//      }
+//      return cache_dice_rolls[roll];
+//      /*
+//         return (int)DatabaseUtils.queryNumEntries(database, dbHelper.TABLE_DICE_ROLLS,
+//         dbHelper.COLUMN_ROLL_RESULT + "=" + Integer.toString(roll));
+//         */
+      return -1;
     }
 
     public int getNumDiceRolls() {
