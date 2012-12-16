@@ -4,40 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
-    
+
     <TextView
         android:id="@+id/player_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true" />
-    
+
     <LinearLayout
         android:id="@+id/dice_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/player_number" >
-        
-	    <ImageView
-	        android:id="@+id/red_die"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:contentDescription="@string/red_die" />
-	
-	    <ImageView
-	        android:id="@+id/yellow_die"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:contentDescription="@string/yellow_die" />
-	</LinearLayout>
+
+        <ImageView
+            android:id="@+id/red_die"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/red_die" />
+
+        <ImageView
+            android:id="@+id/yellow_die"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/yellow_die" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/dice_results"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@id/dice_box" />
-    
+
     <Button
         android:id="@+id/reset_button"
         android:layout_width="wrap_content"
@@ -55,7 +55,7 @@
         android:layout_alignParentRight="true"
         android:onClick="undoDiceRoll"
         android:text="@string/undo_dice_roll_button" />
-    
+
     <Button
         android:id="@+id/roll_dice_button"
         android:layout_width="wrap_content"
