@@ -6,23 +6,25 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "dice_roll.db";
+    private static final String DATABASE_NAME = "rage_dice.db";
     private static final int DATABASE_VERSION = 1;
 
-    public static final String COLUMN_ID = " _id ";
+    public static final String COLUMN_ID = "_id";
 
     // TABLE_GAME ???
-    public static final String TABLE_GAME = " game ";
+    public static final String TABLE_GAME = "game";
+    public static final String COLUMN_RANDOM_NUMBER = "random_number";
     private static final String CREATE_TABLE_GAME = "CREATE TABLE "
             + TABLE_GAME + "("
-            + COLUMN_ID + " integer primary key autoincrement "
+            + COLUMN_ID + " integer primary key autoincrement, "
+            + COLUMN_RANDOM_NUMBER + " integer "
             + ");";
 
     // TABLE_PLAYER
-    public static final String TABLE_PLAYER = " player ";
-    public static final String COLUMN_GAME_ID = " game_id ";
-    public static final String COLUMN_PLAYER_NUMBER = " number ";
-    public static final String COLUMN_PLAYER_NAME = " name ";
+    public static final String TABLE_PLAYER = "player";
+    public static final String COLUMN_GAME_ID = "game_id";
+    public static final String COLUMN_PLAYER_NUMBER = "number";
+    public static final String COLUMN_PLAYER_NAME = "name";
     private static final String CREATE_TABLE_PLAYER = "CREATE TABLE "
             + TABLE_PLAYER + "("
             + COLUMN_ID + " integer primary key autoincrement, "
@@ -32,36 +34,38 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + ");";
 
     // TABLE_DICE_ROLL
-    public static final String TABLE_DICE_ROLL = " dice_roll ";
-    public static final String COLUMN_ROLL_TOTAL = " roll_total ";
-    public static final String COLUMN_PLAYER_ID = " player_description_id ";
+    public static final String TABLE_DICE_ROLL = "dice_roll";
+    public static final String COLUMN_PLAYER_ID = "player_description_id";
     private static final String CREATE_TABLE_DICE_ROLL = "CREATE TABLE "
             + TABLE_DICE_ROLL + "("
             + COLUMN_ID + " integer primary key autoincrement, "
-            + COLUMN_ROLL_TOTAL + " integer not null, "
             + COLUMN_PLAYER_ID + " integer references " + TABLE_PLAYER + " on delete cascade "
             + ");";
 
     // TABLE_DIE_DESCRIPTION
-    public static final String TABLE_DIE_DESCRIPTION = " die_description ";
-    public static final String COLUMN_NUM_LOW_FACE = " num_low_face ";
-    public static final String COLUMN_NUM_HIGH_FACE = " num_high_face ";
-    public static final String COLUMN_BASE_IDENTIFIER_NAME = " base_identifier_name ";
-    public static final String COLUMN_BACKGROUND_COLOR = " background_color ";
+    public static final String TABLE_DIE_DESCRIPTION = "die_description";
+    public static final String COLUMN_NUM_LOW_FACE = "num_low_face";
+    public static final String COLUMN_NUM_HIGH_FACE = "num_high_face";
+    public static final String COLUMN_BASE_IDENTIFIER_NAME = "base_identifier_name";
+    public static final String COLUMN_BACKGROUND_COLOR = "background_color";
+    public static final String COLUMN_IMAGE_VIEW_RESOURCE = "image_view_resource";
+    public static final String COLUMN_IS_NUMERIC = "is_numeric";
     private static final String CREATE_TABLE_DIE_DESCRIPTION = "CREATE TABLE "
             + TABLE_DIE_DESCRIPTION + "("
             + COLUMN_ID + " integer primary key autoincrement, "
             + COLUMN_NUM_LOW_FACE + " integer not NULL, "
             + COLUMN_NUM_HIGH_FACE + " integer not NULL, "
             + COLUMN_BASE_IDENTIFIER_NAME + " text, "
-            + COLUMN_BACKGROUND_COLOR + " integer not NULL "
+            + COLUMN_BACKGROUND_COLOR + " integer not NULL, "
+            + COLUMN_IMAGE_VIEW_RESOURCE + " integer, "
+            + COLUMN_IS_NUMERIC + " boolean "
             + ");";
 
     // TABLE_DIE_RESULT
-    public static final String TABLE_DIE_RESULT = " die_result ";
-    public static final String COLUMN_DICE_ROLL_ID = " dice_roll_id ";
-    public static final String COLUMN_DIE_DESCRIPTION_ID = " description ";
-    public static final String COLUMN_DIE_RESULT = " result ";
+    public static final String TABLE_DIE_RESULT = "die_result";
+    public static final String COLUMN_DICE_ROLL_ID = "dice_roll_id";
+    public static final String COLUMN_DIE_DESCRIPTION_ID = "description";
+    public static final String COLUMN_DIE_RESULT = "result";
     private static final String CREATE_TABLE_DIE_RESULT = "CREATE TABLE "
             + TABLE_DIE_RESULT + "("
             + COLUMN_ID + " integer primary key autoincrement, "
