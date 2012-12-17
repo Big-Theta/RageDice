@@ -15,6 +15,8 @@ public class MainActivity extends Activity {
     private int mNumPlayers;
     private int mPlayerNum;
     private DiceDAO mDiceDAO;
+    private SQLiteDatabase m_database;
+    private MySQLiteHelper m_dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,18 +40,20 @@ public class MainActivity extends Activity {
 
         View mainView = (View)findViewById(R.id.activity_main_view);
         mainView.setBackgroundColor(0xFF818181);
+
+        m_dbHelper = new MySQLiteHelper(context);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mDiceDAO.open();
+        m_database = m_dbHelper.getWritableDatabase();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mDiceDAO.close();
+        m_dbHelper.close();
     }
 
     @Override
@@ -60,10 +64,6 @@ public class MainActivity extends Activity {
     }
 
     protected int rollSingleDie(ImageView die) {
-        Random rand = new Random();
-        int die_select = rand.nextInt(6);
-        die.setImageResource(mDiceImgs[die_select]);
-        return die_select + 1;
     }
 
     protected void nextPlayer(Boolean goForward) {
@@ -117,3 +117,4 @@ public class MainActivity extends Activity {
         showTotals();
     }
 }
+
