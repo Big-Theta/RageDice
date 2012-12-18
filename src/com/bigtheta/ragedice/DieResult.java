@@ -8,7 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 public class DieResult {
-    private String[] tableDieResultColumns = {
+    private static String[] tableDieResultColumns = {
         MySQLiteHelper.COLUMN_DICE_ROLL_ID,
         MySQLiteHelper.COLUMN_DIE_DESCRIPTION_ID,
         MySQLiteHelper.COLUMN_DIE_RESULT
@@ -19,7 +19,8 @@ public class DieResult {
     long m_dieDescriptionId;
     int m_dieResult;
 
-    public DieResult(SQLiteDatabase database, DiceRoll diceRoll, DieDescription dieDescription) {
+    public DieResult(SQLiteDatabase database, DiceRoll diceRoll,
+                     DieDescription dieDescription) {
         m_diceRollId = diceRoll.getId();
         m_dieDescriptionId = dieDescription.getId();
         m_dieResult = rollDie(database);
@@ -35,9 +36,12 @@ public class DieResult {
     public DieResult(SQLiteDatabase database, long id) {
         m_id = id;
         Cursor cursor = getCursor(database);
-        m_diceRollId = cursor.getLong(cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_DICE_ROLL_ID));
-        m_dieDescriptionId = cursor.getLong(cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_DIE_DESCRIPTION_ID));
-        m_dieResult = cursor.getInt(cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_DIE_RESULT));
+        m_diceRollId = cursor.getLong(
+                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_DICE_ROLL_ID));
+        m_dieDescriptionId = cursor.getLong(
+                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_DIE_DESCRIPTION_ID));
+        m_dieResult = cursor.getInt(
+                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_DIE_RESULT));
         cursor.moveToFirst();
         cursor.close();
     }
@@ -63,7 +67,8 @@ public class DieResult {
         return rand.nextInt(numHighFace - numLowFace + 1) + numLowFace;
     }
 
-    public static ArrayList<DieResult> getDieResults(SQLiteDatabase database, DiceRoll dr) {
+    public static ArrayList<DieResult> getDieResults(SQLiteDatabase database,
+                                                     DiceRoll dr) {
         Cursor cursor = database.query(
                 MySQLiteHelper.TABLE_DIE_RESULT,
                 new String[] {MySQLiteHelper.COLUMN_ID},

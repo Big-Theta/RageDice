@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 public class DieDescription {
-    private String[] tableDieDescriptionColumns = {
+    private static String[] tableDieDescriptionColumns = {
         MySQLiteHelper.COLUMN_NUM_LOW_FACE,
         MySQLiteHelper.COLUMN_NUM_HIGH_FACE,
         MySQLiteHelper.COLUMN_BASE_IDENTIFIER_NAME,
@@ -22,8 +22,9 @@ public class DieDescription {
     int m_imageViewResource;
     boolean m_isNumeric;
 
-    public DieDescription(SQLiteDatabase database, int numLowFace, int numHighFace,
-                          String baseIdentifierName, int backgroundColor, int imageViewResource,
+    public DieDescription(SQLiteDatabase database, int numLowFace, int
+                          numHighFace, String baseIdentifierName,
+                          int backgroundColor, int imageViewResource,
                           boolean isNumeric) {
         m_numLowFace = numLowFace;
         m_numHighFace = numHighFace;
@@ -35,22 +36,31 @@ public class DieDescription {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_NUM_LOW_FACE, m_numLowFace);
         values.put(MySQLiteHelper.COLUMN_NUM_HIGH_FACE, m_numHighFace);
-        values.put(MySQLiteHelper.COLUMN_BASE_IDENTIFIER_NAME, m_baseIdentifierName);
+        values.put(MySQLiteHelper.COLUMN_BASE_IDENTIFIER_NAME,
+                   m_baseIdentifierName);
         values.put(MySQLiteHelper.COLUMN_BACKGROUND_COLOR, m_backgroundColor);
-        values.put(MySQLiteHelper.COLUMN_IMAGE_VIEW_RESOURCE, m_imageViewResource);
+        values.put(MySQLiteHelper.COLUMN_IMAGE_VIEW_RESOURCE,
+                   m_imageViewResource);
         values.put(MySQLiteHelper.COLUMN_IS_NUMERIC, m_isNumeric);
-        m_id = database.insert(MySQLiteHelper.TABLE_DIE_DESCRIPTION, null, values);
+        m_id = database.insert(MySQLiteHelper.TABLE_DIE_DESCRIPTION,
+                               null, values);
     }
 
     public DieDescription(SQLiteDatabase database, long id) {
         m_id = id;
         Cursor cursor = getCursor(database);
-        m_numLowFace = cursor.getInt(cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_NUM_LOW_FACE));
-        m_numHighFace = cursor.getInt(cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_NUM_HIGH_FACE));
-        m_baseIdentifierName = cursor.getString(cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_BASE_IDENTIFIER_NAME));
-        m_backgroundColor = cursor.getInt(cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_BACKGROUND_COLOR));
-        m_imageViewResource = cursor.getInt(cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_IMAGE_VIEW_RESOURCE));
-        m_isNumeric = cursor.getInt(cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_IS_NUMERIC)) == 0 ? false : true;
+        m_numLowFace = cursor.getInt(
+                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_NUM_LOW_FACE));
+        m_numHighFace = cursor.getInt(
+                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_NUM_HIGH_FACE));
+        m_baseIdentifierName = cursor.getString(
+                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_BASE_IDENTIFIER_NAME));
+        m_backgroundColor = cursor.getInt(
+                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_BACKGROUND_COLOR));
+        m_imageViewResource = cursor.getInt(
+                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_IMAGE_VIEW_RESOURCE));
+        m_isNumeric = cursor.getInt(
+                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_IS_NUMERIC)) == 0 ? false : true;
 
         cursor.close();
     }
@@ -86,7 +96,8 @@ public class DieDescription {
     private Cursor getCursor(SQLiteDatabase database) {
         Cursor cursor = database.query(
                 MySQLiteHelper.TABLE_DIE_DESCRIPTION,
-                tableDieDescriptionColumns, MySQLiteHelper.COLUMN_ID + " = " + m_id,
+                tableDieDescriptionColumns,
+                MySQLiteHelper.COLUMN_ID + " = " + m_id,
                 null, null, null, null);
         cursor.moveToFirst();
         return cursor;

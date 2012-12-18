@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 
 public class MainActivity extends Activity {
@@ -19,9 +20,8 @@ public class MainActivity extends Activity {
     private MySQLiteHelper m_dbHelper;
     private ArrayList<DieDescription> m_dieDescriptions;
     private Game m_game;
-    private Player debug_p1;
-    private Player debug_p2;
-
+    private Player m_lastPlayer;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +34,8 @@ public class MainActivity extends Activity {
         m_database = m_dbHelper.getWritableDatabase();
         m_game = new Game(m_database);
 
-        debug_p1 = new Player(m_database, m_game, 1, "player one");
-        debug_p2 = new Player(m_database, m_game, 2, "player two");
+        new Player(m_database, m_game, 1, "player one");
+        m_lastPlayer = new Player(m_database, m_game, 2, "player two");
 
         m_dieDescriptions = new ArrayList<DieDescription>();
         DieDescription yellowDie = new DieDescription(
@@ -71,26 +71,41 @@ public class MainActivity extends Activity {
     }
 
     protected void displayDiceRoll(DiceRoll dr) {
+        Player foo = new Player(m_database, dr.getPlayerId());
+        Log.i("displayDiceRoll", Integer.toString(foo.getPlayerNumber()));
+        TextView tv = (TextView)findViewById(R.id.player_number);
+        Player currentPlayer = new Player(m_database, dr.getPlayerId());
+        tv.setText(currentPlayer.getPlayerName());
+
         Class<drawable> res = R.drawable.class;
         for (DieResult result : DieResult.getDieResults(m_database, dr)) {
             DieDescription dd = new DieDescription(m_database, result.getDieDescriptionId());
             ImageView iv = (ImageView)findViewById(dd.getImageViewResource());
-            String description = dd.getBaseIdentifierName() + Integer.toString(result.getDieResult());
+            String description = dd.getBaseIdentifierName()
+                               + Integer.toString(result.getDieResult());
             try {
-            	Field field = res.getField(description);
+                Field field = res.getField(description);
                 iv.setImageResource(field.getInt(null));
                 iv.setBackgroundColor(dd.getBackgroundColor());
             } catch (Exception err){
-            	Log.w("MainActivity::displayDiceRoll", err.getCause());
+                Log.w("MainActivity::displayDiceRoll", err.getCause());
             }
         }
     }
 
+    public void resetDiceRolls(View view) {
+    }
+
     public void undoDiceRoll(View view) {
+        DiceRoll dr = DiceRoll.getLastDiceRoll(m_database);
+        dr.delete(m_database);
+        dr = DiceRoll.getLastDiceRoll(m_database);
+        displayDiceRoll(dr);
     }
 
     public void rollDice(View view) {
-        DiceRoll dr = new DiceRoll(m_database, debug_p1, m_dieDescriptions);
+        m_lastPlayer = m_lastPlayer.getNextPlayer(m_database);
+        DiceRoll dr = new DiceRoll(m_database, m_lastPlayer, m_dieDescriptions);
         displayDiceRoll(dr);
     }
 }

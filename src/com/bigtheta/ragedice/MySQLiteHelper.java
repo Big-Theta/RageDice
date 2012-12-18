@@ -11,7 +11,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public static final String COLUMN_ID = "_id";
 
-    // TABLE_GAME ???
+    // TABLE_GAME
     public static final String TABLE_GAME = "game";
     public static final String COLUMN_RANDOM_NUMBER = "random_number";
     private static final String CREATE_TABLE_GAME = "CREATE TABLE "
@@ -69,8 +69,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_DIE_RESULT = "CREATE TABLE "
             + TABLE_DIE_RESULT + "("
             + COLUMN_ID + " integer primary key autoincrement, "
-            + COLUMN_DICE_ROLL_ID + " integer references " + TABLE_DICE_ROLL + " on delete cascade, "
-            + COLUMN_DIE_DESCRIPTION_ID + " integer references " + TABLE_DIE_DESCRIPTION + " on delete cascade, "
+            + COLUMN_DICE_ROLL_ID + " integer references "
+                                  + TABLE_DICE_ROLL + " on delete cascade, "
+            + COLUMN_DIE_DESCRIPTION_ID + " integer references "
+                                        + TABLE_DIE_DESCRIPTION + " on delete cascade, "
             + COLUMN_DIE_RESULT + " integer not NULL "
             + ");";
 

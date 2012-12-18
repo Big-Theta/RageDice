@@ -7,7 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 public class Game {
-    private String[] tableGameColumns = {
+    private static String[] tableGameColumns = {
         MySQLiteHelper.COLUMN_ID,
         MySQLiteHelper.COLUMN_RANDOM_NUMBER
     };
@@ -27,7 +27,8 @@ public class Game {
     public Game(SQLiteDatabase database, long id) {
         m_id = id;
         Cursor cursor = getCursor(database);
-        m_randomNumber = cursor.getInt(cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_RANDOM_NUMBER));
+        m_randomNumber = cursor.getInt(
+                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_RANDOM_NUMBER));
         cursor.moveToFirst();
         cursor.close();
     }

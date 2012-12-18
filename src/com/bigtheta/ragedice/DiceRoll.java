@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class DiceRoll {
-    private String[] tableDiceRollColumns = {
+    private static String[] tableDiceRollColumns = {
         MySQLiteHelper.COLUMN_ID,
         MySQLiteHelper.COLUMN_PLAYER_ID
     };
@@ -15,7 +16,9 @@ public class DiceRoll {
     long m_id;
     long m_playerId;
 
-    public DiceRoll(SQLiteDatabase database, Player player, ArrayList<DieDescription> dieDescriptions) {
+    public DiceRoll(SQLiteDatabase database, Player player,
+                    ArrayList<DieDescription> dieDescriptions) {
+    	Log.i("DiceRoll", Long.toString(player.getId()));
         m_playerId = player.getId();
 
         ContentValues values = new ContentValues();
@@ -43,15 +46,22 @@ public class DiceRoll {
     }
 
 
-    public DiceRoll getLastDiceRoll(SQLiteDatabase database) {
+    public static DiceRoll getLastDiceRoll(SQLiteDatabase database) {
         Cursor cursor = database.query(MySQLiteHelper.TABLE_DICE_ROLL,
                 tableDiceRollColumns, null, null, null, null, null);
-        // Should this be cursor.getCount() - 1?
-        return new DiceRoll(database, (long)cursor.getCount());
+        if (cursor.getCount() > 0) {
+            return new DiceRoll(database, (long)cursor.getCount());
+        } else {
+            return null;
+        }
     }
 
     public long getId() {
         return m_id;
+    }
+
+    public long getPlayerId() {
+        return m_playerId;
     }
 
     private Cursor getCursor(SQLiteDatabase database) {
