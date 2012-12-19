@@ -14,14 +14,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 public class MainActivity extends Activity {
     private SQLiteDatabase m_database;
     private MySQLiteHelper m_dbHelper;
     private ArrayList<DieDescription> m_dieDescriptions;
     private Game m_game;
-    private Player m_lastPlayer;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +33,9 @@ public class MainActivity extends Activity {
         m_game = new Game(m_database);
 
         new Player(m_database, m_game, 1, "player one");
-        m_lastPlayer = new Player(m_database, m_game, 2, "player two");
+        new Player(m_database, m_game, 2, "player two");
+        new Player(m_database, m_game, 3, "player awesome (three)");
+        new Player(m_database, m_game, 4, "player better than awesome (four)");
 
         m_dieDescriptions = new ArrayList<DieDescription>();
         DieDescription yellowDie = new DieDescription(
@@ -94,6 +94,7 @@ public class MainActivity extends Activity {
     }
 
     public void resetDiceRolls(View view) {
+        DiceRoll.clear(m_database);
     }
 
     public void undoDiceRoll(View view) {
@@ -104,8 +105,8 @@ public class MainActivity extends Activity {
     }
 
     public void rollDice(View view) {
-        m_lastPlayer = m_lastPlayer.getNextPlayer(m_database);
-        DiceRoll dr = new DiceRoll(m_database, m_lastPlayer, m_dieDescriptions);
+        Player nextPlayer = Player.getNextPlayer(m_database, m_game);
+        DiceRoll dr = new DiceRoll(m_database, nextPlayer, m_dieDescriptions);
         displayDiceRoll(dr);
     }
 }
