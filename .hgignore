@@ -1,5 +1,4 @@
 
 syntax: regexp
 ^bin\.*$
-^gen\.*$
 .*\.swp$
