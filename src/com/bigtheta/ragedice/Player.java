@@ -85,15 +85,17 @@ public class Player {
 
     public static Player getNextPlayer(SQLiteDatabase database, Game game) {
         DiceRoll lastRoll = DiceRoll.getLastDiceRoll(database);
+        Player nextPlayer;
         if (lastRoll == null) {
             Cursor cursor = database.query(
                     MySQLiteHelper.TABLE_PLAYER,
                     tablePlayerColumns,
                     null, null, null, null, null);
             cursor.moveToFirst();
-            return new Player(database, cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.COLUMN_ID)));
+            nextPlayer = new Player(database, cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.COLUMN_ID)));
+            cursor.close();
         } else if (!isEmpty(database)) {
-            Player nextPlayer = null;
+            nextPlayer = null;
             Player lastPlayer = getLastPlayer(database);
             for (Player candidate : getPlayers(database, game.getId())) {
                 if (nextPlayer == null) {
@@ -110,10 +112,10 @@ public class Player {
                     nextPlayer = candidate;
                 }
             }
-            return nextPlayer;
         } else {
-            return null;
+            nextPlayer = null;
         }
+        return nextPlayer;
     }
 
     public static ArrayList<Player> getPlayers(SQLiteDatabase database,

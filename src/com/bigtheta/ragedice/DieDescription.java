@@ -3,10 +3,12 @@ package com.bigtheta.ragedice;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+@SuppressLint("UseSparseArrays")
 public class DieDescription {
     private static String[] tableDieDescriptionColumns = {
         MySQLiteHelper.COLUMN_NUM_LOW_FACE,
