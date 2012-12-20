@@ -84,7 +84,6 @@ public class DieResult {
         return ret;
     }
 
-
     private Cursor getCursor(SQLiteDatabase database) {
         Cursor cursor = database.query(
                 MySQLiteHelper.TABLE_DIE_RESULT,

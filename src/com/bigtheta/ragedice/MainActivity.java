@@ -2,8 +2,7 @@ package com.bigtheta.ragedice;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-
-import com.bigtheta.ragedice.R.drawable;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,6 +12,8 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bigtheta.ragedice.R.drawable;
 
 public class MainActivity extends Activity {
     private SQLiteDatabase m_database;
@@ -71,8 +72,6 @@ public class MainActivity extends Activity {
     }
 
     protected void displayDiceRoll(DiceRoll dr) {
-        Player foo = new Player(m_database, dr.getPlayerId());
-        Log.i("displayDiceRoll", Integer.toString(foo.getPlayerNumber()));
         TextView tv = (TextView)findViewById(R.id.player_number);
         Player currentPlayer = new Player(m_database, dr.getPlayerId());
         tv.setText(currentPlayer.getPlayerName());
@@ -88,13 +87,33 @@ public class MainActivity extends Activity {
                 iv.setImageResource(field.getInt(null));
                 iv.setBackgroundColor(dd.getBackgroundColor());
             } catch (Exception err){
-                Log.w("MainActivity::displayDiceRoll", err.getCause());
+                Log.e("MainActivity::displayDiceRoll", err.getCause().getMessage());
             }
         }
+        displayInfo();
+    }
+
+    protected void displayInfo() {
+        TextView tv = (TextView)findViewById(R.id.debug_info);
+        String info = "";
+        info += "numDiceRolls: " + Integer.toString(DiceRoll.getNumDiceRolls(m_database));
+        HashMap<Integer, Float> pmf = DieDescription.getPMF(m_dieDescriptions);
+        for (Integer observation : pmf.keySet()) {
+            info += "\nObservation: " + Integer.toString(observation)
+                  + " Probability: " + pmf.get(observation);
+        }
+        HashMap<Integer, Integer> dist = DiceRoll.getObservedRolls(m_database);
+        for (Integer observation : dist.keySet()) {
+            info += "\nObservation: " + Integer.toString(observation)
+                  + " Count: " + dist.get(observation);
+        }
+
+        tv.setText(info);
     }
 
     public void resetDiceRolls(View view) {
         DiceRoll.clear(m_database);
+        displayInfo();
     }
 
     public void undoDiceRoll(View view) {

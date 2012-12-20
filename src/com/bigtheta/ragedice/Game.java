@@ -41,12 +41,6 @@ public class Game {
         return m_randomNumber;
     }
 
-//  public int getNumDiceRolls() {
-//      Cursor cursor = m_database.query(MySQLiteHelper.TABLE_DICE_ROLLS,
-//              allColumns, null, null, null, null, null);
-//      return cursor.getCount();
-//  }
-
 
 //  /*
 //   * Determines how likely it is that the dice are fair.

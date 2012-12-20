@@ -33,7 +33,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/dice_results"
+        android:id="@+id/debug_info"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@id/dice_box" />

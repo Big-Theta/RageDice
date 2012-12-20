@@ -1,5 +1,8 @@
 package com.bigtheta.ragedice;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -91,6 +94,59 @@ public class DieDescription {
 
     public boolean getIsNumeric() {
         return m_isNumeric;
+    }
+
+    public static HashMap<Integer, Float> getPMF(ArrayList<DieDescription> descriptions) {
+        HashMap<Integer, Float> ret = new HashMap<Integer, Float>();
+
+        HashMap<Integer, Integer> nonNormed = getNonNormedPMF(descriptions);
+        float totalPossibilities = (float)getNumPossibilities(descriptions);
+        for (Integer observation : nonNormed.keySet()) {
+            ret.put(observation, nonNormed.get(observation) / totalPossibilities);
+        }
+        return ret;
+    }
+
+    private static int getNumPossibilities(ArrayList<DieDescription> descriptions) {
+        int count = 1;
+        for (DieDescription description : descriptions) {
+            if (description.getIsNumeric()) {
+                count *= description.getNumHighFace() - description.getNumLowFace() + 1;
+            }
+        }
+        return count;
+    }
+
+    private static HashMap<Integer, Integer> getNonNormedPMF(ArrayList<DieDescription> descriptions) {
+        final HashMap<Integer, Integer> ret = new HashMap<Integer, Integer>();
+        // Need a recursion because we don't know how many dice there are, or what their number
+        // of faces are. Thus, this recursion is a sort of arbitrarily nested loop with
+        // backtracking.
+        class Recursor {
+            public void recurse(ArrayList<DieDescription> remainingDescriptions,
+                                int currentObservation) {
+                if (remainingDescriptions.isEmpty()) {
+                    if (ret.containsKey(currentObservation)) {
+                        ret.put(currentObservation, ret.get(currentObservation) + 1);
+                    } else {
+                        ret.put(currentObservation, 1);
+                    }
+                } else {
+                    DieDescription currentDescription = remainingDescriptions.get(
+                            remainingDescriptions.size() - 1);
+                    ArrayList<DieDescription> copy = new ArrayList<DieDescription>(
+                            remainingDescriptions);
+                    copy.remove(copy.size() - 1);
+                    for (int faceVal = currentDescription.getNumLowFace();
+                         faceVal <= currentDescription.getNumHighFace(); faceVal++) {
+                        recurse(copy, currentObservation + faceVal);
+                    }
+                }
+            }
+        }
+        Recursor recursor = new Recursor();
+        recursor.recurse(descriptions, 0);
+        return ret;
     }
 
     private Cursor getCursor(SQLiteDatabase database) {

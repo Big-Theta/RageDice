@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 public class Player {
     private static String[] tablePlayerColumns = {
@@ -34,7 +33,6 @@ public class Player {
     }
 
     public Player(SQLiteDatabase database, long id) {
-        Log.i("Player retrieving id", Long.toString(id));
         m_id = id;
         Cursor cursor = getCursor(database);
         m_gameId = cursor.getLong(
@@ -69,15 +67,11 @@ public class Player {
     }
 
     public static Player getLastPlayer(SQLiteDatabase database) {
-        Log.i("Player::getLastPlayer", "...");
         if (!isEmpty(database)) {
             DiceRoll lastRoll = DiceRoll.getLastDiceRoll(database);
             if (lastRoll != null) {
-                Log.i("Player::getLastPlayer", "branch 1");
-                Log.i("Player::getLastPlayer playerId:", Long.toString(lastRoll.getPlayerId()));
                 return new Player(database, lastRoll.getPlayerId());
             } else {
-                Log.i("Player::getLastPlayer", "branch 2");
                 Cursor cursor = database.query(
                         MySQLiteHelper.TABLE_PLAYER,
                         tablePlayerColumns,
@@ -90,10 +84,8 @@ public class Player {
     }
 
     public static Player getNextPlayer(SQLiteDatabase database, Game game) {
-        Log.i("Player::getNextPlayer", "...");
         DiceRoll lastRoll = DiceRoll.getLastDiceRoll(database);
         if (lastRoll == null) {
-            Log.i("Player::getNextPlayer branch 1", "...");
             Cursor cursor = database.query(
                     MySQLiteHelper.TABLE_PLAYER,
                     tablePlayerColumns,
@@ -101,38 +93,25 @@ public class Player {
             cursor.moveToFirst();
             return new Player(database, cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.COLUMN_ID)));
         } else if (!isEmpty(database)) {
-            Log.i("Player::getNextPlayer branch 2", "entering");
             Player nextPlayer = null;
             Player lastPlayer = getLastPlayer(database);
-            Log.i("Player::getNextPlayer branch 2 lastPlayer.getId()", Long.toString(lastPlayer.getId()));
             for (Player candidate : getPlayers(database, game.getId())) {
-                Log.i("Player::getNextPlayer branch 2 candidate.getId()", Long.toString(candidate.getId()));
-                Log.i("Player::getNextPlayer branch 2 lastPlayer.getId()", Long.toString(lastPlayer.getId()));
-                if (nextPlayer != null) {
-                    Log.i("Player::getNextPlayer branch 2 nextPlayer.getId()", Long.toString(nextPlayer.getId()));
-                }
                 if (nextPlayer == null) {
-                    Log.i("first", "...");
                     nextPlayer = candidate;
                 // Find minimum candidate that has greater playerNumber...
                 } else if (candidate.getPlayerNumber() > lastPlayer.getPlayerNumber() &&
                            (nextPlayer.getPlayerNumber() <= lastPlayer.getPlayerNumber() ||
                             candidate.getPlayerNumber() < nextPlayer.getPlayerNumber())) {
-                    Log.i("second", "...");
                     nextPlayer = candidate;
                 // ... or else find the candidate with the lowest player number.
                 } else if (candidate.getPlayerNumber() < lastPlayer.getPlayerNumber() &&
                            (nextPlayer.getPlayerNumber() == lastPlayer.getPlayerNumber() ||
                             candidate.getPlayerNumber() < nextPlayer.getPlayerNumber())) {
-                    Log.i("third", "...");
                     nextPlayer = candidate;
                 }
             }
-            Log.i("Player::getNextPlayer branch 2", "leaving");
-            Log.i("branch 2 nextPlayer.getId()", Long.toString(nextPlayer.getId()));
             return nextPlayer;
         } else {
-            Log.i("branch 3", "...");
             return null;
         }
     }

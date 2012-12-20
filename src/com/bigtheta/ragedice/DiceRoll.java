@@ -1,11 +1,11 @@
 package com.bigtheta.ragedice;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 public class DiceRoll {
     private static String[] tableDiceRollColumns = {
@@ -18,7 +18,6 @@ public class DiceRoll {
 
     public DiceRoll(SQLiteDatabase database, Player player,
                     ArrayList<DieDescription> dieDescriptions) {
-        Log.i("DiceRoll created with id", Long.toString(player.getId()));
         m_playerId = player.getId();
 
         ContentValues values = new ContentValues();
@@ -31,7 +30,6 @@ public class DiceRoll {
     }
 
     public DiceRoll(SQLiteDatabase database, long id) {
-        Log.i("DiceRoll retrieved with id", Long.toString(id));
         m_id = id;
         Cursor cursor = getCursor(database);
         m_playerId = cursor.getLong(cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_PLAYER_ID));
@@ -40,13 +38,11 @@ public class DiceRoll {
 
 
     public void delete(SQLiteDatabase database) {
-        Log.i("DiceRoll::delete DiceRoll deleted with id", Long.toString(m_id));
         database.delete(MySQLiteHelper.TABLE_DICE_ROLL,
                         MySQLiteHelper.COLUMN_ID + " = " + m_id, null);
     }
 
     public static void clear(SQLiteDatabase database) {
-        Log.i("DiceRoll::clear", "...");
         database.delete(MySQLiteHelper.TABLE_DICE_ROLL, null, null);
     }
 
@@ -71,6 +67,36 @@ public class DiceRoll {
 
     public long getPlayerId() {
         return m_playerId;
+    }
+
+    public static int getNumDiceRolls(SQLiteDatabase database) {
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_DICE_ROLL,
+                                       null, null, null, null, null, null);
+        return cursor.getCount();
+    }
+
+    public static HashMap<Integer, Integer> getObservedRolls(SQLiteDatabase database) {
+        HashMap<Integer, Integer> ret = new HashMap<Integer, Integer>();
+        Cursor cursor = database.query(
+                MySQLiteHelper.TABLE_DICE_ROLL,
+                null, null, null, null, null, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            DiceRoll roll = new DiceRoll(database, cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.COLUMN_ID)));
+            int resultSum = 0;
+            for (DieResult result : DieResult.getDieResults(database, roll)) {
+                resultSum += result.getDieResult();
+            }
+
+            if (ret.containsKey(resultSum)) {
+                ret.put(resultSum, ret.get(resultSum) + 1);
+            } else {
+                ret.put(resultSum, 1);
+            }
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return ret;
     }
 
     private static boolean isEmpty(SQLiteDatabase database) {
