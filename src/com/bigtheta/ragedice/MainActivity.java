@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
         new Player(m_game, 4, "player better than awesome (four)");
 
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
-                           0xFFFFFF00, R.string.yellow_die, true);
+                           0xFFFFFF00, R.id.yellow_die, true);
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
                            0xFFFF0000, R.id.red_die, true);
 
@@ -83,10 +83,10 @@ public class MainActivity extends Activity {
             try {
                 Field field = res.getField(description);
                 iv.setImageResource(field.getInt(null));
-                iv.setBackgroundColor(dd.getBackgroundColor());
             } catch (Exception err){
                 Log.e("MainActivity::displayDiceRoll", err.getCause().getMessage());
             }
+            iv.setBackgroundColor(dd.getBackgroundColor());
         }
         displayInfo();
     }
@@ -128,7 +128,6 @@ public class MainActivity extends Activity {
     public void rollDice(View view) {
         Player nextPlayer = Player.getNextPlayer(m_game);
         DiceRoll dr = new DiceRoll(nextPlayer);
-        dr = new DiceRoll(nextPlayer);
         displayDiceRoll(dr);
     }
 }
