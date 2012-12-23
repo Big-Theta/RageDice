@@ -16,10 +16,13 @@ import android.widget.TextView;
 import com.bigtheta.ragedice.R.drawable;
 
 public class MainActivity extends Activity {
-    private SQLiteDatabase m_database;
+    private static SQLiteDatabase m_database;
     private MySQLiteHelper m_dbHelper;
-    private ArrayList<DieDescription> m_dieDescriptions;
     private Game m_game;
+
+    public static SQLiteDatabase getDatabase() {
+        return m_database;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,22 +34,17 @@ public class MainActivity extends Activity {
         this.deleteDatabase("rage_dice.db");
 
         m_database = m_dbHelper.getWritableDatabase();
-        m_game = new Game(m_database);
+        m_game = new Game();
 
-        new Player(m_database, m_game, 1, "player one");
-        new Player(m_database, m_game, 2, "player two");
-        new Player(m_database, m_game, 3, "player awesome (three)");
-        new Player(m_database, m_game, 4, "player better than awesome (four)");
+        new Player(m_game, 1, "player one");
+        new Player(m_game, 2, "player two");
+        new Player(m_game, 3, "player awesome (three)");
+        new Player(m_game, 4, "player better than awesome (four)");
 
-        m_dieDescriptions = new ArrayList<DieDescription>();
-        DieDescription yellowDie = new DieDescription(
-                m_database, 1, 6, "alea_transface_colbg_", 0xFFFFFF00,
-                R.id.yellow_die, true);
-        m_dieDescriptions.add(yellowDie);
-        DieDescription redDie = new DieDescription(
-                m_database, 1, 6, "alea_transface_colbg_", 0xFFFF0000,
-                R.id.red_die, true);
-        m_dieDescriptions.add(redDie);
+        new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
+                           0xFFFFFF00, R.string.yellow_die, true);
+        new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
+                           0xFFFF0000, R.id.red_die, true);
 
         View mainView = (View)findViewById(R.id.activity_main_view);
         mainView.setBackgroundColor(0xFF818181);
@@ -73,12 +71,12 @@ public class MainActivity extends Activity {
 
     protected void displayDiceRoll(DiceRoll dr) {
         TextView tv = (TextView)findViewById(R.id.player_number);
-        Player currentPlayer = new Player(m_database, dr.getPlayerId());
+        Player currentPlayer = Player.retrieve(dr.getPlayerId());
         tv.setText(currentPlayer.getPlayerName());
 
         Class<drawable> res = R.drawable.class;
-        for (DieResult result : DieResult.getDieResults(m_database, dr)) {
-            DieDescription dd = new DieDescription(m_database, result.getDieDescriptionId());
+        for (DieResult result : DieResult.getDieResults(dr)) {
+            DieDescription dd = DieDescription.retrieve(result.getDieDescriptionId());
             ImageView iv = (ImageView)findViewById(dd.getImageViewResource());
             String description = dd.getBaseIdentifierName()
                                + Integer.toString(result.getDieResult());
@@ -96,36 +94,41 @@ public class MainActivity extends Activity {
     protected void displayInfo() {
         TextView tv = (TextView)findViewById(R.id.debug_info);
         String info = "";
-        info += "numDiceRolls: " + Integer.toString(DiceRoll.getNumDiceRolls(m_database));
-        HashMap<Integer, Float> pmf = DieDescription.getPMF(m_dieDescriptions);
+        info += "numDiceRolls: " + Integer.toString(DiceRoll.getNumDiceRolls());
+        HashMap<Integer, Double> pmf = DieDescription.getPMF(m_game.getId());
         for (Integer observation : pmf.keySet()) {
             info += "\nObservation: " + Integer.toString(observation)
                   + " Probability: " + pmf.get(observation);
         }
-        HashMap<Integer, Integer> dist = DiceRoll.getObservedRolls(m_database);
+        HashMap<Integer, Integer> dist = DiceRoll.getObservedRolls(m_game.getId());
         for (Integer observation : dist.keySet()) {
             info += "\nObservation: " + Integer.toString(observation)
                   + " Count: " + dist.get(observation);
         }
+        double stat = DiceRoll.calculateKSTestStatistic(m_game.getId());
+        info += "\nKS statistic: " + Double.toString(stat);
+        // Probability that these are different distributions.
+        info += "\nKS probability: " + Double.toString(DiceRoll.calculateKSProbability(m_game.getId()));
 
         tv.setText(info);
     }
 
     public void resetDiceRolls(View view) {
-        DiceRoll.clear(m_database);
+        DiceRoll.clear();
         displayInfo();
     }
 
     public void undoDiceRoll(View view) {
-        DiceRoll dr = DiceRoll.getLastDiceRoll(m_database);
-        dr.delete(m_database);
-        dr = DiceRoll.getLastDiceRoll(m_database);
+        DiceRoll dr = DiceRoll.getLastDiceRoll();
+        dr.delete();
+        dr = DiceRoll.getLastDiceRoll();
         displayDiceRoll(dr);
     }
 
     public void rollDice(View view) {
-        Player nextPlayer = Player.getNextPlayer(m_database, m_game);
-        DiceRoll dr = new DiceRoll(m_database, nextPlayer, m_dieDescriptions);
+        Player nextPlayer = Player.getNextPlayer(m_game);
+        DiceRoll dr = new DiceRoll(nextPlayer);
+        dr = new DiceRoll(nextPlayer);
         displayDiceRoll(dr);
     }
 }

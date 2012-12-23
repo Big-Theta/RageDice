@@ -4,7 +4,6 @@ import java.util.Random;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 public class Game {
     private static String[] tableGameColumns = {
@@ -15,22 +14,26 @@ public class Game {
     long m_id;
     int m_randomNumber;
 
-    public Game(SQLiteDatabase database) {
+    public Game() {
         Random rand = new Random();
         m_randomNumber = rand.nextInt();
 
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_RANDOM_NUMBER, m_randomNumber);
-        m_id = database.insert(MySQLiteHelper.TABLE_GAME, null, values);
+        m_id = MainActivity.getDatabase().insert(MySQLiteHelper.TABLE_GAME, null, values);
     }
 
-    public Game(SQLiteDatabase database, long id) {
+    private Game(long id) {
         m_id = id;
-        Cursor cursor = getCursor(database);
+        Cursor cursor = getCursor();
         m_randomNumber = cursor.getInt(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_RANDOM_NUMBER));
         cursor.moveToFirst();
         cursor.close();
+    }
+
+    public static Game retrieve(long id) {
+        return new Game(id);
     }
 
     public long getId() {
@@ -42,8 +45,8 @@ public class Game {
     }
 
 
-    private Cursor getCursor(SQLiteDatabase database) {
-        Cursor cursor = database.query(
+    private Cursor getCursor() {
+        Cursor cursor = MainActivity.getDatabase().query(
                 MySQLiteHelper.TABLE_GAME,
                 tableGameColumns, MySQLiteHelper.COLUMN_ID + " = " + m_id,
                 null, null, null, null);

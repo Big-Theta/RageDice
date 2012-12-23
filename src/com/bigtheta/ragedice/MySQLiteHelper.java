@@ -44,6 +44,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // TABLE_DIE_DESCRIPTION
     public static final String TABLE_DIE_DESCRIPTION = "die_description";
+    // COLUMN_GAME_ID is reused
     public static final String COLUMN_NUM_LOW_FACE = "num_low_face";
     public static final String COLUMN_NUM_HIGH_FACE = "num_high_face";
     public static final String COLUMN_BASE_IDENTIFIER_NAME = "base_identifier_name";
@@ -53,6 +54,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_DIE_DESCRIPTION = "CREATE TABLE "
             + TABLE_DIE_DESCRIPTION + "("
             + COLUMN_ID + " integer primary key autoincrement, "
+            + COLUMN_GAME_ID + " integer references " + TABLE_GAME + " on delete cascade, "
             + COLUMN_NUM_LOW_FACE + " integer not NULL, "
             + COLUMN_NUM_HIGH_FACE + " integer not NULL, "
             + COLUMN_BASE_IDENTIFIER_NAME + " text, "

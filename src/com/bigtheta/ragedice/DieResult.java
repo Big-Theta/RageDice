@@ -5,7 +5,6 @@ import java.util.Random;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 public class DieResult {
     private static String[] tableDieResultColumns = {
@@ -19,23 +18,23 @@ public class DieResult {
     long m_dieDescriptionId;
     int m_dieResult;
 
-    public DieResult(SQLiteDatabase database, DiceRoll diceRoll,
+    public DieResult(DiceRoll diceRoll,
                      DieDescription dieDescription) {
         m_diceRollId = diceRoll.getId();
         m_dieDescriptionId = dieDescription.getId();
-        m_dieResult = rollDie(database);
+        m_dieResult = rollDie();
 
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_DICE_ROLL_ID, m_diceRollId);
         values.put(MySQLiteHelper.COLUMN_DIE_DESCRIPTION_ID, m_dieDescriptionId);
         values.put(MySQLiteHelper.COLUMN_DIE_RESULT, m_dieResult);
 
-        m_id = database.insert(MySQLiteHelper.TABLE_DIE_RESULT, null, values);
+        m_id = MainActivity.getDatabase().insert(MySQLiteHelper.TABLE_DIE_RESULT, null, values);
     }
 
-    public DieResult(SQLiteDatabase database, long id) {
+    private DieResult(long id) {
         m_id = id;
-        Cursor cursor = getCursor(database);
+        Cursor cursor = getCursor();
         m_diceRollId = cursor.getLong(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_DICE_ROLL_ID));
         m_dieDescriptionId = cursor.getLong(
@@ -44,6 +43,10 @@ public class DieResult {
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_DIE_RESULT));
         cursor.moveToFirst();
         cursor.close();
+    }
+
+    public static DieResult retrieve(long id) {
+        return new DieResult(id);
     }
 
     public long getId() {
@@ -58,18 +61,17 @@ public class DieResult {
         return m_dieResult;
     }
 
-    private int rollDie(SQLiteDatabase database) {
+    private int rollDie() {
         Random rand = new Random();
-        DieDescription dd = new DieDescription(database, m_dieDescriptionId);
+        DieDescription dd = DieDescription.retrieve(m_dieDescriptionId);
         int numLowFace = dd.getNumLowFace();
         int numHighFace = dd.getNumHighFace();
 
         return rand.nextInt(numHighFace - numLowFace + 1) + numLowFace;
     }
 
-    public static ArrayList<DieResult> getDieResults(SQLiteDatabase database,
-                                                     DiceRoll dr) {
-        Cursor cursor = database.query(
+    public static ArrayList<DieResult> getDieResults(DiceRoll dr) {
+        Cursor cursor = MainActivity.getDatabase().query(
                 MySQLiteHelper.TABLE_DIE_RESULT,
                 new String[] {MySQLiteHelper.COLUMN_ID},
                 MySQLiteHelper.COLUMN_DICE_ROLL_ID + " = " + dr.getId(),
@@ -77,15 +79,15 @@ public class DieResult {
         ArrayList<DieResult> ret = new ArrayList<DieResult>();
         if (cursor.moveToFirst()) {
             do {
-                ret.add(new DieResult(database, cursor.getLong(0)));
+                ret.add(new DieResult(cursor.getLong(0)));
             } while (cursor.moveToNext());
         }
         cursor.close();
         return ret;
     }
 
-    private Cursor getCursor(SQLiteDatabase database) {
-        Cursor cursor = database.query(
+    private Cursor getCursor() {
+        Cursor cursor = MainActivity.getDatabase().query(
                 MySQLiteHelper.TABLE_DIE_RESULT,
                 tableDieResultColumns, MySQLiteHelper.COLUMN_ID + " = " + m_id,
                 null, null, null, null);

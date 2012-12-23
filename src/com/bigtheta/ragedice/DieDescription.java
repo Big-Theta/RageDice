@@ -6,11 +6,11 @@ import java.util.HashMap;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 @SuppressLint("UseSparseArrays")
 public class DieDescription {
     private static String[] tableDieDescriptionColumns = {
+        MySQLiteHelper.COLUMN_GAME_ID,
         MySQLiteHelper.COLUMN_NUM_LOW_FACE,
         MySQLiteHelper.COLUMN_NUM_HIGH_FACE,
         MySQLiteHelper.COLUMN_BASE_IDENTIFIER_NAME,
@@ -20,6 +20,7 @@ public class DieDescription {
     };
 
     long m_id;
+    long m_gameId;
     int m_numLowFace;
     int m_numHighFace;
     String m_baseIdentifierName;
@@ -27,8 +28,12 @@ public class DieDescription {
     int m_imageViewResource;
     boolean m_isNumeric;
 
-    public DieDescription(SQLiteDatabase database, int numLowFace, int
-                          numHighFace, String baseIdentifierName,
+    // This opens an oportunity to break... if the database is cleared, this won't be.
+    private static HashMap<Long, ArrayList<DieDescription> > cacheRetrieveAll = null;
+    private static HashMap<Long, HashMap<Integer, Double> > cacheGetPMF = null;
+
+    public DieDescription(Game game, int numLowFace, int numHighFace,
+                          String baseIdentifierName,
                           int backgroundColor, int imageViewResource,
                           boolean isNumeric) {
         m_numLowFace = numLowFace;
@@ -39,6 +44,7 @@ public class DieDescription {
         m_isNumeric = isNumeric;
 
         ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.COLUMN_GAME_ID, game.getId());
         values.put(MySQLiteHelper.COLUMN_NUM_LOW_FACE, m_numLowFace);
         values.put(MySQLiteHelper.COLUMN_NUM_HIGH_FACE, m_numHighFace);
         values.put(MySQLiteHelper.COLUMN_BASE_IDENTIFIER_NAME,
@@ -47,13 +53,15 @@ public class DieDescription {
         values.put(MySQLiteHelper.COLUMN_IMAGE_VIEW_RESOURCE,
                    m_imageViewResource);
         values.put(MySQLiteHelper.COLUMN_IS_NUMERIC, m_isNumeric);
-        m_id = database.insert(MySQLiteHelper.TABLE_DIE_DESCRIPTION,
-                               null, values);
+        m_id = MainActivity.getDatabase().insert(MySQLiteHelper.TABLE_DIE_DESCRIPTION,
+                                                 null, values);
     }
 
-    public DieDescription(SQLiteDatabase database, long id) {
+    private DieDescription(long id) {
         m_id = id;
-        Cursor cursor = getCursor(database);
+        Cursor cursor = getCursor();
+        m_gameId = cursor.getLong(
+                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_GAME_ID));
         m_numLowFace = cursor.getInt(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_NUM_LOW_FACE));
         m_numHighFace = cursor.getInt(
@@ -70,8 +78,40 @@ public class DieDescription {
         cursor.close();
     }
 
+    public static DieDescription retrieve(long id) {
+        return new DieDescription(id);
+    }
+
+    public static ArrayList<DieDescription> retrieveAll(long gameId) {
+        if (cacheRetrieveAll == null || !cacheRetrieveAll.containsKey(gameId)) {
+            ArrayList<DieDescription> ret = new ArrayList<DieDescription>();
+            Cursor cursor = MainActivity.getDatabase().query(
+                    MySQLiteHelper.TABLE_DIE_DESCRIPTION,
+                    new String[] {MySQLiteHelper.COLUMN_ID},
+                    MySQLiteHelper.COLUMN_GAME_ID + " = " + gameId,
+                    null, null, null, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                ret.add(DieDescription.retrieve(cursor.getLong(0)));
+                cursor.moveToNext();
+            }
+            cursor.close();
+            if (cacheRetrieveAll == null) {
+                cacheRetrieveAll = new HashMap<Long, ArrayList<DieDescription> >();
+            }
+            cacheRetrieveAll.put(gameId, ret);
+            return ret;
+        } else {
+            return cacheRetrieveAll.get(gameId);
+        }
+    }
+
     public long getId() {
         return m_id;
+    }
+
+    public long getGameId() {
+        return m_gameId;
     }
 
     public int getNumLowFace() {
@@ -98,15 +138,24 @@ public class DieDescription {
         return m_isNumeric;
     }
 
-    public static HashMap<Integer, Float> getPMF(ArrayList<DieDescription> descriptions) {
-        HashMap<Integer, Float> ret = new HashMap<Integer, Float>();
+    public static HashMap<Integer, Double> getPMF(long gameId) {
+        if (cacheGetPMF == null || !cacheGetPMF.containsKey(gameId)) {
+            ArrayList<DieDescription> descriptions = retrieveAll(gameId);
+            HashMap<Integer, Double> ret = new HashMap<Integer, Double>();
 
-        HashMap<Integer, Integer> nonNormed = getNonNormedPMF(descriptions);
-        float totalPossibilities = (float)getNumPossibilities(descriptions);
-        for (Integer observation : nonNormed.keySet()) {
-            ret.put(observation, nonNormed.get(observation) / totalPossibilities);
+            HashMap<Integer, Integer> nonNormed = getNonNormedPMF(descriptions);
+            double totalPossibilities = (double)getNumPossibilities(descriptions);
+            for (Integer observation : nonNormed.keySet()) {
+                ret.put(observation, nonNormed.get(observation) / totalPossibilities);
+            }
+            if (cacheGetPMF == null) {
+                cacheGetPMF = new HashMap<Long, HashMap<Integer, Double> >();
+            }
+            cacheGetPMF.put(gameId, ret);
+            return ret;
+        } else {
+            return cacheGetPMF.get(gameId);
         }
-        return ret;
     }
 
     private static int getNumPossibilities(ArrayList<DieDescription> descriptions) {
@@ -151,8 +200,8 @@ public class DieDescription {
         return ret;
     }
 
-    private Cursor getCursor(SQLiteDatabase database) {
-        Cursor cursor = database.query(
+    private Cursor getCursor() {
+        Cursor cursor = MainActivity.getDatabase().query(
                 MySQLiteHelper.TABLE_DIE_DESCRIPTION,
                 tableDieDescriptionColumns,
                 MySQLiteHelper.COLUMN_ID + " = " + m_id,
