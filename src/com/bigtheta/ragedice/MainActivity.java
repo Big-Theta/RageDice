@@ -1,40 +1,52 @@
 package com.bigtheta.ragedice;
 
-import java.util.Random;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.Activity;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bigtheta.ragedice.R.drawable;
 
 public class MainActivity extends Activity {
-    private int[] mDiceImgs;
-    private int mNumPlayers;
-    private int mPlayerNum;
-    private DiceDAO mDiceDAO;
+    private SQLiteDatabase m_database;
+    private MySQLiteHelper m_dbHelper;
+    private ArrayList<DieDescription> m_dieDescriptions;
+    private Game m_game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mDiceImgs = new int[6];
-        mDiceImgs[0] = R.drawable.alea_1_transface_colbg;
-        mDiceImgs[1] = R.drawable.alea_2_transface_colbg;
-        mDiceImgs[2] = R.drawable.alea_3_transface_colbg;
-        mDiceImgs[3] = R.drawable.alea_4_transface_colbg;
-        mDiceImgs[4] = R.drawable.alea_5_transface_colbg;
-        mDiceImgs[5] = R.drawable.alea_6_transface_colbg;
-        mNumPlayers = 2;
-        mPlayerNum = 0;
-        ImageView red_die = (ImageView)findViewById(R.id.red_die);
-        red_die.setBackgroundColor(0xFFFF0000);
-        ImageView yellow_die = (ImageView)findViewById(R.id.yellow_die);
-        yellow_die.setBackgroundColor(0xFFFFFF00);
 
-        mDiceDAO = new DiceDAO(this);
+        m_dbHelper = new MySQLiteHelper(this);
+        // REMOVEME
+        this.deleteDatabase("rage_dice.db");
+
+        m_database = m_dbHelper.getWritableDatabase();
+        m_game = new Game(m_database);
+
+        new Player(m_database, m_game, 1, "player one");
+        new Player(m_database, m_game, 2, "player two");
+        new Player(m_database, m_game, 3, "player awesome (three)");
+        new Player(m_database, m_game, 4, "player better than awesome (four)");
+
+        m_dieDescriptions = new ArrayList<DieDescription>();
+        DieDescription yellowDie = new DieDescription(
+                m_database, 1, 6, "alea_transface_colbg_", 0xFFFFFF00,
+                R.id.yellow_die, true);
+        m_dieDescriptions.add(yellowDie);
+        DieDescription redDie = new DieDescription(
+                m_database, 1, 6, "alea_transface_colbg_", 0xFFFF0000,
+                R.id.red_die, true);
+        m_dieDescriptions.add(redDie);
 
         View mainView = (View)findViewById(R.id.activity_main_view);
         mainView.setBackgroundColor(0xFF818181);
@@ -43,13 +55,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        mDiceDAO.open();
+        m_database = m_dbHelper.getWritableDatabase();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mDiceDAO.close();
+        m_dbHelper.close();
     }
 
     @Override
@@ -59,61 +71,62 @@ public class MainActivity extends Activity {
         return true;
     }
 
-    protected int rollSingleDie(ImageView die) {
-        Random rand = new Random();
-        int die_select = rand.nextInt(6);
-        die.setImageResource(mDiceImgs[die_select]);
-        return die_select + 1;
-    }
+    protected void displayDiceRoll(DiceRoll dr) {
+        TextView tv = (TextView)findViewById(R.id.player_number);
+        Player currentPlayer = new Player(m_database, dr.getPlayerId());
+        tv.setText(currentPlayer.getPlayerName());
 
-    protected void nextPlayer(Boolean goForward) {
-        if (mNumPlayers > 1 && goForward) {
-            mPlayerNum %= mNumPlayers;
-            mPlayerNum++;
-        } else {
-            mPlayerNum--;
-            if (mPlayerNum == 0) {
-                mPlayerNum += mNumPlayers;
+        Class<drawable> res = R.drawable.class;
+        for (DieResult result : DieResult.getDieResults(m_database, dr)) {
+            DieDescription dd = new DieDescription(m_database, result.getDieDescriptionId());
+            ImageView iv = (ImageView)findViewById(dd.getImageViewResource());
+            String description = dd.getBaseIdentifierName()
+                               + Integer.toString(result.getDieResult());
+            try {
+                Field field = res.getField(description);
+                iv.setImageResource(field.getInt(null));
+                iv.setBackgroundColor(dd.getBackgroundColor());
+            } catch (Exception err){
+                Log.e("MainActivity::displayDiceRoll", err.getCause().getMessage());
             }
         }
-        TextView player = (TextView)findViewById(R.id.player_number);
-        player.setText("Player " + Integer.toString(mPlayerNum));
+        displayInfo();
     }
 
-    protected void showTotals() {
-        String resultsStr = "";
-        for (int i = 2; i <= 12; i++) {
-            resultsStr += "Num " + Integer.toString(i) +
-                " : " + Integer.toString(mDiceDAO.getCountForRoll(i)) +
-                " -- " + Double.toString(mDiceDAO.getExpectedCount(i)) + "\n";
+    protected void displayInfo() {
+        TextView tv = (TextView)findViewById(R.id.debug_info);
+        String info = "";
+        info += "numDiceRolls: " + Integer.toString(DiceRoll.getNumDiceRolls(m_database));
+        HashMap<Integer, Float> pmf = DieDescription.getPMF(m_dieDescriptions);
+        for (Integer observation : pmf.keySet()) {
+            info += "\nObservation: " + Integer.toString(observation)
+                  + " Probability: " + pmf.get(observation);
         }
-        resultsStr += "Prob1:" + Double.toString(mDiceDAO.calculateKSProbability());
-        resultsStr += "\nProb2:" + Double.toString(mDiceDAO.calculateKSProbabilityMaximized());
-        TextView results_view = (TextView)findViewById(R.id.dice_results);
-        results_view.setText(resultsStr);
+        HashMap<Integer, Integer> dist = DiceRoll.getObservedRolls(m_database);
+        for (Integer observation : dist.keySet()) {
+            info += "\nObservation: " + Integer.toString(observation)
+                  + " Count: " + dist.get(observation);
+        }
+
+        tv.setText(info);
     }
 
     public void resetDiceRolls(View view) {
-        mDiceDAO.deleteAllDiceRolls();
-        mPlayerNum = 1;
-        showTotals();
+        DiceRoll.clear(m_database);
+        displayInfo();
     }
 
     public void undoDiceRoll(View view) {
-        // TODO: Check if the rolls are empty. This crashes otherwise.
-        mDiceDAO.deleteDiceRoll(mDiceDAO.getLastDiceRoll());
-        nextPlayer(false);
-        showTotals();
+        DiceRoll dr = DiceRoll.getLastDiceRoll(m_database);
+        dr.delete(m_database);
+        dr = DiceRoll.getLastDiceRoll(m_database);
+        displayDiceRoll(dr);
     }
 
     public void rollDice(View view) {
-        int die_roll_result = 0;
-        nextPlayer(true);
-        ImageView red_die = (ImageView)findViewById(R.id.red_die);
-        ImageView yellow_die = (ImageView)findViewById(R.id.yellow_die);
-        die_roll_result += rollSingleDie(red_die);
-        die_roll_result += rollSingleDie(yellow_die);
-        mDiceDAO.createDiceRoll(die_roll_result);
-        showTotals();
+        Player nextPlayer = Player.getNextPlayer(m_database, m_game);
+        DiceRoll dr = new DiceRoll(m_database, nextPlayer, m_dieDescriptions);
+        displayDiceRoll(dr);
     }
 }
+
