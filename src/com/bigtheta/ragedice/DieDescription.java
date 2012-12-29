@@ -3,6 +3,9 @@ package com.bigtheta.ragedice;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -147,8 +150,40 @@ public class DieDescription {
                 + "fraction function (cff). Currently, this value is ";
         update += Double.toString(DiceRoll.calculateKSTestStatistic(gameId));
         update += ". As the maximum difference between the two cffs becomes small, "
-                + "the likelyhood that the observed dice rolls were produced by 'fair' "
+                + "the likelihood that the observed dice rolls were produced by 'fair' "
                 + "dice becomes large... unless we used a biased random number generator.";
+        return update;
+    }
+    
+    public static String getCLTDescription(long gameId) {
+        String update = new String();
+        SummaryStatistics observedSummaryStatistics = DiceRoll.getObservedSummaryStatistics(gameId);
+        if (observedSummaryStatistics.getN() < 2) {
+            return update;
+        }
+        update += "This test adds up all dice rolls in this game and detemines "
+                + "how likely it is that the sum is as extreme, or more extreme, "
+                + "as it is. This test works because the Central Limit Theorem "
+                + "states that the sum of all dice rolls is a standard random "
+                + "variable. The current sum is ";
+        update += Double.toString(observedSummaryStatistics.getSum());
+        update += ". Assuming that the average value for a roll is ";
+        SummaryStatistics expectedSummaryStatistics = DiceRoll.getExpectedSummaryStatistics(gameId);
+        update += Double.toString(expectedSummaryStatistics.getMean());
+        Long sizeN = observedSummaryStatistics.getN();
+        NormalDistribution normalDistribution = new NormalDistribution(sizeN * expectedSummaryStatistics.getMean(),
+                                                                       Math.sqrt(sizeN) * expectedSummaryStatistics.getStandardDeviation());
+        update += " then the 95% confidence interval for the sum of all dice rolls is (";
+        update += Double.toString(normalDistribution.inverseCumulativeProbability(0.025));
+        update += ", ";
+        update += Double.toString(normalDistribution.inverseCumulativeProbability(1.0 - 0.025));
+        double delta = Math.abs(observedSummaryStatistics.getSum() - normalDistribution.getMean());
+        double low = normalDistribution.getMean() - delta;
+        double high = normalDistribution.getMean() + delta;
+        update += "). The likelihood that the sum of " + Long.toString(sizeN)
+                + " dice rolls will be between " + Double.toString(low)
+                + " and " + Double.toString(high)
+                + " is " + Double.toString(normalDistribution.cumulativeProbability(low, high)) + ".";
         return update;
     }
 

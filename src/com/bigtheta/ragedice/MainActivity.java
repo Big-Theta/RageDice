@@ -111,7 +111,13 @@ public class MainActivity extends Activity {
         info += "\nKS statistic: " + Double.toString(stat);
         // Probability that these are different distributions.
         info += "\nKS probability: " + Double.toString(DiceRoll.calculateKSProbability(m_game.getId()));
+        info += "\nCentral Limit Theorem probability: " + Double.toString(DiceRoll.calculateCentralLimitProbabilityPValue(m_game.getId()));
 
+        info += "\n=====\n";
+        info += DieDescription.getKSDescription(m_game.getId());
+        info += "\n=====\n";
+        info += DieDescription.getCLTDescription(m_game.getId());
+        
         tv.setText(info);
     }
 
