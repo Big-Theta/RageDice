@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="yellowDie">#FFFFFF00</color>
-    <color name="redDie">#FFFF0000</color>
+    <color name="yellow_die">#FFFFFF00</color>
+    <color name="red_die">#FFFF0000</color>
     <color name="background">#FF818181</color>
 </resources>

@@ -1,7 +1,6 @@
 package com.bigtheta.ragedice;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.Activity;
@@ -12,6 +11,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 
 import com.bigtheta.ragedice.R.drawable;
 
@@ -42,12 +42,14 @@ public class MainActivity extends Activity {
         new Player(m_game, 4, "player better than awesome (four)");
 
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
-                           0xFFFFFF00, R.id.yellow_die, true);
+                           getResources().getColor(R.color.yellow_die),
+                           R.id.yellow_die, true);
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
-                           0xFFFF0000, R.id.red_die, true);
+                           getResources().getColor(R.color.red_die),
+                           R.id.red_die, true);
 
         View mainView = (View)findViewById(R.id.activity_main_view);
-        mainView.setBackgroundColor(0xFF818181);
+        mainView.setBackgroundColor(getResources().getColor(R.color.background));
     }
 
     @Override

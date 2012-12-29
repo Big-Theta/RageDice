@@ -138,6 +138,23 @@ public class DieDescription {
         return m_isNumeric;
     }
 
+    public static String getKSDescription(long gameId) {
+        String update = new String();
+        update += "This test uses the Kolmogorov-Smirnov test to determine "
+                + "how likely it is that this collection of dice rolls came "
+                + "from a fair distribution. The KS statistic is the maximum "
+                + "difference between the observed and the expected cumulative "
+                + "fraction function (cff). Currently, this value is ";
+        update += Double.toString(DiceRoll.calculateKSTestStatistic(gameId));
+        update += ". As the maximum difference between the two cffs becomes small, "
+                + "the likelyhood that the observed dice rolls were produced by 'fair' "
+                + "dice becomes large... unless we used a biased random number generator.";
+        return update;
+    }
+
+    /*
+     * Calculates the expected distribution for each dice result.
+     */
     public static HashMap<Integer, Double> getPMF(long gameId) {
         if (cacheGetPMF == null || !cacheGetPMF.containsKey(gameId)) {
             ArrayList<DieDescription> descriptions = retrieveAll(gameId);
@@ -168,7 +185,7 @@ public class DieDescription {
         return count;
     }
 
-    private static HashMap<Integer, Integer> getNonNormedPMF(ArrayList<DieDescription> descriptions) {
+    public static HashMap<Integer, Integer> getNonNormedPMF(ArrayList<DieDescription> descriptions) {
         final HashMap<Integer, Integer> ret = new HashMap<Integer, Integer>();
         // Need a recursion because we don't know how many dice there are, or what their number
         // of faces are. Thus, this recursion is a sort of arbitrarily nested loop with
