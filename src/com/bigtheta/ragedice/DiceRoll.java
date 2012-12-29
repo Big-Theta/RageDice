@@ -1,8 +1,11 @@
 package com.bigtheta.ragedice;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.math3.distribution.KolmogorovSmirnovDistribution;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.distribution.NormalDistribution;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -187,6 +190,55 @@ public class DiceRoll {
         } else {
             return 0.0;
         }
+    }
+
+    public static SummaryStatistics getObservedSummaryStatistics(long gameId) {
+        SummaryStatistics retval = new SummaryStatistics();
+        HashMap<Integer, Integer> observedRolls = DiceRoll.getObservedRolls(gameId);
+        for (Integer key : observedRolls.keySet()) {
+            for (int i = 0; i < observedRolls.get(key); i++) {
+                retval.addValue(key);
+            }
+        }
+        return retval;
+    }
+
+    public static SummaryStatistics getExpectedSummaryStatistics(long gameId) {
+        SummaryStatistics retval = new SummaryStatistics();
+        ArrayList<DieDescription> descriptions = DieDescription.retrieveAll(gameId);
+        HashMap<Integer, Integer> nonNormedPMF = DieDescription.getNonNormedPMF(descriptions);
+        for (Integer key : nonNormedPMF.keySet()) {
+            for (int i = 0; i < nonNormedPMF.get(key); i++) {
+                retval.addValue(key);
+            }
+        }
+        return retval;
+    }
+
+    /*
+     * See http://en.wikipedia.org/wiki/Central_limit_theorem
+     * (X_bar - mu) / (sigma/sqrt(n)) ~~ Norm(0, 1)
+     */
+    public static double calculateCentralLimitProbabilityPValue(long gameId) {
+        Log.i(" > calculateCentralLimitProbability()", "...");
+        SummaryStatistics observedSummaryStatistics = getObservedSummaryStatistics(gameId);
+        if (getNumDiceRolls() < 4) {
+            Log.i(" < calculateCentralLimitProbability()", "...");
+            return 1.0;
+        }
+        SummaryStatistics expectedSummaryStatistics = getExpectedSummaryStatistics(gameId);
+
+        double X_bar = observedSummaryStatistics.getMean();
+        double mu = expectedSummaryStatistics.getMean();
+        double sigma = expectedSummaryStatistics.getStandardDeviation();
+        double statistic = Math.abs((X_bar - mu) / (sigma / Math.sqrt(getNumDiceRolls())));
+        Log.i("stat is", Double.toString(statistic));
+        Log.i("getN() is", Long.toString(observedSummaryStatistics.getN()));
+        Log.i("getNumDiceRolls() is", Integer.toString(getNumDiceRolls()));
+        NormalDistribution standardNormal = new NormalDistribution();
+        double pValue = 1.0 - standardNormal.cumulativeProbability(-statistic, statistic);
+        Log.i(" < calculateCentralLimitProbability()", "...");
+        return pValue;
     }
 
     private static boolean isEmpty() {
