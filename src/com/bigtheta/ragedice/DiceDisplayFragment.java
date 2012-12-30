@@ -1,15 +1,28 @@
 package com.bigtheta.ragedice;
 
+import java.lang.reflect.Field;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bigtheta.ragedice.R.drawable;
 
 
 
 public class DiceDisplayFragment extends Fragment  {
+	DiceDisplayListener mCallback;
+	
+	public interface DiceDisplayListener {
+		public void onDiceSelected(int position);
+	}
+	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
                          Bundle savedInstanceState) {
@@ -19,6 +32,12 @@ public class DiceDisplayFragment extends Fragment  {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        try {
+        	mCallback = (DiceDisplayListener) activity;
+        } catch (ClassCastException e) {
+        	throw new ClassCastException(activity.toString()
+        			+ " must implement DiceDisplayListener");
+        }
     }
 
     @Override
@@ -69,5 +88,26 @@ public class DiceDisplayFragment extends Fragment  {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+    public void rollTest() {
+    	mCallback.onDiceSelected(0);
+    }
+    public void displayDiceRoll(DiceRoll dr, TextView tv, ImageView iv) {
+        Player currentPlayer = Player.retrieve(dr.getPlayerId());
+        tv.setText(currentPlayer.getPlayerName());
+
+        Class<drawable> res = R.drawable.class;
+        for (DieResult result : DieResult.getDieResults(dr)) {
+            DieDescription dd = DieDescription.retrieve(result.getDieDescriptionId());
+            String description = dd.getBaseIdentifierName()
+                               + Integer.toString(result.getDieResult());
+            try {
+                Field field = res.getField(description);
+                iv.setImageResource(field.getInt(null));
+            } catch (Exception err){
+                Log.e("MainActivity::displayDiceRoll", err.getCause().getMessage());
+            }
+            iv.setBackgroundColor(dd.getBackgroundColor());
+        }
     }
 }

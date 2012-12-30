@@ -1,13 +1,13 @@
 package com.bigtheta.ragedice;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.support.v4.app.FragmentActivity;
+import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -16,8 +16,7 @@ import android.widget.TextView;
 
 import com.bigtheta.ragedice.R.drawable;
 
-public class MainActivity extends FragmentActivity 
-		implements DiceDisplayFragment.DiceDisplayListener {
+public class MainActivityAlternate extends Activity {
     private static SQLiteDatabase m_database;
     private MySQLiteHelper m_dbHelper;
     private Game m_game;
@@ -29,7 +28,7 @@ public class MainActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_alternate);
+        setContentView(R.layout.activity_main);
 
         m_dbHelper = new MySQLiteHelper(this);
         // REMOVEME
@@ -47,12 +46,8 @@ public class MainActivity extends FragmentActivity
                            0xFFFFFF00, R.id.yellow_die, true);
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
                            0xFFFF0000, R.id.red_die, true);
-        //FragmentManager fm = getSupportFragmentManager();
-        //FragmentTransaction ft = fm.beginTransaction();
-        //ft.add(R.layout.dice_layout, new DiceFragment());
-        //ft.commit();
 
-        View mainView = (View)findViewById(R.id.activity_main_alt_view);
+        View mainView = (View)findViewById(R.id.activity_main_view);
         mainView.setBackgroundColor(0xFF818181);
     }
 
@@ -131,20 +126,11 @@ public class MainActivity extends FragmentActivity
         displayDiceRoll(dr);
     }
 
-    public DiceRoll rollDice() {
+    public void rollDice(View view) {
         Player nextPlayer = Player.getNextPlayer(m_game);
         DiceRoll dr = new DiceRoll(nextPlayer);
-        return dr;
-    }
-    
-    
-    public void onDiceSelected(int position) {
-    	rollDice();
-    	DiceDisplayFragment ddf = (DiceDisplayFragment)
-    			getSupportFragmentManager().findFragmentById(R.id.dice_fragment_ui);
-    	TextView tv = (TextView)findViewById(R.id.player_number);
-    	ImageView iv = (ImageView)findViewById(dd.getImageViewResource());
-    	ddf.displayDiceRoll(rollDice(), tv, iv);
+        displayDiceRoll(dr);
     }
 }
+
 
