@@ -3,19 +3,19 @@ package com.bigtheta.ragedice;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 import com.bigtheta.ragedice.R.drawable;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity 
+		implements DiceDisplayFragment.DiceDisplayListener {
     private static SQLiteDatabase m_database;
     private MySQLiteHelper m_dbHelper;
     private Game m_game;
@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_alternate);
 
         m_dbHelper = new MySQLiteHelper(this);
         // REMOVEME
@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
                            getResources().getColor(R.color.red_die),
                            R.id.red_die, true);
 
-        View mainView = (View)findViewById(R.id.activity_main_view);
+        View mainView = (View)findViewById(R.id.activity_main_alt_view);
         mainView.setBackgroundColor(getResources().getColor(R.color.background));
     }
 
@@ -136,7 +136,13 @@ public class MainActivity extends Activity {
     public void rollDice(View view) {
         Player nextPlayer = Player.getNextPlayer(m_game);
         DiceRoll dr = new DiceRoll(nextPlayer);
-        displayDiceRoll(dr);
+        //displayDiceRoll(dr);
+        DiceDisplayFragment ddf = (DiceDisplayFragment)
+        		getSupportFragmentManager().findFragmentById(R.id.dice_fragment_ui);
+        ddf.displayDiceRoll(dr);
+    }
+    
+    public void onDiceSelected(int position) {
     }
 }
 

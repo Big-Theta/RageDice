@@ -21,6 +21,7 @@ public class DiceDisplayFragment extends Fragment  {
 	
 	public interface DiceDisplayListener {
 		public void onDiceSelected(int position);
+		public View findViewById(int id);
 	}
 	
     @Override
@@ -92,13 +93,16 @@ public class DiceDisplayFragment extends Fragment  {
     public void rollTest() {
     	mCallback.onDiceSelected(0);
     }
-    public void displayDiceRoll(DiceRoll dr, TextView tv, ImageView iv) {
-        Player currentPlayer = Player.retrieve(dr.getPlayerId());
-        tv.setText(currentPlayer.getPlayerName());
+    
+    public void displayDiceRoll(DiceRoll dr) {
+    	//TextView tv = (TextView) mCallback.findViewById(R.id.player_number);
+        //Player currentPlayer = Player.retrieve(dr.getPlayerId());
+        //tv.setText(currentPlayer.getPlayerName());
 
         Class<drawable> res = R.drawable.class;
         for (DieResult result : DieResult.getDieResults(dr)) {
             DieDescription dd = DieDescription.retrieve(result.getDieDescriptionId());
+            ImageView iv = (ImageView) mCallback.findViewById(dd.getImageViewResource());
             String description = dd.getBaseIdentifierName()
                                + Integer.toString(result.getDieResult());
             try {

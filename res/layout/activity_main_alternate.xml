@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/dice_fragment_ui"
-        android:name="com.bigtheta.ragedice.DiceFragment"
+        android:name="com.bigtheta.ragedice.DiceDisplayFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
