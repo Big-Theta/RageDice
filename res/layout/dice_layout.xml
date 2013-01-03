@@ -1,37 +1,27 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@id/dice_fragment_ui"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:clickable="true" >
-
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
+        android:background="@color/background"
+        android:clickable="true"
+        android:gravity="center"
+        android:onClick="rollDice" >
 
         <ImageView
             android:id="@+id/red_die"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/red_die" />
+            android:background="@color/red_die"
+            android:contentDescription="@string/red_die"
+            android:src="@drawable/alea_transface_colbg_3" />
+
         <ImageView
             android:id="@+id/yellow_die"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/yellow_die" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
-
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="rollDice"
-            android:text="Button" />
+            android:background="@color/yellow_die"
+            android:contentDescription="@string/yellow_die"
+            android:src="@drawable/alea_transface_colbg_4" />
 
     </LinearLayout>

@@ -15,7 +15,9 @@ import android.widget.TextView;
 import com.bigtheta.ragedice.R.drawable;
 
 public class MainActivity extends FragmentActivity 
-		implements DiceDisplayFragment.DiceDisplayListener {
+		implements GameLogFragment.GameLogListener,
+				   DiceDisplayFragment.DiceDisplayListener {
+	
     private static SQLiteDatabase m_database;
     private MySQLiteHelper m_dbHelper;
     private Game m_game;
@@ -48,8 +50,8 @@ public class MainActivity extends FragmentActivity
                            getResources().getColor(R.color.red_die),
                            R.id.red_die, true);
 
-        View mainView = (View)findViewById(R.id.activity_main_alt_view);
-        mainView.setBackgroundColor(getResources().getColor(R.color.background));
+        //View mainView = (View)findViewById(R.id.activity_main_alt_view);
+        //mainView.setBackgroundColor(getResources().getColor(R.color.background));
     }
 
     @Override
@@ -143,6 +145,9 @@ public class MainActivity extends FragmentActivity
     }
     
     public void onDiceSelected(int position) {
+    }
+    
+    public void onGameLogSelected(int position) {
     }
 }
 

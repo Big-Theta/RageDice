@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bigtheta.ragedice.R.drawable;
 
@@ -111,7 +110,7 @@ public class DiceDisplayFragment extends Fragment  {
             } catch (Exception err){
                 Log.e("MainActivity::displayDiceRoll", err.getCause().getMessage());
             }
-            iv.setBackgroundColor(dd.getBackgroundColor());
+            //iv.setBackgroundColor(dd.getBackgroundColor());
         }
     }
 }
