@@ -154,7 +154,7 @@ public class DieDescription {
                 + "dice becomes large... unless we used a biased random number generator.";
         return update;
     }
-    
+
     public static String getCLTDescription(long gameId) {
         String update = new String();
         SummaryStatistics observedSummaryStatistics = DiceRoll.getObservedSummaryStatistics(gameId);

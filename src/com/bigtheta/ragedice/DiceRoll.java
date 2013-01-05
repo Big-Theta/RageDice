@@ -87,7 +87,11 @@ public class DiceRoll {
         MainActivity.getDatabase().delete(MySQLiteHelper.TABLE_DICE_ROLL, null, null);
     }
 
-    public static DiceRoll getLastDiceRoll() {
+    /*
+     * TODO Make sure that the player referenced by this dice roll is associated with
+     * the gameId.
+     */
+    public static DiceRoll getLastDiceRoll(long gameId) {
         DiceRoll ret;
         if (!isEmpty()) {
             String query_str = "SELECT MAX(" + MySQLiteHelper.COLUMN_ID + ") "
@@ -181,14 +185,14 @@ public class DiceRoll {
         return d;
     }
 
-    public static double calculateKSProbability(long gameId) {
+    public static double calculateKSPValue(long gameId) {
         double testStatistic = calculateKSTestStatistic(gameId);
         int numRolls = getNumDiceRolls();
         if (numRolls > 0) {
             KolmogorovSmirnovDistribution dist = new KolmogorovSmirnovDistribution(numRolls);
-            return dist.cdf(testStatistic);
+            return 1.0 - dist.cdf(testStatistic);
         } else {
-            return 0.0;
+            return 1.0;
         }
     }
 

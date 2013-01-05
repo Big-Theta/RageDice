@@ -1,10 +1,14 @@
 package com.bigtheta.ragedice;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Random;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
+
+import com.bigtheta.ragedice.R.drawable;
 
 public class DieResult {
     private static String[] tableDieResultColumns = {
@@ -59,6 +63,22 @@ public class DieResult {
 
     public int getDieResult() {
         return m_dieResult;
+    }
+
+    public int getImageResource() throws Exception {
+        Class<drawable> res = R.drawable.class;
+        int retval;
+        DieDescription dd = DieDescription.retrieve(getDieDescriptionId());
+        String description = dd.getBaseIdentifierName()
+                           + Integer.toString(getDieResult());
+        try {
+            Field field = res.getField(description);
+            retval = field.getInt(null);
+        } catch (Exception err){
+            Log.e("DieResult::getImageResource()", err.getCause().getMessage());
+            throw err;
+        }
+        return retval;
     }
 
     private int rollDie() {

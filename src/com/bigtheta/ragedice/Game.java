@@ -48,7 +48,8 @@ public class Game {
     private Cursor getCursor() {
         Cursor cursor = MainActivity.getDatabase().query(
                 MySQLiteHelper.TABLE_GAME,
-                tableGameColumns, MySQLiteHelper.COLUMN_ID + " = " + m_id,
+                tableGameColumns,
+                MySQLiteHelper.COLUMN_ID + " = " + Long.toString(m_id),
                 null, null, null, null);
         cursor.moveToFirst();
         return cursor;
