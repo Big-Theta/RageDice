@@ -2,13 +2,13 @@ package com.bigtheta.ragedice;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ListView;
 
-public class GameLogFragment extends Fragment {
+public class GameLogFragment extends ListFragment {
 	GameLogListener mCallback;
 	
 	public interface GameLogListener {
@@ -39,8 +39,11 @@ public class GameLogFragment extends Fragment {
         }
     }
     
-    public void displayInfo() {
-    	TextView tv = mCallback.findViewById(R.layout.log_view);
+    public void displayInfo(Player player, DiceRoll dr) {
+    	ListView tv = (ListView) mCallback.findViewById(R.id.log_view);
+    	tv.append(player.getPlayerName() + " rolled " +
+    				dr.getTotalResult() + "\n");
+    	
     	
     }
 }

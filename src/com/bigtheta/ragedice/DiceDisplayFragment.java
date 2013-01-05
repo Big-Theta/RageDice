@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import com.bigtheta.ragedice.R.drawable;
 
 
-
 public class DiceDisplayFragment extends Fragment  {
 	DiceDisplayListener mCallback;
 	

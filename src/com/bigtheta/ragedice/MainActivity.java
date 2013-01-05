@@ -6,6 +6,7 @@ import java.util.HashMap;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -96,7 +97,7 @@ public class MainActivity extends FragmentActivity
     }
 
     protected void displayInfo() {
-        TextView tv = (TextView)findViewById(R.id.debug_info);
+        TextView tv = (TextView)findViewById(R.id.log_view);
         String info = "";
         info += "numDiceRolls: " + Integer.toString(DiceRoll.getNumDiceRolls());
         HashMap<Integer, Double> pmf = DieDescription.getPMF(m_game.getId());
@@ -138,10 +139,14 @@ public class MainActivity extends FragmentActivity
     public void rollDice(View view) {
         Player nextPlayer = Player.getNextPlayer(m_game);
         DiceRoll dr = new DiceRoll(nextPlayer);
+        FragmentManager fm = getSupportFragmentManager();
         //displayDiceRoll(dr);
         DiceDisplayFragment ddf = (DiceDisplayFragment)
-        		getSupportFragmentManager().findFragmentById(R.id.dice_fragment_ui);
+        		fm.findFragmentById(R.id.dice_fragment_ui);
+        GameLogFragment glf = (GameLogFragment) fm.findFragmentById(R.id.game_log_fragment);
         ddf.displayDiceRoll(dr);
+        glf.displayInfo(nextPlayer, dr);
+        //displayInfo();
     }
     
     public void onDiceSelected(int position) {
