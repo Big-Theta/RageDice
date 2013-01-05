@@ -22,8 +22,7 @@ public class Player {
     // This opens an opportunity to break... if the database is cleared, this won't be.
     private static HashMap<Long, Player> cacheRetrieve;
 
-    public Player(Game game, int playerNumber,
-                  String playerName) {
+    public Player(Game game, int playerNumber, String playerName) {
         m_gameId = game.getId();
         m_playerNumber = playerNumber;
         m_playerName = playerName;
@@ -37,7 +36,11 @@ public class Player {
 
     private Player(long id) {
         m_id = id;
-        Cursor cursor = getCursor();
+        Cursor cursor = MainActivity.getDatabase().query(
+                MySQLiteHelper.TABLE_PLAYER,
+                tablePlayerColumns,
+                null, null, null, null, null);
+        cursor.moveToFirst();
         m_gameId = cursor.getLong(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_GAME_ID));
         m_playerNumber = cursor.getInt(
@@ -81,16 +84,17 @@ public class Player {
         return m_playerName;
     }
 
-    public static Player getLastPlayer() {
-        if (!isEmpty()) {
-            DiceRoll lastRoll = DiceRoll.getLastDiceRoll();
+    public static Player getLastPlayer(long gameId) {
+        if (!isEmpty(gameId)) {
+            DiceRoll lastRoll = DiceRoll.getLastDiceRoll(gameId);
             if (lastRoll != null) {
                 return new Player(lastRoll.getPlayerId());
             } else {
                 Cursor cursor = MainActivity.getDatabase().query(
                         MySQLiteHelper.TABLE_PLAYER,
                         tablePlayerColumns,
-                        null, null, null, null, null);
+                        MySQLiteHelper.COLUMN_GAME_ID + " = " + Long.toString(gameId),
+                        null, null, null, null);
                 cursor.moveToLast();
                 return new Player(cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.COLUMN_ID)));
             }
@@ -98,8 +102,8 @@ public class Player {
         return null;
     }
 
-    public static Player getNextPlayer(Game game) {
-        DiceRoll lastRoll = DiceRoll.getLastDiceRoll();
+    public static Player getNextPlayer(long gameId) {
+        DiceRoll lastRoll = DiceRoll.getLastDiceRoll(gameId);
         Player nextPlayer;
         if (lastRoll == null) {
             Cursor cursor = MainActivity.getDatabase().query(
@@ -109,10 +113,10 @@ public class Player {
             cursor.moveToFirst();
             nextPlayer = new Player(cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.COLUMN_ID)));
             cursor.close();
-        } else if (!isEmpty()) {
+        } else if (!isEmpty(gameId)) {
             nextPlayer = null;
-            Player lastPlayer = getLastPlayer();
-            for (Player candidate : getPlayers(game.getId())) {
+            Player lastPlayer = getLastPlayer(gameId);
+            for (Player candidate : getPlayers(gameId)) {
                 if (nextPlayer == null) {
                     nextPlayer = candidate;
                 // Find minimum candidate that has greater playerNumber...
@@ -149,12 +153,13 @@ public class Player {
         return ret;
     }
 
-    private static boolean isEmpty() {
+    private static boolean isEmpty(long gameId) {
         boolean retval;
         Cursor cursor = MainActivity.getDatabase().query(
                 MySQLiteHelper.TABLE_PLAYER,
                 tablePlayerColumns,
-                null, null, null, null, null);
+                MySQLiteHelper.COLUMN_GAME_ID + " = " + Long.toString(gameId),
+                null, null, null, null);
         if (cursor.getCount() > 0) {
             retval = false;
         } else {
@@ -162,16 +167,6 @@ public class Player {
         }
         cursor.close();
         return retval;
-    }
-
-    private Cursor getCursor() {
-        Cursor cursor = MainActivity.getDatabase().query(
-                MySQLiteHelper.TABLE_PLAYER,
-                tablePlayerColumns,
-                MySQLiteHelper.COLUMN_ID + " = " + m_id,
-                null, null, null, null);
-        cursor.moveToFirst();
-        return cursor;
     }
 }
 

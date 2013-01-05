@@ -1,12 +1,10 @@
 package com.bigtheta.ragedice;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
@@ -72,25 +70,22 @@ public class MainActivity extends Activity {
     }
 
     protected void displayDiceRoll(DiceRoll dr) {
+        displayInfo();
+        if (dr == null) {
+            return;
+        }
         TextView tv = (TextView)findViewById(R.id.player_number);
         Player currentPlayer = Player.retrieve(dr.getPlayerId());
         tv.setText(currentPlayer.getPlayerName());
 
         Class<drawable> res = R.drawable.class;
-        for (DieResult result : DieResult.getDieResults(dr)) {
-            DieDescription dd = DieDescription.retrieve(result.getDieDescriptionId());
-            ImageView iv = (ImageView)findViewById(dd.getImageViewResource());
-            String description = dd.getBaseIdentifierName()
-                               + Integer.toString(result.getDieResult());
+        for (DieResult dd : DieResult.getDieResults(dr)) {
             try {
-                Field field = res.getField(description);
-                iv.setImageResource(field.getInt(null));
-            } catch (Exception err){
-                Log.e("MainActivity::displayDiceRoll", err.getCause().getMessage());
-            }
-            iv.setBackgroundColor(dd.getBackgroundColor());
+                ImageView iv = (ImageView)findViewById(dd.getImageResource());
+                iv.setImageResource(dd.getImageResource());
+                iv.setBackgroundColor(DieDescription.retrieve(dd.getDieDescriptionId()).getBackgroundColor());
+            } catch (Exception err) {}
         }
-        displayInfo();
     }
 
     protected void displayInfo() {
@@ -110,14 +105,14 @@ public class MainActivity extends Activity {
         double stat = DiceRoll.calculateKSTestStatistic(m_game.getId());
         info += "\nKS statistic: " + Double.toString(stat);
         // Probability that these are different distributions.
-        info += "\nKS probability: " + Double.toString(DiceRoll.calculateKSProbability(m_game.getId()));
+        info += "\nKS probability: " + Double.toString(DiceRoll.calculateKSPValue(m_game.getId()));
         info += "\nCentral Limit Theorem probability: " + Double.toString(DiceRoll.calculateCentralLimitProbabilityPValue(m_game.getId()));
 
         info += "\n=====\n";
         info += DieDescription.getKSDescription(m_game.getId());
         info += "\n=====\n";
         info += DieDescription.getCLTDescription(m_game.getId());
-        
+
         tv.setText(info);
     }
 
@@ -127,14 +122,17 @@ public class MainActivity extends Activity {
     }
 
     public void undoDiceRoll(View view) {
-        DiceRoll dr = DiceRoll.getLastDiceRoll();
+        DiceRoll dr = DiceRoll.getLastDiceRoll(m_game.getId());
+        if (dr == null) {
+            return;
+        }
         dr.delete();
-        dr = DiceRoll.getLastDiceRoll();
+        dr = DiceRoll.getLastDiceRoll(m_game.getId());
         displayDiceRoll(dr);
     }
 
     public void rollDice(View view) {
-        Player nextPlayer = Player.getNextPlayer(m_game);
+        Player nextPlayer = Player.getNextPlayer(m_game.getId());
         DiceRoll dr = new DiceRoll(nextPlayer);
         displayDiceRoll(dr);
     }
