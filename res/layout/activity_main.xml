@@ -38,6 +38,12 @@
         android:layout_height="fill_parent"
         android:layout_below="@id/dice_box" />
 
+    <com.bigtheta.ragedice.HistogramView
+        android:id="@+id/snake"
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+    	android:layout_below="@id/debug_info" />
+    
     <Button
         android:id="@+id/reset_button"
         android:layout_width="wrap_content"

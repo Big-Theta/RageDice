@@ -92,6 +92,7 @@ public class MainActivity extends Activity {
         TextView tv = (TextView)findViewById(R.id.debug_info);
         String info = "";
         info += "numDiceRolls: " + Integer.toString(DiceRoll.getNumDiceRolls());
+        /*
         HashMap<Integer, Double> pmf = DieDescription.getPMF(m_game.getId());
         for (Integer observation : pmf.keySet()) {
             info += "\nObservation: " + Integer.toString(observation)
@@ -112,6 +113,7 @@ public class MainActivity extends Activity {
         info += DieDescription.getKSDescription(m_game.getId());
         info += "\n=====\n";
         info += DieDescription.getCLTDescription(m_game.getId());
+        */
 
         tv.setText(info);
     }
