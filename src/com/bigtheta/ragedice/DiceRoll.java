@@ -87,15 +87,11 @@ public class DiceRoll {
         MainActivity.getDatabase().delete(MySQLiteHelper.TABLE_DICE_ROLL, null, null);
     }
 
-    /*
-     * TODO Make sure that the player referenced by this dice roll is associated with
-     * the gameId.
-     */
     public static DiceRoll getLastDiceRoll(long gameId) {
         DiceRoll ret;
         if (!isEmpty()) {
             String query_str = "SELECT MAX(" + MySQLiteHelper.COLUMN_ID + ") "
-                             + "AS _id FROM " + MySQLiteHelper.TABLE_DICE_ROLL;
+                             + "FROM ";  // ???
             Cursor cursor = MainActivity.getDatabase().rawQuery(query_str, null);
             cursor.moveToFirst();
             ret = DiceRoll.retrieve(cursor.getLong(0));

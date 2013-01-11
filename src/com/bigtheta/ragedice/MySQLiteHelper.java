@@ -35,7 +35,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // TABLE_DICE_ROLL
     public static final String TABLE_DICE_ROLL = "dice_roll";
-    public static final String COLUMN_PLAYER_ID = "player_description_id";
+    public static final String COLUMN_PLAYER_ID = "player_id";
     private static final String CREATE_TABLE_DICE_ROLL = "CREATE TABLE "
             + TABLE_DICE_ROLL + "("
             + COLUMN_ID + " integer primary key autoincrement, "
