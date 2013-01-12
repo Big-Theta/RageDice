@@ -105,7 +105,7 @@ public class MainActivity extends FragmentActivity
     }
 
     protected void displayInfo() {
-        TextView tv = (TextView)findViewById(R.id.log_view);
+        TextView tv = (TextView)findViewById(R.id.ksdescription_view);
         String info = "";
         info += "numDiceRolls: " + Integer.toString(DiceRoll.getNumDiceRolls());
         HashMap<Integer, Double> pmf = DieDescription.getPMF(m_game.getId());
@@ -148,6 +148,7 @@ public class MainActivity extends FragmentActivity
         Player nextPlayer = Player.getNextPlayer(m_game.getId());
         DiceRoll dr = new DiceRoll(nextPlayer);
         displayDiceRoll(nextPlayer, dr);
+        //displayInfo();
         /*
         FragmentManager fm = getSupportFragmentManager();
         //displayDiceRoll(dr);
