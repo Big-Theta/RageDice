@@ -24,4 +24,13 @@
             android:contentDescription="@string/yellow_die"
             android:src="@drawable/alea_transface_colbg_4" />
 
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_weight="0"
+            android:onClick="undoDiceRoll"
+            android:text="Undo" />
+
     </LinearLayout>

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.math3.distribution.KolmogorovSmirnovDistribution;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import android.content.ContentValues;
 import android.database.Cursor;

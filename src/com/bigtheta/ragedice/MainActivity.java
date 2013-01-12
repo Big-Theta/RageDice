@@ -1,19 +1,14 @@
 package com.bigtheta.ragedice;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.bigtheta.ragedice.R.drawable;
 
 public class MainActivity extends FragmentActivity 
 		implements GameLogFragment.GameLogListener,
@@ -74,7 +69,15 @@ public class MainActivity extends FragmentActivity
         return true;
     }
 
-    protected void displayDiceRoll(DiceRoll dr) {
+    protected void displayDiceRoll(Player nextPlayer, DiceRoll dr) {
+        FragmentManager fm = getSupportFragmentManager();
+        //displayDiceRoll(dr);
+        DiceDisplayFragment ddf = (DiceDisplayFragment)
+        		fm.findFragmentById(R.id.dice_fragment_ui);
+        GameLogFragment glf = (GameLogFragment) fm.findFragmentById(R.id.game_log_fragment);
+        ddf.displayDiceRoll(dr);
+        glf.displayInfo(nextPlayer, dr);
+        /*
         TextView tv = (TextView)findViewById(R.id.player_number);
         Player currentPlayer = Player.retrieve(dr.getPlayerId());
         tv.setText(currentPlayer.getPlayerName());
@@ -94,6 +97,7 @@ public class MainActivity extends FragmentActivity
             iv.setBackgroundColor(dd.getBackgroundColor());
         }
         displayInfo();
+        */
     }
 
     protected void displayInfo() {
@@ -133,12 +137,14 @@ public class MainActivity extends FragmentActivity
         DiceRoll dr = DiceRoll.getLastDiceRoll();
         dr.delete();
         dr = DiceRoll.getLastDiceRoll();
-        displayDiceRoll(dr);
+        displayDiceRoll(Player.getLastPlayer(), dr);
     }
 
     public void rollDice(View view) {
         Player nextPlayer = Player.getNextPlayer(m_game);
         DiceRoll dr = new DiceRoll(nextPlayer);
+        displayDiceRoll(nextPlayer, dr);
+        /*
         FragmentManager fm = getSupportFragmentManager();
         //displayDiceRoll(dr);
         DiceDisplayFragment ddf = (DiceDisplayFragment)
@@ -147,6 +153,8 @@ public class MainActivity extends FragmentActivity
         ddf.displayDiceRoll(dr);
         glf.displayInfo(nextPlayer, dr);
         //displayInfo();
+         * 
+         */
     }
     
     public void onDiceSelected(int position) {
