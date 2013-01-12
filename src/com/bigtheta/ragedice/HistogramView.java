@@ -64,6 +64,5 @@ public class HistogramView extends View {
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         m_chartView.draw(canvas);
-//        m_chartView.repaint();
     }
 }
