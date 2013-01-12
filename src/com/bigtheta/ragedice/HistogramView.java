@@ -54,7 +54,6 @@ public class HistogramView extends View {
         }
         m_dataset.addSeries(series);
         m_chartView = ChartFactory.getBarChartView(context, m_dataset, m_renderer, BarChart.Type.DEFAULT);
-   // Read more: http://www.cnx-software.com/2011/09/02/drawing-charts-in-android-with-achartengine-library/#ixzz2HjrW0mG4
     }
 
     public HistogramView(Context context, AttributeSet attrs, int defStyle) {
@@ -64,6 +63,7 @@ public class HistogramView extends View {
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        m_chartView.repaint();
+        m_chartView.draw(canvas);
+//        m_chartView.repaint();
     }
 }
