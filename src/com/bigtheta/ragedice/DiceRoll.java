@@ -9,6 +9,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 public class DiceRoll {
@@ -87,19 +88,19 @@ public class DiceRoll {
         MainActivity.getDatabase().delete(MySQLiteHelper.TABLE_DICE_ROLL, null, null);
     }
 
-    /*
-     * TODO Make sure that the player referenced by this dice roll is associated with
-     * the gameId.
-     */
     public static DiceRoll getLastDiceRoll(long gameId) {
         DiceRoll ret;
         if (!isEmpty()) {
             String query_str = "SELECT MAX(" + MySQLiteHelper.COLUMN_ID + ") "
                              + "AS _id FROM " + MySQLiteHelper.TABLE_DICE_ROLL;
-            Cursor cursor = MainActivity.getDatabase().rawQuery(query_str, null);
-            cursor.moveToFirst();
-            ret = DiceRoll.retrieve(cursor.getLong(0));
-            cursor.close();
+            try {
+                Cursor cursor = MainActivity.getDatabase().rawQuery(query_str, null);
+                cursor.moveToFirst();
+                ret = DiceRoll.retrieve(cursor.getLong(0));
+                cursor.close();
+            } catch (SQLiteException err) {
+                return null;
+            }
         } else {
             ret = null;
         }

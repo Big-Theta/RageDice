@@ -139,6 +139,9 @@ public class MainActivity extends FragmentActivity
 
     public void undoDiceRoll(View view) {
         DiceRoll dr = DiceRoll.getLastDiceRoll(m_game.getId());
+        if (dr == null) {
+            return;
+        }
         dr.delete();
         dr = DiceRoll.getLastDiceRoll(m_game.getId());
         displayDiceRoll(Player.getLastPlayer(m_game.getId()), dr);

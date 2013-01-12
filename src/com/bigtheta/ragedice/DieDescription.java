@@ -3,6 +3,7 @@ package com.bigtheta.ragedice;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.achartengine.chart.BarChart;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
@@ -39,6 +40,8 @@ public class DieDescription {
                           String baseIdentifierName,
                           int backgroundColor, int imageViewResource,
                           boolean isNumeric) {
+        BarChart bc;
+        
         m_numLowFace = numLowFace;
         m_numHighFace = numHighFace;
         m_baseIdentifierName = baseIdentifierName;
