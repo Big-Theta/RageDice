@@ -12,11 +12,14 @@ import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity 
 		implements GameLogFragment.GameLogListener,
-				   DiceDisplayFragment.DiceDisplayListener {
+				   DiceDisplayFragment.DiceDisplayListener,
+				   KSDescriptionFragment.KSDescriptionListener {
+					
 	
     private static SQLiteDatabase m_database;
     private MySQLiteHelper m_dbHelper;
     private Game m_game;
+    private FragmentManager fm;
 
     public static SQLiteDatabase getDatabase() {
         return m_database;
@@ -45,6 +48,7 @@ public class MainActivity extends FragmentActivity
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
                            getResources().getColor(R.color.red_die),
                            R.id.red_die, true);
+        fm = getSupportFragmentManager();
 
         //View mainView = (View)findViewById(R.id.activity_main_alt_view);
         //mainView.setBackgroundColor(getResources().getColor(R.color.background));
@@ -70,7 +74,7 @@ public class MainActivity extends FragmentActivity
     }
 
     protected void displayDiceRoll(Player nextPlayer, DiceRoll dr) {
-        FragmentManager fm = getSupportFragmentManager();
+        //FragmentManager fm = getSupportFragmentManager();
         //displayDiceRoll(dr);
         DiceDisplayFragment ddf = (DiceDisplayFragment)
         		fm.findFragmentById(R.id.dice_fragment_ui);
@@ -117,7 +121,7 @@ public class MainActivity extends FragmentActivity
         double stat = DiceRoll.calculateKSTestStatistic(m_game.getId());
         info += "\nKS statistic: " + Double.toString(stat);
         // Probability that these are different distributions.
-        info += "\nKS probability: " + Double.toString(DiceRoll.calculateKSProbability(m_game.getId()));
+        info += "\nKS probability: " + Double.toString(DiceRoll.calculateKSPValue(m_game.getId()));
         info += "\nCentral Limit Theorem probability: " + Double.toString(DiceRoll.calculateCentralLimitProbabilityPValue(m_game.getId()));
 
         info += "\n=====\n";
@@ -134,14 +138,14 @@ public class MainActivity extends FragmentActivity
     }
 
     public void undoDiceRoll(View view) {
-        DiceRoll dr = DiceRoll.getLastDiceRoll();
+        DiceRoll dr = DiceRoll.getLastDiceRoll(m_game.getId());
         dr.delete();
-        dr = DiceRoll.getLastDiceRoll();
-        displayDiceRoll(Player.getLastPlayer(), dr);
+        dr = DiceRoll.getLastDiceRoll(m_game.getId());
+        displayDiceRoll(Player.getLastPlayer(m_game.getId()), dr);
     }
 
     public void rollDice(View view) {
-        Player nextPlayer = Player.getNextPlayer(m_game);
+        Player nextPlayer = Player.getNextPlayer(m_game.getId());
         DiceRoll dr = new DiceRoll(nextPlayer);
         displayDiceRoll(nextPlayer, dr);
         /*
@@ -161,6 +165,9 @@ public class MainActivity extends FragmentActivity
     }
     
     public void onGameLogSelected(int position) {
+    }
+    
+    public void onKSDescriptionSelected(int position) {
     }
 }
 
