@@ -39,7 +39,7 @@
         android:layout_below="@id/dice_box" />
 
     <com.bigtheta.ragedice.HistogramView
-        android:id="@+id/snake"
+        android:id="@+id/histogram_view"
     	android:layout_width="fill_parent"
     	android:layout_height="fill_parent"
     	android:layout_below="@id/debug_info" />
