@@ -10,15 +10,14 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends FragmentActivity 
-		implements GameLogFragment.GameLogListener,
-				   DiceDisplayFragment.DiceDisplayListener,
-				   KSDescriptionFragment.KSDescriptionListener {
-					
-	
+public class MainActivity extends FragmentActivity
+        implements GameLogFragment.GameLogListener,
+                   DiceDisplayFragment.DiceDisplayListener,
+                   KSDescriptionFragment.KSDescriptionListener {
+
     private static SQLiteDatabase m_database;
     private MySQLiteHelper m_dbHelper;
-    private Game m_game;
+    private static Game m_game;
     private FragmentManager fm;
 
     public static SQLiteDatabase getDatabase() {
@@ -77,10 +76,11 @@ public class MainActivity extends FragmentActivity
         //FragmentManager fm = getSupportFragmentManager();
         //displayDiceRoll(dr);
         DiceDisplayFragment ddf = (DiceDisplayFragment)
-        		fm.findFragmentById(R.id.dice_fragment_ui);
+                fm.findFragmentById(R.id.dice_fragment_ui);
         GameLogFragment glf = (GameLogFragment) fm.findFragmentById(R.id.game_log_fragment);
         ddf.displayDiceRoll(dr);
         glf.displayInfo(nextPlayer, dr);
+        findViewById(R.id.histogram_view).invalidate();
         /*
         TextView tv = (TextView)findViewById(R.id.player_number);
         Player currentPlayer = Player.retrieve(dr.getPlayerId());
@@ -128,7 +128,7 @@ public class MainActivity extends FragmentActivity
         info += DieDescription.getKSDescription(m_game.getId());
         info += "\n=====\n";
         info += DieDescription.getCLTDescription(m_game.getId());
-        
+
         tv.setText(info);
     }
 
@@ -151,27 +151,32 @@ public class MainActivity extends FragmentActivity
         Player nextPlayer = Player.getNextPlayer(m_game.getId());
         DiceRoll dr = new DiceRoll(nextPlayer);
         displayDiceRoll(nextPlayer, dr);
+        //findViewById(R.id.)
         //displayInfo();
         /*
         FragmentManager fm = getSupportFragmentManager();
         //displayDiceRoll(dr);
         DiceDisplayFragment ddf = (DiceDisplayFragment)
-        		fm.findFragmentById(R.id.dice_fragment_ui);
+                fm.findFragmentById(R.id.dice_fragment_ui);
         GameLogFragment glf = (GameLogFragment) fm.findFragmentById(R.id.game_log_fragment);
         ddf.displayDiceRoll(dr);
         glf.displayInfo(nextPlayer, dr);
         //displayInfo();
-         * 
+         *
          */
     }
-    
+
     public void onDiceSelected(int position) {
     }
-    
+
     public void onGameLogSelected(int position) {
     }
-    
+
     public void onKSDescriptionSelected(int position) {
+    }
+    
+    public static Game getGame() {
+        return m_game;
     }
 }
 

@@ -1,5 +1,7 @@
 package com.bigtheta.ragedice;
 
+import java.util.HashMap;
+
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
 import org.achartengine.chart.BarChart;
@@ -12,47 +14,30 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 public class HistogramView extends View {
-    private final Paint m_paint = new Paint();
     private XYMultipleSeriesDataset m_dataset = new XYMultipleSeriesDataset();
     private XYMultipleSeriesRenderer m_renderer = new XYMultipleSeriesRenderer();
-    private BarChart m_histogram;
-    private XYSeries m_currentSeries;
-    private XYSeriesRenderer m_currentRenderer;
     private GraphicalView m_chartView;
 
     public HistogramView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        /*
-        m_renderer.setApplyBackgroundColor(true);
-        m_renderer.setBackgroundColor(Color.argb(100, 50, 50, 50));
-        m_renderer.setAxisTitleTextSize(16);
-        m_renderer.setChartTitleTextSize(20);
-        m_renderer.setLabelsTextSize(15);
-        m_renderer.setLegendTextSize(15);
-        m_renderer.setMargins(new int[] { 20, 30, 15, 0 });
-        m_renderer.setZoomButtonsVisible(true);
-        m_renderer.setPointSize(10);
-        */
-        double[] minValues = new double[] { -24, -19, -10, -1, 7, 12, 15, 14, 9, 1, -11, -16 };
-        double[] maxValues = new double[] { 7, 12, 24, 28, 33, 35, 37, 36, 28, 19, 11, 4 };
-        
         m_dataset = new XYMultipleSeriesDataset();
         m_renderer = new XYMultipleSeriesRenderer();
         XYSeriesRenderer renderer = new XYSeriesRenderer();
-        m_currentRenderer = renderer;
+        renderer.setColor(getResources().getColor(R.color.histogram_bar));
         m_renderer.addSeriesRenderer(renderer);
-
-        XYSeries series = new XYSeries("Rolls");
-        int length = minValues.length;
-        for (int k = 0; k < length; k++) {
-          series.add(minValues[k], maxValues[k]);
-        }
-        m_dataset.addSeries(series);
+        m_renderer.setBarSpacing(0.1);
+        m_renderer.setYAxisMin(0.0);
+        m_renderer.setBackgroundColor(getResources().getColor(R.color.histogram_background));
+        m_renderer.setApplyBackgroundColor(true);
+        m_renderer.setLabelsTextSize(20);
+        m_renderer.setXLabelsColor(getResources().getColor(R.color.histogram_labels));
+        m_renderer.setYLabelsColor(0, getResources().getColor(R.color.histogram_labels));
+        m_renderer.setYLabelsAlign(Paint.Align.RIGHT);
+        updateDataset();
         m_chartView = ChartFactory.getBarChartView(context, m_dataset, m_renderer, BarChart.Type.DEFAULT);
     }
 
@@ -60,9 +45,43 @@ public class HistogramView extends View {
         super(context, attrs, defStyle);
     }
     
+    private void updateDataset() {
+        XYSeries series = new XYSeries("Rolls");
+        for (int i = 0; i < m_dataset.getSeriesCount(); i++) {
+            m_dataset.removeSeries(0);         
+        }
+        
+        Game game = MainActivity.getGame();
+        if (game != null) {
+            HashMap<Integer, Double> pmf = DieDescription.getPMF(game.getId());
+            HashMap<Integer, Integer> observedRolls = DiceRoll.getObservedRolls(game.getId());
+            Integer min = null;
+            Integer max = null;
+            for (Integer key : pmf.keySet()) {
+                Integer val = observedRolls.get(key);
+                if (val == null) {
+                    series.add((double)key, 0.0);
+                } else {
+                    series.add((double)key, (double)val);
+                }
+                if (min == null || key < min) {
+                    min = key;
+                }
+                if (max == null || key > max) {
+                    max = key;
+                }
+            }
+            m_renderer.setXLabels(pmf.size());
+            m_renderer.setXAxisMin((double)min - 0.5);
+            m_renderer.setXAxisMax((double)max + 0.5);
+        }
+        m_dataset.addSeries(series);
+    }
+    
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        updateDataset();
         m_chartView.draw(canvas);
     }
 }
