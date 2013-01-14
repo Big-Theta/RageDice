@@ -38,7 +38,11 @@ public class DieResult {
 
     private DieResult(long id) {
         m_id = id;
-        Cursor cursor = getCursor();
+        Cursor cursor = MainActivity.getDatabase().query(
+                MySQLiteHelper.TABLE_DIE_RESULT,
+                tableDieResultColumns, MySQLiteHelper.COLUMN_ID + " = " + m_id,
+                null, null, null, null);
+        cursor.moveToFirst();        
         m_diceRollId = cursor.getLong(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_DICE_ROLL_ID));
         m_dieDescriptionId = cursor.getLong(
@@ -104,15 +108,6 @@ public class DieResult {
         }
         cursor.close();
         return ret;
-    }
-
-    private Cursor getCursor() {
-        Cursor cursor = MainActivity.getDatabase().query(
-                MySQLiteHelper.TABLE_DIE_RESULT,
-                tableDieResultColumns, MySQLiteHelper.COLUMN_ID + " = " + m_id,
-                null, null, null, null);
-        cursor.moveToFirst();
-        return cursor;
     }
 }
 
