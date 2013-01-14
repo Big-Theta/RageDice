@@ -25,7 +25,12 @@ public class Game {
 
     private Game(long id) {
         m_id = id;
-        Cursor cursor = getCursor();
+        Cursor cursor = MainActivity.getDatabase().query(
+                MySQLiteHelper.TABLE_GAME,
+                tableGameColumns,
+                MySQLiteHelper.COLUMN_ID + " = " + Long.toString(m_id),
+                null, null, null, null);
+        cursor.moveToFirst();    
         m_randomNumber = cursor.getInt(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_RANDOM_NUMBER));
         cursor.moveToFirst();
@@ -42,17 +47,6 @@ public class Game {
 
     public int getRandomNumber() {
         return m_randomNumber;
-    }
-
-
-    private Cursor getCursor() {
-        Cursor cursor = MainActivity.getDatabase().query(
-                MySQLiteHelper.TABLE_GAME,
-                tableGameColumns,
-                MySQLiteHelper.COLUMN_ID + " = " + Long.toString(m_id),
-                null, null, null, null);
-        cursor.moveToFirst();
-        return cursor;
     }
 }
 

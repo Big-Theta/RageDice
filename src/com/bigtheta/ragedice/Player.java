@@ -39,7 +39,8 @@ public class Player {
         Cursor cursor = MainActivity.getDatabase().query(
                 MySQLiteHelper.TABLE_PLAYER,
                 tablePlayerColumns,
-                null, null, null, null, null);
+                MySQLiteHelper.COLUMN_ID + " = " + Long.toString(id),
+                null, null, null, null);
         cursor.moveToFirst();
         m_gameId = cursor.getLong(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_GAME_ID));
@@ -96,7 +97,9 @@ public class Player {
                         MySQLiteHelper.COLUMN_GAME_ID + " = " + Long.toString(gameId),
                         null, null, null, null);
                 cursor.moveToLast();
-                return new Player(cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.COLUMN_ID)));
+                Player ret = new Player(cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.COLUMN_ID)));
+                cursor.close();
+                return ret;
             }
         }
         return null;

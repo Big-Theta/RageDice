@@ -40,6 +40,7 @@ public class MainActivity extends FragmentActivity
         new Player(m_game, 2, "player two");
         new Player(m_game, 3, "player awesome (three)");
         new Player(m_game, 4, "player better than awesome (four)");
+        Player.getPlayers(m_game.getId());
 
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
                            getResources().getColor(R.color.yellow_die),

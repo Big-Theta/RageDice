@@ -49,7 +49,11 @@ public class DiceRoll {
 
     private DiceRoll(long id) {
         m_id = id;
-        Cursor cursor = getCursor();
+        Cursor cursor = MainActivity.getDatabase().query(
+                MySQLiteHelper.TABLE_DICE_ROLL,
+                tableDiceRollColumns, MySQLiteHelper.COLUMN_ID + " = " + id,
+                null, null, null, null);
+        cursor.moveToFirst();
         m_playerId = cursor.getLong(cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_PLAYER_ID));
         cursor.close();
     }
@@ -259,15 +263,6 @@ public class DiceRoll {
         }
         cursor.close();
         return retval;
-    }
-
-    private Cursor getCursor() {
-        Cursor cursor = MainActivity.getDatabase().query(
-                MySQLiteHelper.TABLE_DICE_ROLL,
-                tableDiceRollColumns, MySQLiteHelper.COLUMN_ID + " = " + m_id,
-                null, null, null, null);
-        cursor.moveToFirst();
-        return cursor;
     }
 }
 

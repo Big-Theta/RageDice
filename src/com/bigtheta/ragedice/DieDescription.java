@@ -65,7 +65,12 @@ public class DieDescription {
 
     private DieDescription(long id) {
         m_id = id;
-        Cursor cursor = getCursor();
+        Cursor cursor = MainActivity.getDatabase().query(
+                MySQLiteHelper.TABLE_DIE_DESCRIPTION,
+                tableDieDescriptionColumns,
+                MySQLiteHelper.COLUMN_ID + " = " + id,
+                null, null, null, null);
+        cursor.moveToFirst();        
         m_gameId = cursor.getLong(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_GAME_ID));
         m_numLowFace = cursor.getInt(
@@ -253,16 +258,6 @@ public class DieDescription {
         Recursor recursor = new Recursor();
         recursor.recurse(descriptions, 0);
         return ret;
-    }
-
-    private Cursor getCursor() {
-        Cursor cursor = MainActivity.getDatabase().query(
-                MySQLiteHelper.TABLE_DIE_DESCRIPTION,
-                tableDieDescriptionColumns,
-                MySQLiteHelper.COLUMN_ID + " = " + m_id,
-                null, null, null, null);
-        cursor.moveToFirst();
-        return cursor;
     }
 }
 
