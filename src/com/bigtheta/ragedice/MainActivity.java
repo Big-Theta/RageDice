@@ -38,8 +38,8 @@ public class MainActivity extends FragmentActivity
 
         new Player(m_game, 1, "player one");
         new Player(m_game, 2, "player two");
-        new Player(m_game, 3, "player awesome (three)");
-        new Player(m_game, 4, "player better than awesome (four)");
+        new Player(m_game, 3, "player three");
+        new Player(m_game, 4, "player four");
         Player.getPlayers(m_game.getId());
 
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
@@ -81,7 +81,8 @@ public class MainActivity extends FragmentActivity
         GameLogFragment glf = (GameLogFragment) fm.findFragmentById(R.id.game_log_fragment);
         ddf.displayDiceRoll(dr);
         glf.displayInfo(nextPlayer, dr);
-        findViewById(R.id.histogram_view).invalidate();
+        findViewById(R.id.histogram_rolls_view).invalidate();
+        findViewById(R.id.histogram_player_time_view).invalidate();
         /*
         TextView tv = (TextView)findViewById(R.id.player_number);
         Player currentPlayer = Player.retrieve(dr.getPlayerId());
@@ -152,7 +153,6 @@ public class MainActivity extends FragmentActivity
         Player nextPlayer = Player.getNextPlayer(m_game.getId());
         DiceRoll dr = new DiceRoll(nextPlayer);
         displayDiceRoll(nextPlayer, dr);
-        DiceRoll.getAverageTimes(m_game.getId());
         //findViewById(R.id.)
         //displayInfo();
         /*
