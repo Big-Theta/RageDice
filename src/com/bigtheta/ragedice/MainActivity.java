@@ -152,6 +152,7 @@ public class MainActivity extends FragmentActivity
         Player nextPlayer = Player.getNextPlayer(m_game.getId());
         DiceRoll dr = new DiceRoll(nextPlayer);
         displayDiceRoll(nextPlayer, dr);
+        DiceRoll.getAverageTimes(m_game.getId());
         //findViewById(R.id.)
         //displayInfo();
         /*

@@ -1,6 +1,8 @@
 package com.bigtheta.ragedice;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import org.apache.commons.math3.distribution.KolmogorovSmirnovDistribution;
@@ -15,20 +17,24 @@ import android.util.Log;
 public class DiceRoll {
     private static String[] tableDiceRollColumns = {
         MySQLiteHelper.COLUMN_ID,
-        MySQLiteHelper.COLUMN_PLAYER_ID
+        MySQLiteHelper.COLUMN_PLAYER_ID,
+        MySQLiteHelper.COLUMN_TIME_CREATED
     };
 
     long m_id;
     long m_playerId;
+    Timestamp m_timeCreated;
 
     // This opens an oportunity to break... if the database is cleared, this won't be.
     private static HashMap<Long, HashMap<Integer, Integer> > cacheGetObservedRolls = null;
 
     public DiceRoll(Player player) {
         m_playerId = player.getId();
-
+        Calendar calendar = Calendar.getInstance();
+        m_timeCreated = new Timestamp(calendar.getTime().getTime());
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_PLAYER_ID, m_playerId);
+        values.put(MySQLiteHelper.COLUMN_TIME_CREATED, m_timeCreated.toString());
         m_id = MainActivity.getDatabase().insert(MySQLiteHelper.TABLE_DICE_ROLL, null, values);
 
         for (DieDescription dd : DieDescription.retrieveAll(Player.retrieve(m_playerId).getGameId())) {
@@ -55,6 +61,8 @@ public class DiceRoll {
                 null, null, null, null);
         cursor.moveToFirst();
         m_playerId = cursor.getLong(cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_PLAYER_ID));
+        m_timeCreated = Timestamp.valueOf(cursor.getString(
+                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_TIME_CREATED)));
         cursor.close();
     }
 
@@ -117,6 +125,94 @@ public class DiceRoll {
 
     public long getPlayerId() {
         return m_playerId;
+    }
+
+    public Timestamp getTimeCreated() {
+        return m_timeCreated;
+    }
+
+    public static HashMap<Long, Long> getAverageTimes(long gameId) {
+        HashMap<Long, Long> times = new HashMap<Long, Long>();
+        HashMap<Long, Long> moves = new HashMap<Long, Long>();
+        DiceRoll current = getFirstDiceRoll(gameId);
+        DiceRoll next = getNextDiceRoll(current);
+
+        long delta = 0;
+        while (next != null) {
+            long key = current.getPlayerId();
+            delta = next.getTimeCreated().getTime() - current.getTimeCreated().getTime();
+            if (times.containsKey(key)) {
+                times.put(key, times.get(key) + delta);
+                moves.put(key, moves.get(key) + 1);
+            } else {
+                times.put(key, delta);
+                moves.put(key, 1L);
+            }
+            current = next;
+            next = getNextDiceRoll(current);
+        }
+
+        for (Long playerId : times.keySet()) {
+            times.put(playerId, times.get(playerId) / moves.get(playerId));
+            Log.e("Average for " + Long.toString(playerId), Long.toString(times.get(playerId)));
+        }
+
+        return times;
+    }
+
+    public static DiceRoll getFirstDiceRoll(long gameId) {
+        DiceRoll ret;
+        if (!isEmpty()) {
+            String query_str = "SELECT MIN(" + MySQLiteHelper.COLUMN_ID + ") "
+                             + "AS _id FROM " + MySQLiteHelper.TABLE_DICE_ROLL;
+            try {
+                Cursor cursor = MainActivity.getDatabase().rawQuery(query_str, null);
+                cursor.moveToFirst();
+                ret = DiceRoll.retrieve(cursor.getLong(0));
+                cursor.close();
+            } catch (SQLiteException err) {
+                return null;
+            }
+        } else {
+            ret = null;
+        }
+        return ret;
+    }
+
+    public static DiceRoll getNextDiceRoll(DiceRoll dr) {
+        DiceRoll ret;
+        if (!isEmpty()) {
+            Cursor cursor = MainActivity.getDatabase().query(
+                    MySQLiteHelper.TABLE_DICE_ROLL,
+                    tableDiceRollColumns, MySQLiteHelper.COLUMN_ID + " > " +
+                            Long.toString(dr.getId()),
+                    null, null, null, null);
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
+                ret = DiceRoll.retrieve(cursor.getLong(0));
+            } else {
+                ret = null;
+            }
+            cursor.close();
+        } else {
+            ret = null;
+        }
+        return ret;
+    }
+
+    public static ArrayList<DiceRoll> getDiceRolls(long gameId) {
+        Cursor cursor = MainActivity.getDatabase().query(
+                MySQLiteHelper.TABLE_DICE_ROLL,
+                new String[] {MySQLiteHelper.COLUMN_ID},
+                null, null, null, null, null);
+        cursor.moveToFirst();
+        ArrayList<DiceRoll> rolls = new ArrayList<DiceRoll>();
+        while (!cursor.isAfterLast()) {
+            rolls.add(new DiceRoll(cursor.getLong(0)));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return rolls;
     }
 
     public static int getNumDiceRolls() {
