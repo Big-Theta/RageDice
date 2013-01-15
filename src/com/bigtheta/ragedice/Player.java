@@ -85,6 +85,10 @@ public class Player {
         return m_playerName;
     }
 
+    public void setTime() {
+        
+    }
+    
     public static Player getLastPlayer(long gameId) {
         if (!isEmpty(gameId)) {
             DiceRoll lastRoll = DiceRoll.getLastDiceRoll(gameId);
