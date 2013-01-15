@@ -6,8 +6,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-    <com.bigtheta.ragedice.HistogramView
-        android:id="@+id/histogram_view"
+    <com.bigtheta.ragedice.HistogramRollsView
+        android:id="@+id/histogram_rolls_view"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+    
+    <com.bigtheta.ragedice.HistogramPlayerTimeView
+        android:id="@+id/histogram_player_time_view"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />

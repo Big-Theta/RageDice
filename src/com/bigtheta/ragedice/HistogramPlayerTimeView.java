@@ -1,5 +1,7 @@
 package com.bigtheta.ragedice;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.achartengine.ChartFactory;
@@ -14,14 +16,15 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
-public class HistogramView extends View {
+public class HistogramPlayerTimeView extends View {
     private XYMultipleSeriesDataset m_dataset = new XYMultipleSeriesDataset();
     private XYMultipleSeriesRenderer m_renderer = new XYMultipleSeriesRenderer();
     private GraphicalView m_chartView;
 
-    public HistogramView(Context context, AttributeSet attrs) {
+    public HistogramPlayerTimeView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         m_dataset = new XYMultipleSeriesDataset();
@@ -41,39 +44,46 @@ public class HistogramView extends View {
         m_chartView = ChartFactory.getBarChartView(context, m_dataset, m_renderer, BarChart.Type.DEFAULT);
     }
 
-    public HistogramView(Context context, AttributeSet attrs, int defStyle) {
+    public HistogramPlayerTimeView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
     
     private void updateDataset() {
-        XYSeries series = new XYSeries("Rolls");
+        XYSeries series = new XYSeries("Average time");
         for (int i = 0; i < m_dataset.getSeriesCount(); i++) {
             m_dataset.removeSeries(0);         
         }
-        
+
         Game game = MainActivity.getGame();
         if (game != null) {
-            HashMap<Integer, Double> pmf = DieDescription.getPMF(game.getId());
-            HashMap<Integer, Integer> observedRolls = DiceRoll.getObservedRolls(game.getId());
-            Integer min = null;
-            Integer max = null;
-            for (Integer key : pmf.keySet()) {
-                Integer val = observedRolls.get(key);
-                if (val == null) {
-                    series.add((double)key, 0.0);
+            HashMap<Long, Long> times = DiceRoll.getAverageTimes(game.getId());
+            m_renderer.setXLabels(0);
+            double space = 1.0;
+            Long min = null;
+            Long max = null;
+            ArrayList<Long> playerIds = new ArrayList<Long>(times.keySet());
+            Collections.sort(playerIds);
+            for (Long playerId : playerIds) {
+                Long milis = times.get(playerId);
+                if (milis == null) {
+                    series.add((double)playerId, 0.0);
                 } else {
-                    series.add((double)key, (double)val);
+                    series.add((double)playerId, (double)(milis));  // / 1000));
                 }
-                if (min == null || key < min) {
-                    min = key;
+                if (min == null || playerId < min) {
+                    min = playerId;
                 }
-                if (max == null || key > max) {
-                    max = key;
+                if (max == null || playerId > max) {
+                    max = playerId;
                 }
+                m_renderer.addXTextLabel(space, Player.retrieve(playerId).getPlayerName());
+                Log.e("label", Player.retrieve(playerId).getPlayerName());
+                space += 1.0;
             }
-            m_renderer.setXLabels(pmf.size());
-            m_renderer.setXAxisMin((double)min - 0.5);
-            m_renderer.setXAxisMax((double)max + 0.5);
+            if (min != null && max != null) {
+                m_renderer.setXAxisMin(min - 0.5);
+                m_renderer.setXAxisMax(max + 0.5);
+            }
         }
         m_dataset.addSeries(series);
     }
