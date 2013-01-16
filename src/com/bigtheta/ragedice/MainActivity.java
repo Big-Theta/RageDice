@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -49,6 +50,9 @@ public class MainActivity extends FragmentActivity
                            getResources().getColor(R.color.red_die),
                            R.id.red_die, true);
         fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.add(R.id.lower_ui_container, new GameLogFragment(), "glf");
+        ft.commit();
 
         //View mainView = (View)findViewById(R.id.activity_main_alt_view);
         //mainView.setBackgroundColor(getResources().getColor(R.color.background));
@@ -78,9 +82,15 @@ public class MainActivity extends FragmentActivity
         //displayDiceRoll(dr);
         DiceDisplayFragment ddf = (DiceDisplayFragment)
         		fm.findFragmentById(R.id.dice_fragment_ui);
-        GameLogFragment glf = (GameLogFragment) fm.findFragmentById(R.id.game_log_fragment);
+        GameLogFragment glf = (GameLogFragment) fm.findFragmentByTag("glf");
         ddf.displayDiceRoll(dr);
-        glf.displayInfo(nextPlayer, dr);
+        if (glf != null && glf.isVisible()) {
+            
+            glf.displayInfo(nextPlayer, dr);
+        } else {
+            displayInfo();
+        }
+        
         /*
         TextView tv = (TextView)findViewById(R.id.player_number);
         Player currentPlayer = Player.retrieve(dr.getPlayerId());
@@ -160,6 +170,12 @@ public class MainActivity extends FragmentActivity
         //displayInfo();
          * 
          */
+    }
+    
+    public void nextFragment(View view) {
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
+        ft.commit();
     }
     
     public void onDiceSelected(int position) {
