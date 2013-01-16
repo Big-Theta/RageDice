@@ -25,19 +25,43 @@ public class DiceRoll {
     long m_playerId;
     Timestamp m_timeCreated;
 
-    // This opens an oportunity to break... if the database is cleared, this won't be.
     private static HashMap<Long, HashMap<Integer, Integer> > cacheGetObservedRolls = null;
+    private static HashMap<Long, HashMap<Long, Long> > cacheGetTotalTimes = null;
+    private static HashMap<Long, HashMap<Long, Long> > cacheGetRollsPerPlayer = null;
 
     public DiceRoll(Player player) {
         m_playerId = player.getId();
         Calendar calendar = Calendar.getInstance();
+
         m_timeCreated = new Timestamp(calendar.getTime().getTime());
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_PLAYER_ID, m_playerId);
         values.put(MySQLiteHelper.COLUMN_TIME_CREATED, m_timeCreated.toString());
-        m_id = MainActivity.getDatabase().insert(MySQLiteHelper.TABLE_DICE_ROLL, null, values);
+        DiceRoll lastRoll = getLastDiceRoll(player.getGameId());
+        m_id = MainActivity.getDatabase().insert(MySQLiteHelper.TABLE_DICE_ROLL,
+                                                 null, values);
 
-        for (DieDescription dd : DieDescription.retrieveAll(Player.retrieve(m_playerId).getGameId())) {
+        if (lastRoll != null &&
+            cacheGetTotalTimes != null &&
+            cacheGetTotalTimes.containsKey(player.getGameId()) &&
+            cacheGetTotalTimes.get(player.getGameId()).containsKey(lastRoll.getPlayerId())) {
+
+            Log.e("updateing...", "...");
+            HashMap<Long, Long> updateTimes = cacheGetTotalTimes.get(player.getGameId());
+            updateTimes.put(lastRoll.getPlayerId(),
+                            updateTimes.get(lastRoll.getPlayerId()) +
+                                    m_timeCreated.getTime() -
+                                    lastRoll.getTimeCreated().getTime());
+            HashMap<Long, Long> updateRollCount = cacheGetRollsPerPlayer.get(
+                                                                        player.getGameId());
+            updateRollCount.put(lastRoll.getPlayerId(),
+                                updateRollCount.get(lastRoll.getPlayerId()) + 1);
+        } else {
+            initializeCachesForAverageTimes(player.getGameId());
+        }
+
+        for (DieDescription dd : DieDescription.retrieveAll(
+                                                Player.retrieve(m_playerId).getGameId())) {
             new DieResult(this, dd);
         }
 
@@ -60,7 +84,8 @@ public class DiceRoll {
                 tableDiceRollColumns, MySQLiteHelper.COLUMN_ID + " = " + id,
                 null, null, null, null);
         cursor.moveToFirst();
-        m_playerId = cursor.getLong(cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_PLAYER_ID));
+        m_playerId = cursor.getLong(
+                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_PLAYER_ID));
         m_timeCreated = Timestamp.valueOf(cursor.getString(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_TIME_CREATED)));
         cursor.close();
@@ -79,15 +104,15 @@ public class DiceRoll {
     }
 
     public void delete() {
+        cacheGetObservedRolls.remove(Player.retrieve(m_playerId).getGameId());
+        cacheGetTotalTimes.remove(Player.retrieve(m_playerId).getGameId());
+        cacheGetRollsPerPlayer.remove(Player.retrieve(m_playerId).getGameId());
+
         long key = Player.retrieve(m_playerId).getGameId();
         if (cacheGetObservedRolls != null && cacheGetObservedRolls.containsKey(key)) {
             int result = getTotalResult();
             HashMap<Integer, Integer> toUpdate = cacheGetObservedRolls.get(key);
-            Log.i("removing... result", Integer.toString(result));
-            Log.i("removing... old observations", Integer.toString(toUpdate.get(result)));
             toUpdate.put(result, toUpdate.get(result) - 1);
-        } else {
-            Log.i("didn't contain key.", "...");
         }
 
         MainActivity.getDatabase().delete(
@@ -95,8 +120,11 @@ public class DiceRoll {
                 MySQLiteHelper.COLUMN_ID + " = " + m_id, null);
     }
 
-    public static void clear() {
-        cacheGetObservedRolls = null;
+    public static void clear(long gameId) {
+        cacheGetObservedRolls.remove(gameId);
+        cacheGetTotalTimes.remove(gameId);
+        cacheGetRollsPerPlayer.remove(gameId);
+
         MainActivity.getDatabase().delete(MySQLiteHelper.TABLE_DICE_ROLL, null, null);
     }
 
@@ -132,8 +160,24 @@ public class DiceRoll {
     }
 
     public static HashMap<Long, Long> getAverageTimes(long gameId) {
+        HashMap<Long, Long> times = getTotalTimes(gameId);
+        HashMap<Long, Long> moves = getRollsPerPlayer(gameId);
+        HashMap<Long, Long> ret = new HashMap<Long, Long>();
+        for (Long playerId : times.keySet()) {
+            ret.put(playerId, times.get(playerId) / moves.get(playerId));
+        }
+        return ret;
+    }
+
+    private static void initializeCachesForAverageTimes(long gameId) {
+        if (cacheGetTotalTimes == null) {
+            cacheGetTotalTimes = new HashMap<Long, HashMap<Long, Long> >();
+            cacheGetRollsPerPlayer = new HashMap<Long, HashMap<Long, Long> >();
+        }
+
         HashMap<Long, Long> times = new HashMap<Long, Long>();
         HashMap<Long, Long> moves = new HashMap<Long, Long>();
+
         DiceRoll current = getFirstDiceRoll(gameId);
         DiceRoll next = getNextDiceRoll(current);
 
@@ -152,12 +196,29 @@ public class DiceRoll {
             next = getNextDiceRoll(current);
         }
 
-        for (Long playerId : times.keySet()) {
-            times.put(playerId, times.get(playerId) / moves.get(playerId));
-            Log.e("Average for " + Long.toString(playerId), Long.toString(times.get(playerId)));
+        if (cacheGetTotalTimes == null) {
+            cacheGetTotalTimes = new HashMap<Long, HashMap<Long, Long> >();
         }
 
-        return times;
+        if (cacheGetRollsPerPlayer == null) {
+            cacheGetRollsPerPlayer = new HashMap<Long, HashMap<Long, Long> >();
+        }
+        cacheGetTotalTimes.put(gameId, times);
+        cacheGetRollsPerPlayer.put(gameId, moves);
+    }
+
+    private static HashMap<Long, Long> getTotalTimes(long gameId) {
+        if (cacheGetTotalTimes == null) {
+            initializeCachesForAverageTimes(gameId);
+        }
+        return cacheGetTotalTimes.get(gameId);
+    }
+
+    private static HashMap<Long, Long> getRollsPerPlayer(long gameId) {
+        if (cacheGetTotalTimes == null) {
+            initializeCachesForAverageTimes(gameId);
+        }
+        return cacheGetRollsPerPlayer.get(gameId);
     }
 
     public static DiceRoll getFirstDiceRoll(long gameId) {

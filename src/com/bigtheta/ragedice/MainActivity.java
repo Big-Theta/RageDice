@@ -135,7 +135,7 @@ public class MainActivity extends FragmentActivity
     }
 
     public void resetDiceRolls(View view) {
-        DiceRoll.clear();
+        DiceRoll.clear(m_game.getId());
         displayInfo();
     }
 

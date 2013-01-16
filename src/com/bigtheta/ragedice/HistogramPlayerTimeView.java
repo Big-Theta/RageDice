@@ -68,7 +68,7 @@ public class HistogramPlayerTimeView extends View {
                 if (milis == null) {
                     series.add((double)playerId, 0.0);
                 } else {
-                    series.add((double)playerId, (double)(milis));  // / 1000));
+                    series.add((double)playerId, (double)(milis / 1000));
                 }
                 if (min == null || playerId < min) {
                     min = playerId;
