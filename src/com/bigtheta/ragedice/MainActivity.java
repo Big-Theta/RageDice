@@ -6,15 +6,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends FragmentActivity
-        implements GameLogFragment.GameLogListener,
-                   DiceDisplayFragment.DiceDisplayListener,
-                   KSDescriptionFragment.KSDescriptionListener {
-
+public class MainActivity extends FragmentActivity 
+		implements GameLogFragment.GameLogListener,
+				   DiceDisplayFragment.DiceDisplayListener,
+				   KSDescriptionFragment.KSDescriptionListener {
+					
+	
     private static SQLiteDatabase m_database;
     private MySQLiteHelper m_dbHelper;
     private static Game m_game;
@@ -40,7 +42,6 @@ public class MainActivity extends FragmentActivity
         new Player(m_game, 2, "player two");
         new Player(m_game, 3, "player three");
         new Player(m_game, 4, "player four");
-        Player.getPlayers(m_game.getId());
 
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
                            getResources().getColor(R.color.yellow_die),
@@ -49,6 +50,9 @@ public class MainActivity extends FragmentActivity
                            getResources().getColor(R.color.red_die),
                            R.id.red_die, true);
         fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.add(R.id.lower_ui_container, new GameLogFragment(), "glf");
+        ft.commit();
 
         //View mainView = (View)findViewById(R.id.activity_main_alt_view);
         //mainView.setBackgroundColor(getResources().getColor(R.color.background));
@@ -77,12 +81,19 @@ public class MainActivity extends FragmentActivity
         //FragmentManager fm = getSupportFragmentManager();
         //displayDiceRoll(dr);
         DiceDisplayFragment ddf = (DiceDisplayFragment)
-                fm.findFragmentById(R.id.dice_fragment_ui);
-        GameLogFragment glf = (GameLogFragment) fm.findFragmentById(R.id.game_log_fragment);
+        		fm.findFragmentById(R.id.dice_fragment_ui);
+        GameLogFragment glf = (GameLogFragment) fm.findFragmentByTag("glf");
         ddf.displayDiceRoll(dr);
-        glf.displayInfo(nextPlayer, dr);
-        findViewById(R.id.histogram_rolls_view).invalidate();
-        findViewById(R.id.histogram_player_time_view).invalidate();
+        if (glf != null && glf.isVisible()) {
+            
+            glf.displayInfo(nextPlayer, dr);
+        } else {
+            displayInfo();
+        }
+        
+        // TODO These views need to exist somewhere.
+        //findViewById(R.id.histogram_rolls_view).invalidate();
+        //findViewById(R.id.histogram_player_time_view).invalidate();
         /*
         TextView tv = (TextView)findViewById(R.id.player_number);
         Player currentPlayer = Player.retrieve(dr.getPlayerId());
@@ -130,7 +141,6 @@ public class MainActivity extends FragmentActivity
         info += DieDescription.getKSDescription(m_game.getId());
         info += "\n=====\n";
         info += DieDescription.getCLTDescription(m_game.getId());
-
         tv.setText(info);
     }
 
@@ -153,30 +163,34 @@ public class MainActivity extends FragmentActivity
         Player nextPlayer = Player.getNextPlayer(m_game.getId());
         DiceRoll dr = new DiceRoll(nextPlayer);
         displayDiceRoll(nextPlayer, dr);
-        //findViewById(R.id.)
         //displayInfo();
         /*
         FragmentManager fm = getSupportFragmentManager();
         //displayDiceRoll(dr);
         DiceDisplayFragment ddf = (DiceDisplayFragment)
-                fm.findFragmentById(R.id.dice_fragment_ui);
+        		fm.findFragmentById(R.id.dice_fragment_ui);
         GameLogFragment glf = (GameLogFragment) fm.findFragmentById(R.id.game_log_fragment);
         ddf.displayDiceRoll(dr);
         glf.displayInfo(nextPlayer, dr);
         //displayInfo();
-         *
+         * 
          */
     }
-
+    
+    public void nextFragment(View view) {
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
+        ft.commit();
+    }
+    
     public void onDiceSelected(int position) {
     }
-
     public void onGameLogSelected(int position) {
     }
 
     public void onKSDescriptionSelected(int position) {
     }
-    
+
     public static Game getGame() {
         return m_game;
     }
