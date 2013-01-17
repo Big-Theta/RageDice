@@ -45,8 +45,6 @@ public class DiceRoll {
             cacheGetTotalTimes != null &&
             cacheGetTotalTimes.containsKey(player.getGameId()) &&
             cacheGetTotalTimes.get(player.getGameId()).containsKey(lastRoll.getPlayerId())) {
-
-            Log.e("updateing...", "...");
             HashMap<Long, Long> updateTimes = cacheGetTotalTimes.get(player.getGameId());
             updateTimes.put(lastRoll.getPlayerId(),
                             updateTimes.get(lastRoll.getPlayerId()) +
@@ -104,11 +102,18 @@ public class DiceRoll {
     }
 
     public void delete() {
-        cacheGetObservedRolls.remove(Player.retrieve(m_playerId).getGameId());
-        cacheGetTotalTimes.remove(Player.retrieve(m_playerId).getGameId());
-        cacheGetRollsPerPlayer.remove(Player.retrieve(m_playerId).getGameId());
-
         long key = Player.retrieve(m_playerId).getGameId();
+
+        if (cacheGetObservedRolls != null && cacheGetObservedRolls.containsKey(key)) {
+            cacheGetObservedRolls.remove(Player.retrieve(m_playerId).getGameId());
+        }
+        if (cacheGetTotalTimes != null && cacheGetTotalTimes.containsKey(key)) {
+            cacheGetTotalTimes.remove(Player.retrieve(m_playerId).getGameId());
+        }
+        if (cacheGetTotalTimes != null && cacheGetRollsPerPlayer.containsKey(key)) {
+            cacheGetRollsPerPlayer.remove(Player.retrieve(m_playerId).getGameId());
+        }
+
         if (cacheGetObservedRolls != null && cacheGetObservedRolls.containsKey(key)) {
             int result = getTotalResult();
             HashMap<Integer, Integer> toUpdate = cacheGetObservedRolls.get(key);
