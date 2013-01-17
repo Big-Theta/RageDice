@@ -53,7 +53,7 @@ public class MainActivity extends FragmentActivity
         FragmentTransaction ft = fm.beginTransaction();
         ft.add(R.id.lower_ui_container, new GameLogFragment(), "glf");
         ft.commit();
-
+        
         //View mainView = (View)findViewById(R.id.activity_main_alt_view);
         //mainView.setBackgroundColor(getResources().getColor(R.color.background));
     }
