@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -53,9 +54,6 @@ public class MainActivity extends FragmentActivity
         FragmentTransaction ft = fm.beginTransaction();
         ft.add(R.id.lower_ui_container, new GameLogFragment(), "glf");
         ft.commit();
-
-        //View mainView = (View)findViewById(R.id.activity_main_alt_view);
-        //mainView.setBackgroundColor(getResources().getColor(R.color.background));
     }
 
     @Override
@@ -105,7 +103,18 @@ public class MainActivity extends FragmentActivity
     
     public void nextFragment(View view) {
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
+        if (fm.findFragmentByTag("glf") != null &&
+            fm.findFragmentByTag("glf").isVisible()) {
+            ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
+        }else if (fm.findFragmentByTag("ksdf") != null &&
+            fm.findFragmentByTag("ksdf").isVisible()) {
+            ft.replace(R.id.lower_ui_container, new GameLogFragment(), "glf");
+        }else if (fm.findFragmentByTag("hgf") != null &&
+            fm.findFragmentByTag("hgf").isVisible()) {
+            ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
+        }else {
+            throw new IllegalStateException("No fragment visible.");
+        }
         ft.commit();
     }
     

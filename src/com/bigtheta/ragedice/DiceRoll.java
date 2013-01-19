@@ -102,13 +102,19 @@ public class DiceRoll {
         }
         return result;
     }
-
     public void delete() {
-        cacheGetObservedRolls.remove(Player.retrieve(m_playerId).getGameId());
-        cacheGetTotalTimes.remove(Player.retrieve(m_playerId).getGameId());
-        cacheGetRollsPerPlayer.remove(Player.retrieve(m_playerId).getGameId());
-
         long key = Player.retrieve(m_playerId).getGameId();
+
+        if (cacheGetObservedRolls != null && cacheGetObservedRolls.containsKey(key)) {
+            cacheGetObservedRolls.remove(Player.retrieve(m_playerId).getGameId());
+        }
+        if (cacheGetTotalTimes != null && cacheGetTotalTimes.containsKey(key)) {
+            cacheGetTotalTimes.remove(Player.retrieve(m_playerId).getGameId());
+        }
+        if (cacheGetTotalTimes != null && cacheGetRollsPerPlayer.containsKey(key)) {
+            cacheGetRollsPerPlayer.remove(Player.retrieve(m_playerId).getGameId());
+        }
+
         if (cacheGetObservedRolls != null && cacheGetObservedRolls.containsKey(key)) {
             int result = getTotalResult();
             HashMap<Integer, Integer> toUpdate = cacheGetObservedRolls.get(key);
