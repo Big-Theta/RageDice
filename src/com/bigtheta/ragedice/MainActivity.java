@@ -76,77 +76,15 @@ public class MainActivity extends FragmentActivity
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
-
-    protected void displayDiceRoll(Player nextPlayer, DiceRoll dr) {
-        //FragmentManager fm = getSupportFragmentManager();
-        //displayDiceRoll(dr);
-        DiceDisplayFragment ddf = (DiceDisplayFragment)
-        		fm.findFragmentById(R.id.dice_fragment_ui);
-        GameLogFragment glf = (GameLogFragment) fm.findFragmentByTag("glf");
-        ddf.displayDiceRoll(dr);
-        if (glf != null && glf.isVisible()) {
-            
-            glf.displayInfo(nextPlayer, dr);
-        } else {
-            displayInfo();
-        }
-        
+       
         // TODO These views need to exist somewhere.
         //findViewById(R.id.histogram_rolls_view).invalidate();
         //findViewById(R.id.histogram_player_time_view).invalidate();
-        /*
-        TextView tv = (TextView)findViewById(R.id.player_number);
-        Player currentPlayer = Player.retrieve(dr.getPlayerId());
-        tv.setText(currentPlayer.getPlayerName());
-
-        Class<drawable> res = R.drawable.class;
-        for (DieResult result : DieResult.getDieResults(dr)) {
-            DieDescription dd = DieDescription.retrieve(result.getDieDescriptionId());
-            ImageView iv = (ImageView)findViewById(dd.getImageViewResource());
-            String description = dd.getBaseIdentifierName()
-                               + Integer.toString(result.getDieResult());
-            try {
-                Field field = res.getField(description);
-                iv.setImageResource(field.getInt(null));
-            } catch (Exception err){
-                Log.e("MainActivity::displayDiceRoll", err.getCause().getMessage());
-            }
-            iv.setBackgroundColor(dd.getBackgroundColor());
-        }
-        displayInfo();
-        */
-    }
-
-    protected void displayInfo() {
-        TextView tv = (TextView)findViewById(R.id.ksdescription_view);
-        String info = "";
-        info += "numDiceRolls: " + Integer.toString(DiceRoll.getNumDiceRolls());
-        HashMap<Integer, Double> pmf = DieDescription.getPMF(m_game.getId());
-        for (Integer observation : pmf.keySet()) {
-            info += "\nObservation: " + Integer.toString(observation)
-                  + " Probability: " + pmf.get(observation);
-        }
-        HashMap<Integer, Integer> dist = DiceRoll.getObservedRolls(m_game.getId());
-        for (Integer observation : dist.keySet()) {
-            info += "\nObservation: " + Integer.toString(observation)
-                  + " Count: " + dist.get(observation);
-        }
-        double stat = DiceRoll.calculateKSTestStatistic(m_game.getId());
-        info += "\nKS statistic: " + Double.toString(stat);
-        // Probability that these are different distributions.
-        info += "\nKS probability: " + Double.toString(DiceRoll.calculateKSPValue(m_game.getId()));
-        info += "\nCentral Limit Theorem probability: " + Double.toString(DiceRoll.calculateCentralLimitProbabilityPValue(m_game.getId()));
-
-        info += "\n=====\n";
-        info += DieDescription.getKSDescription(m_game.getId());
-        info += "\n=====\n";
-        info += DieDescription.getCLTDescription(m_game.getId());
-        tv.setText(info);
-    }
 
     public void resetDiceRolls(View view) {
         DiceRoll.clear(m_game.getId());
-        displayInfo();
+        //displayInfo();
+        refreshDisplay();
     }
 
     public void undoDiceRoll(View view) {
@@ -155,32 +93,39 @@ public class MainActivity extends FragmentActivity
             return;
         }
         dr.delete();
-        dr = DiceRoll.getLastDiceRoll(m_game.getId());
-        displayDiceRoll(Player.getLastPlayer(m_game.getId()), dr);
+        refreshDisplay();
     }
 
     public void rollDice(View view) {
         Player nextPlayer = Player.getNextPlayer(m_game.getId());
         DiceRoll dr = new DiceRoll(nextPlayer);
-        displayDiceRoll(nextPlayer, dr);
-        //displayInfo();
-        /*
-        FragmentManager fm = getSupportFragmentManager();
-        //displayDiceRoll(dr);
-        DiceDisplayFragment ddf = (DiceDisplayFragment)
-        		fm.findFragmentById(R.id.dice_fragment_ui);
-        GameLogFragment glf = (GameLogFragment) fm.findFragmentById(R.id.game_log_fragment);
-        ddf.displayDiceRoll(dr);
-        glf.displayInfo(nextPlayer, dr);
-        //displayInfo();
-         * 
-         */
+        //displayDiceRoll(nextPlayer, dr);
+        refreshDisplay();
     }
     
     public void nextFragment(View view) {
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
         ft.commit();
+    }
+    
+    public void refreshDisplay() {
+        DiceRoll dr = DiceRoll.getLastDiceRoll(m_game.getId());
+        Player nextPlayer = Player.getLastPlayer(m_game.getId());
+        DiceDisplayFragment ddf = (DiceDisplayFragment)
+        		fm.findFragmentById(R.id.dice_fragment_ui);
+        GameLogFragment glf = (GameLogFragment) fm.findFragmentByTag("glf");
+        KSDescriptionFragment ksdf = (KSDescriptionFragment) fm.findFragmentByTag("ksdf");
+        
+        if (ddf != null && ddf.isVisible()) {
+            ddf.displayDiceRoll(dr);
+        }
+        if (glf != null && glf.isVisible()) {
+            
+            glf.displayInfo(nextPlayer, dr);
+        } else if (ksdf != null && ksdf.isVisible()) {
+            ksdf.displayInfo(m_game.getId());
+        }
     }
     
     public void onDiceSelected(int position) {

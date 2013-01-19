@@ -1,5 +1,7 @@
 package com.bigtheta.ragedice;
 
+import java.util.HashMap;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -39,10 +41,31 @@ public class KSDescriptionFragment extends Fragment {
         }
     }
     
-    public void displayInfo(String info) {
+    public void displayInfo(long gameId) {
     	TextView tv = (TextView) mCallback.findViewById(R.id.ksdescription_view);
-    	tv.setText(info);
-    	
+        String info = "";
+        info += "numDiceRolls: " + Integer.toString(DiceRoll.getNumDiceRolls());
+        HashMap<Integer, Double> pmf = DieDescription.getPMF(gameId);
+        for (Integer observation : pmf.keySet()) {
+            info += "\nObservation: " + Integer.toString(observation)
+                  + " Probability: " + pmf.get(observation);
+        }
+        HashMap<Integer, Integer> dist = DiceRoll.getObservedRolls(gameId);
+        for (Integer observation : dist.keySet()) {
+            info += "\nObservation: " + Integer.toString(observation)
+                  + " Count: " + dist.get(observation);
+        }
+        double stat = DiceRoll.calculateKSTestStatistic(gameId);
+        info += "\nKS statistic: " + Double.toString(stat);
+        // Probability that these are different distributions.
+        info += "\nKS probability: " + Double.toString(DiceRoll.calculateKSPValue(gameId));
+        info += "\nCentral Limit Theorem probability: " + Double.toString(DiceRoll.calculateCentralLimitProbabilityPValue(gameId));
+
+        info += "\n=====\n";
+        info += DieDescription.getKSDescription(gameId);
+        info += "\n=====\n";
+        info += DieDescription.getCLTDescription(gameId);
+        tv.setText(info);
     	
     }
 }
