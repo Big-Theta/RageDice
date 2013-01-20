@@ -121,11 +121,13 @@ public class MainActivity extends FragmentActivity
             throw new IllegalStateException("No fragment visible.");
         }
         ft.commit();
+        refreshDisplay();
     }
 
     public void prevFragment() {
         Log.i("prevFragment", "triggered");
         nextFragment();
+        refreshDisplay();
     }
 
     public void refreshDisplay() {
@@ -149,7 +151,7 @@ public class MainActivity extends FragmentActivity
     
     public void onDiceSelected(int position) {
     }
-    public void onGameLog.dlected(int position) {
+    public void onGameLogSelected(int position) {
     }
 
     public void onKSDescriptionSelected(int position) {
@@ -168,14 +170,14 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public boolean onDown(MotionEvent event) { 
-        Log.d("debug...","onDown: " + event.toString()); 
+        Log.e("debug...","onDown: " + event.toString()); 
         return true;
     }
 
     @Override
     public boolean onFling(MotionEvent start, MotionEvent finish,
                            float velocityX, float velocityY) {
-        Log.d("debug...", "onFling: ");
+        Log.e("debug...", "onFling: ");
         float deltaX = Math.abs(finish.getRawX() - start.getRawX());
         float deltaY = Math.abs(finish.getRawY() - start.getRawY());
         if (deltaX > deltaY) {
@@ -191,42 +193,42 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onLongPress(MotionEvent event) {
-        Log.d("debug...", "onLongPress: " + event.toString()); 
+        Log.e("debug...", "onLongPress: " + event.toString()); 
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
             float distanceY) {
-        Log.d("debug...", "onScroll: " + e1.toString()+e2.toString());
+        Log.e("debug...", "onScroll: " + e1.toString()+e2.toString());
         return true;
     }
 
     @Override
     public void onShowPress(MotionEvent event) {
-        Log.d("debug...", "onShowPress: " + event.toString());
+        Log.e("debug...", "onShowPress: " + event.toString());
     }
 
     @Override
     public boolean onSingleTapUp(MotionEvent event) {
-        Log.d("debug...", "onSingleTapUp: " + event.toString());
+        Log.e("debug...", "onSingleTapUp: " + event.toString());
         return true;
     }
 
     @Override
     public boolean onDoubleTap(MotionEvent event) {
-        Log.d("debug...", "onDoubleTap: " + event.toString());
+        Log.e("debug...", "onDoubleTap: " + event.toString());
         return true;
     }
 
     @Override
     public boolean onDoubleTapEvent(MotionEvent event) {
-        Log.d("debug...", "onDoubleTapEvent: " + event.toString());
+        Log.e("debug...", "onDoubleTapEvent: " + event.toString());
         return true;
     }
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent event) {
-        Log.d("debug...", "onSingleTapConfirmed: " + event.toString());
+        Log.e("debug...", "onSingleTapConfirmed: " + event.toString());
         return true;
     }
 }
