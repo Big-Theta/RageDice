@@ -41,7 +41,6 @@ public class DieDescription {
                           int backgroundColor, int imageViewResource,
                           boolean isNumeric) {
         BarChart bc;
-        
         m_numLowFace = numLowFace;
         m_numHighFace = numHighFace;
         m_baseIdentifierName = baseIdentifierName;
@@ -70,7 +69,7 @@ public class DieDescription {
                 tableDieDescriptionColumns,
                 MySQLiteHelper.COLUMN_ID + " = " + id,
                 null, null, null, null);
-        cursor.moveToFirst();        
+        cursor.moveToFirst();
         m_gameId = cursor.getLong(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_GAME_ID));
         m_numLowFace = cursor.getInt(
