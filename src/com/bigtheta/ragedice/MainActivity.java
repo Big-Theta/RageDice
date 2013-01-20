@@ -1,23 +1,25 @@
 package com.bigtheta.ragedice;
 
-import java.util.HashMap;
-
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GestureDetectorCompat;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
 
 public class MainActivity extends FragmentActivity 
 		implements GameLogFragment.GameLogListener,
 				   DiceDisplayFragment.DiceDisplayListener,
-				   KSDescriptionFragment.KSDescriptionListener {
+				   KSDescriptionFragment.KSDescriptionListener,
+				   GestureDetector.OnGestureListener,
+				   GestureDetector.OnDoubleTapListener {
 					
-	
+    private GestureDetectorCompat m_gestureDetector;
     private static SQLiteDatabase m_database;
     private MySQLiteHelper m_dbHelper;
     private static Game m_game;
@@ -32,6 +34,8 @@ public class MainActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_alternate);
 
+        m_gestureDetector = new GestureDetectorCompat(this, this);
+        m_gestureDetector.setOnDoubleTapListener(this);
         m_dbHelper = new MySQLiteHelper(this);
         // REMOVEME
         this.deleteDatabase("rage_dice.db");
@@ -101,23 +105,29 @@ public class MainActivity extends FragmentActivity
         refreshDisplay();
     }
     
-    public void nextFragment(View view) {
+    public void nextFragment() {
+        Log.i("nextFragment", "triggered");
         FragmentTransaction ft = fm.beginTransaction();
         if (fm.findFragmentByTag("glf") != null &&
             fm.findFragmentByTag("glf").isVisible()) {
             ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
-        }else if (fm.findFragmentByTag("ksdf") != null &&
+        } else if (fm.findFragmentByTag("ksdf") != null &&
             fm.findFragmentByTag("ksdf").isVisible()) {
             ft.replace(R.id.lower_ui_container, new GameLogFragment(), "glf");
-        }else if (fm.findFragmentByTag("hgf") != null &&
+        } else if (fm.findFragmentByTag("hgf") != null &&
             fm.findFragmentByTag("hgf").isVisible()) {
             ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
-        }else {
+        } else {
             throw new IllegalStateException("No fragment visible.");
         }
         ft.commit();
     }
-    
+
+    public void prevFragment() {
+        Log.i("prevFragment", "triggered");
+        nextFragment();
+    }
+
     public void refreshDisplay() {
         DiceRoll dr = DiceRoll.getLastDiceRoll(m_game.getId());
         Player nextPlayer = Player.getLastPlayer(m_game.getId());
@@ -139,7 +149,7 @@ public class MainActivity extends FragmentActivity
     
     public void onDiceSelected(int position) {
     }
-    public void onGameLogSelected(int position) {
+    public void onGameLog.dlected(int position) {
     }
 
     public void onKSDescriptionSelected(int position) {
@@ -147,6 +157,77 @@ public class MainActivity extends FragmentActivity
 
     public static Game getGame() {
         return m_game;
+    }
+
+    @Override 
+    public boolean onTouchEvent(MotionEvent event){ 
+        this.m_gestureDetector.onTouchEvent(event);
+        // Be sure to call the superclass implementation
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onDown(MotionEvent event) { 
+        Log.d("debug...","onDown: " + event.toString()); 
+        return true;
+    }
+
+    @Override
+    public boolean onFling(MotionEvent start, MotionEvent finish,
+                           float velocityX, float velocityY) {
+        Log.d("debug...", "onFling: ");
+        float deltaX = Math.abs(finish.getRawX() - start.getRawX());
+        float deltaY = Math.abs(finish.getRawY() - start.getRawY());
+        if (deltaX > deltaY) {
+            if (finish.getRawX() < start.getRawX()) {
+                nextFragment();
+            } else {
+                prevFragment();
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent event) {
+        Log.d("debug...", "onLongPress: " + event.toString()); 
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+            float distanceY) {
+        Log.d("debug...", "onScroll: " + e1.toString()+e2.toString());
+        return true;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent event) {
+        Log.d("debug...", "onShowPress: " + event.toString());
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent event) {
+        Log.d("debug...", "onSingleTapUp: " + event.toString());
+        return true;
+    }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent event) {
+        Log.d("debug...", "onDoubleTap: " + event.toString());
+        return true;
+    }
+
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent event) {
+        Log.d("debug...", "onDoubleTapEvent: " + event.toString());
+        return true;
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent event) {
+        Log.d("debug...", "onSingleTapConfirmed: " + event.toString());
+        return true;
     }
 }
 
