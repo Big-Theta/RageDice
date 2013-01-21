@@ -6,4 +6,7 @@
     <color name="histogram_bar">#BA771E</color>
     <color name="histogram_background">#C0FFEE</color>
     <color name="histogram_labels">#1ABE15</color>
+    <color name="ship_die_castle_blue">#0000FF</color>
+    <color name="ship_die_castle_green">#008000</color>
+    <color name="ship_die_castle_yellow">#FFFF00</color>
 </resources>

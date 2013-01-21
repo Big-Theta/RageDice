@@ -15,15 +15,15 @@ import com.bigtheta.ragedice.R.drawable;
 
 
 public class DiceDisplayFragment extends Fragment  {
-	DiceDisplayListener mCallback;
-	
-	public interface DiceDisplayListener {
-		public void onDiceSelected(int position);
-		public View findViewById(int id);
-	}
-	
+    DiceDisplayListener m_callback;
+
+    public interface DiceDisplayListener {
+        public void onDiceSelected(int position);
+        public View findViewById(int id);
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, 
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                          Bundle savedInstanceState) {
         return inflater.inflate(R.layout.dice_layout, container, false);
     }
@@ -32,10 +32,10 @@ public class DiceDisplayFragment extends Fragment  {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-        	mCallback = (DiceDisplayListener) activity;
+            m_callback = (DiceDisplayListener) activity;
         } catch (ClassCastException e) {
-        	throw new ClassCastException(activity.toString()
-        			+ " must implement DiceDisplayListener");
+            throw new ClassCastException(activity.toString()
+                    + " must implement DiceDisplayListener");
         }
     }
 
@@ -89,27 +89,30 @@ public class DiceDisplayFragment extends Fragment  {
         super.onDetach();
     }
     public void rollTest() {
-    	mCallback.onDiceSelected(0);
+        m_callback.onDiceSelected(0);
     }
-    
+
     public void displayDiceRoll(DiceRoll dr) {
-    	//TextView tv = (TextView) mCallback.findViewById(R.id.player_number);
+        //TextView tv = (TextView) m_callback.findViewById(R.id.player_number);
         //Player currentPlayer = Player.retrieve(dr.getPlayerId());
         //tv.setText(currentPlayer.getPlayerName());
+        if (dr == null) {
+            return;
+        }
 
         Class<drawable> res = R.drawable.class;
         for (DieResult result : DieResult.getDieResults(dr)) {
             DieDescription dd = DieDescription.retrieve(result.getDieDescriptionId());
-            ImageView iv = (ImageView) mCallback.findViewById(dd.getImageViewResource());
-            String description = dd.getBaseIdentifierName()
-                               + Integer.toString(result.getDieResult());
+            ImageView iv = (ImageView)m_callback.findViewById(dd.getImageViewResource());
             try {
-                Field field = res.getField(description);
-                iv.setImageResource(field.getInt(null));
-            } catch (Exception err){
+                iv.setImageResource(result.getImageResource());
+                Log.e("res is: ", Integer.toString(result.getImageColorResource()));
+                //getResources().getColor(result.getImageColorResource());
+                iv.setBackgroundColor(getResources().getColor(result.getImageColorResource()));
+            } catch (Exception err) {
                 Log.e("MainActivity::displayDiceRoll", err.getCause().getMessage());
             }
-            //iv.setBackgroundColor(dd.getBackgroundColor());
         }
     }
 }
+

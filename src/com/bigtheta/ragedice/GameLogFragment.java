@@ -40,6 +40,9 @@ public class GameLogFragment extends Fragment {
     }
     
     public void displayInfo(Player player, DiceRoll dr) {
+        if (dr == null) {
+            return;
+        }
     	TextView tv = (TextView) mCallback.findViewById(R.id.log_view);
     	tv.append(player.getPlayerName() + " rolled " +
     				dr.getTotalResult() + "\n");

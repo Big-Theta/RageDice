@@ -20,17 +20,20 @@ public class DieDescription {
         MySQLiteHelper.COLUMN_BASE_IDENTIFIER_NAME,
         MySQLiteHelper.COLUMN_BACKGROUND_COLOR,
         MySQLiteHelper.COLUMN_IMAGE_VIEW_RESOURCE,
-        MySQLiteHelper.COLUMN_IS_NUMERIC
+        MySQLiteHelper.COLUMN_DISPLAY_TYPE
     };
+
+    public static final String NUMERIC = "NUMERIC";
+    public static final String SHIP = "SHIP";
 
     long m_id;
     long m_gameId;
     int m_numLowFace;
     int m_numHighFace;
     String m_baseIdentifierName;
-    int m_backgroundColor;
+    int m_backgroundColorResource;
     int m_imageViewResource;
-    boolean m_isNumeric;
+    String m_displayType;
 
     // This opens an oportunity to break... if the database is cleared, this won't be.
     private static HashMap<Long, ArrayList<DieDescription> > cacheRetrieveAll = null;
@@ -38,15 +41,15 @@ public class DieDescription {
 
     public DieDescription(Game game, int numLowFace, int numHighFace,
                           String baseIdentifierName,
-                          int backgroundColor, int imageViewResource,
-                          boolean isNumeric) {
+                          int backgroundColorResource, int imageViewResource,
+                          String displayType) {
         BarChart bc;
         m_numLowFace = numLowFace;
         m_numHighFace = numHighFace;
         m_baseIdentifierName = baseIdentifierName;
-        m_backgroundColor = backgroundColor;
+        m_backgroundColorResource = backgroundColorResource;
         m_imageViewResource = imageViewResource;
-        m_isNumeric = isNumeric;
+        m_displayType = displayType;
 
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_GAME_ID, game.getId());
@@ -54,10 +57,10 @@ public class DieDescription {
         values.put(MySQLiteHelper.COLUMN_NUM_HIGH_FACE, m_numHighFace);
         values.put(MySQLiteHelper.COLUMN_BASE_IDENTIFIER_NAME,
                    m_baseIdentifierName);
-        values.put(MySQLiteHelper.COLUMN_BACKGROUND_COLOR, m_backgroundColor);
+        values.put(MySQLiteHelper.COLUMN_BACKGROUND_COLOR, m_backgroundColorResource);
         values.put(MySQLiteHelper.COLUMN_IMAGE_VIEW_RESOURCE,
                    m_imageViewResource);
-        values.put(MySQLiteHelper.COLUMN_IS_NUMERIC, m_isNumeric);
+        values.put(MySQLiteHelper.COLUMN_DISPLAY_TYPE, m_displayType);
         m_id = MainActivity.getDatabase().insert(MySQLiteHelper.TABLE_DIE_DESCRIPTION,
                                                  null, values);
     }
@@ -78,12 +81,12 @@ public class DieDescription {
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_NUM_HIGH_FACE));
         m_baseIdentifierName = cursor.getString(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_BASE_IDENTIFIER_NAME));
-        m_backgroundColor = cursor.getInt(
+        m_backgroundColorResource = cursor.getInt(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_BACKGROUND_COLOR));
         m_imageViewResource = cursor.getInt(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_IMAGE_VIEW_RESOURCE));
-        m_isNumeric = cursor.getInt(
-                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_IS_NUMERIC)) == 0 ? false : true;
+        m_displayType = cursor.getString(
+                cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_DISPLAY_TYPE));
 
         cursor.close();
     }
@@ -136,16 +139,16 @@ public class DieDescription {
         return m_baseIdentifierName;
     }
 
-    public int getBackgroundColor() {
-        return m_backgroundColor;
+    public int getBackgroundColorResource() {
+        return m_backgroundColorResource;
     }
 
     public int getImageViewResource() {
         return m_imageViewResource;
     }
 
-    public boolean getIsNumeric() {
-        return m_isNumeric;
+    public String getDisplayType() {
+        return m_displayType;
     }
 
     public static String getKSDescription(long gameId) {
@@ -220,7 +223,7 @@ public class DieDescription {
     private static int getNumPossibilities(ArrayList<DieDescription> descriptions) {
         int count = 1;
         for (DieDescription description : descriptions) {
-            if (description.getIsNumeric()) {
+            if (description.getDisplayType().equals(DieDescription.NUMERIC)) {
                 count *= description.getNumHighFace() - description.getNumLowFace() + 1;
             }
         }
