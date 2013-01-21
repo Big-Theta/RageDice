@@ -42,7 +42,7 @@ public class DieResult {
                 MySQLiteHelper.TABLE_DIE_RESULT,
                 tableDieResultColumns, MySQLiteHelper.COLUMN_ID + " = " + m_id,
                 null, null, null, null);
-        cursor.moveToFirst();        
+        cursor.moveToFirst();
         m_diceRollId = cursor.getLong(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_DICE_ROLL_ID));
         m_dieDescriptionId = cursor.getLong(
