@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class GameLogFragment extends Fragment {
-    GameLogListener mCallback;
+    GameLogListener m_callback;
 
     public interface GameLogListener {
         public void onGameLogSelected(int position);
@@ -32,10 +32,10 @@ public class GameLogFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallback = (GameLogListener) activity;
+            m_callback = (GameLogListener)activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement GameLogListener");
+            throw new ClassCastException(activity.toString() +
+                                         " must implement GameLogListener");
         }
     }
 
@@ -43,7 +43,7 @@ public class GameLogFragment extends Fragment {
         if (dr == null) {
             return;
         }
-        TextView tv = (TextView) mCallback.findViewById(R.id.log_view);
+        TextView tv = (TextView) m_callback.findViewById(R.id.log_view);
         tv.append(player.getPlayerName() + " rolled " +
                     dr.getTotalResult() + "\n");
 

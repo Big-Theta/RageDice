@@ -3,6 +3,7 @@ package com.bigtheta.ragedice;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -19,6 +20,7 @@ public class MainActivity extends FragmentActivity
         implements GameLogFragment.GameLogListener,
                    DiceDisplayFragment.DiceDisplayListener,
                    KSDescriptionFragment.KSDescriptionListener,
+                   HistogramRollsFragment.HistogramRollsListener,
                    GestureDetector.OnGestureListener,
                    GestureDetector.OnDoubleTapListener {
 
@@ -52,14 +54,11 @@ public class MainActivity extends FragmentActivity
         new Player(m_game, 4, "player four");
 
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
-                           R.color.yellow_die,
-                           R.id.yellow_die, DieDescription.NUMERIC);
+                           R.color.yellow_die, R.id.yellow_die, DieDescription.NUMERIC);
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
-                           R.color.red_die,
-                           R.id.red_die, DieDescription.NUMERIC);
+                           R.color.red_die, R.id.red_die, DieDescription.NUMERIC);
         new DieDescription(m_game, 1, 6, "ship_die_",
-                           R.color.background,
-                           R.id.ship_die, DieDescription.SHIP);
+                           R.color.background, R.id.ship_die, DieDescription.SHIP);
         fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         //ft.add(R.id.lower_ui_container, new GameLogFragment(), "glf");
@@ -147,15 +146,21 @@ public class MainActivity extends FragmentActivity
         DiceDisplayFragment ddf = (DiceDisplayFragment)
                 fm.findFragmentById(R.id.dice_fragment_ui);
         GameLogFragment glf = (GameLogFragment) fm.findFragmentByTag("glf");
-        KSDescriptionFragment ksdf = (KSDescriptionFragment) fm.findFragmentById(R.id.ksdescription_view);
 
         if (ddf != null && ddf.isVisible()) {
             ddf.displayDiceRoll(dr);
         }
-        if (glf != null && glf.isVisible()) {
-            glf.displayInfo(nextPlayer, dr);
-        } else if (ksdf != null && ksdf.isVisible()) {
-            ksdf.displayInfo(m_game.getId());
+        Fragment c_fragment = fm.findFragmentById(R.id.tabs_content_container);
+        if (c_fragment == null) {
+            throw new IllegalStateException("Tabs container contains no fragments.");
+        }else {
+            if (c_fragment instanceof KSDescriptionFragment) {
+                ((KSDescriptionFragment)c_fragment).displayInfo(m_game.getId());
+            } else if (c_fragment instanceof GameLogFragment) {
+                ((GameLogFragment)c_fragment).displayInfo(nextPlayer, dr);
+            } else if (c_fragment instanceof HistogramRollsFragment) {
+                ((HistogramRollsFragment)c_fragment).updateHistogram();
+            }
         }
     }
 
@@ -165,6 +170,9 @@ public class MainActivity extends FragmentActivity
     }
 
     public void onKSDescriptionSelected(int position) {
+    }
+
+    public void onHistogramRollsSelected(int position) {
     }
 
     public static Game getGame() {
