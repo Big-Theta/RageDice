@@ -96,7 +96,10 @@ public class DiceRoll {
     public int getTotalResult() {
         Integer result = 0;
         for (DieResult dr : DieResult.getDieResults(this)) {
-            result += dr.getDieResult();
+            DieDescription dd = DieDescription.retrieve(dr.getDieDescriptionId());
+            if (dd.getDisplayType().equals(DieDescription.NUMERIC)) {
+                result += dr.getDieResult();
+            }
         }
         return result;
     }
