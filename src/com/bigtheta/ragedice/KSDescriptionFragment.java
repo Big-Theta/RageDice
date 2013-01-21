@@ -16,7 +16,6 @@ public class KSDescriptionFragment extends Fragment {
 	public interface KSDescriptionListener {
 		public void onKSDescriptionSelected(int position);
 		public View findViewById(int id);
-		public Game getGame();
 	}
 	
 
@@ -24,6 +23,10 @@ public class KSDescriptionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
                          Bundle savedInstanceState) {
         return inflater.inflate(R.layout.ksdescription_layout, container, false);
+    }
+    
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        displayInfo(MainActivity.getGame().getId());
     }
     
     @Override
