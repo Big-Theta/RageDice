@@ -45,8 +45,6 @@ public class DiceRoll {
             cacheGetTotalTimes != null &&
             cacheGetTotalTimes.containsKey(player.getGameId()) &&
             cacheGetTotalTimes.get(player.getGameId()).containsKey(lastRoll.getPlayerId())) {
-
-            Log.e("updateing...", "...");
             HashMap<Long, Long> updateTimes = cacheGetTotalTimes.get(player.getGameId());
             updateTimes.put(lastRoll.getPlayerId(),
                             updateTimes.get(lastRoll.getPlayerId()) +
