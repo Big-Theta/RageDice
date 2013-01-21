@@ -1,11 +1,8 @@
 package com.bigtheta.ragedice;
 
-import java.lang.reflect.Field;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +12,16 @@ import com.bigtheta.ragedice.R.drawable;
 
 
 public class DiceDisplayFragment extends Fragment  {
-	DiceDisplayListener mCallback;
-	
-	public interface DiceDisplayListener {
-		public void onDiceSelected(int position);
-		public View findViewById(int id);
-	}
-	
+    DiceDisplayListener m_callback;
+
+    public interface DiceDisplayListener {
+        public void onDiceSelected(int position);
+        public View findViewById(int id);
+        public void initializeGame(boolean display);
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, 
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                          Bundle savedInstanceState) {
         return inflater.inflate(R.layout.dice_layout, container, false);
     }
@@ -32,10 +30,10 @@ public class DiceDisplayFragment extends Fragment  {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-        	mCallback = (DiceDisplayListener) activity;
+            m_callback = (DiceDisplayListener) activity;
         } catch (ClassCastException e) {
-        	throw new ClassCastException(activity.toString()
-        			+ " must implement DiceDisplayListener");
+            throw new ClassCastException(activity.toString()
+                    + " must implement DiceDisplayListener");
         }
     }
 
@@ -46,6 +44,7 @@ public class DiceDisplayFragment extends Fragment  {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        //refreshStatusText();
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -56,6 +55,7 @@ public class DiceDisplayFragment extends Fragment  {
 
     @Override
     public void onResume() {
+        displayDiceRoll(DiceRoll.getLastDiceRoll(MainActivity.getGame().getId()));
         super.onResume();
     }
 
@@ -89,27 +89,52 @@ public class DiceDisplayFragment extends Fragment  {
         super.onDetach();
     }
     public void rollTest() {
-    	mCallback.onDiceSelected(0);
+        m_callback.onDiceSelected(0);
     }
-    
+
     public void displayDiceRoll(DiceRoll dr) {
-    	//TextView tv = (TextView) mCallback.findViewById(R.id.player_number);
+        //TextView tv = (TextView) m_callback.findViewById(R.id.player_number);
         //Player currentPlayer = Player.retrieve(dr.getPlayerId());
         //tv.setText(currentPlayer.getPlayerName());
-
-        Class<drawable> res = R.drawable.class;
-        for (DieResult result : DieResult.getDieResults(dr)) {
-            DieDescription dd = DieDescription.retrieve(result.getDieDescriptionId());
-            ImageView iv = (ImageView) mCallback.findViewById(dd.getImageViewResource());
-            String description = dd.getBaseIdentifierName()
-                               + Integer.toString(result.getDieResult());
-            try {
-                Field field = res.getField(description);
-                iv.setImageResource(field.getInt(null));
-            } catch (Exception err){
-                Log.e("MainActivity::displayDiceRoll", err.getCause().getMessage());
+        if (dr == null) {
+            Player initPlayer = Player.getNextPlayer(MainActivity.getGame().getId());
+            dr = new DiceRoll(initPlayer);
+            displayDiceRoll(dr);
+            dr.delete();
+        }else {
+            Class<drawable> res = R.drawable.class;
+            for (DieResult result : DieResult.getDieResults(dr)) {
+                DieDescription dd = DieDescription.retrieve(result.getDieDescriptionId());
+                try {
+                    ImageView iv = (ImageView)m_callback.findViewById(dd.getImageViewResource());
+                    iv.setImageResource(result.getImageResource());
+                    //getResources().getColor(result.getImageColorResource());
+                    iv.setBackgroundColor(getResources().getColor(result.getImageColorResource()));
+                } catch (ClassCastException err) {
+                    m_callback.initializeGame(false);
+                } catch (Exception err) {
+                }
+                
             }
-            //iv.setBackgroundColor(dd.getBackgroundColor());
         }
+        //refreshStatusText();
+    }
+
+    private void refreshStatusText() {
+        /*
+        TextView tv = (TextView) m_callback.findViewById(R.id.whose_turn_text);
+        Game g = MainActivity.getGame();
+        String currentPlayerName = Player.getLastPlayer(g.getId()).getPlayerName();
+        String nextPlayerName = Player.getNextPlayer(g.getId()).getPlayerName();
+        if (tv != null) {
+            if (Player.getNumPlayers() > 1) {
+                tv.setText(currentPlayerName + "'s turn.\n" +
+                           nextPlayerName + " is next.");
+            } else {
+                tv.setText("");
+            }
+        }
+        */
     }
 }
+
