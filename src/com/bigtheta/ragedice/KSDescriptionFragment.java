@@ -16,6 +16,7 @@ public class KSDescriptionFragment extends Fragment {
 	public interface KSDescriptionListener {
 		public void onKSDescriptionSelected(int position);
 		public View findViewById(int id);
+		public Game getGame();
 	}
 	
 
