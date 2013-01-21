@@ -52,7 +52,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_BASE_IDENTIFIER_NAME = "base_identifier_name";
     public static final String COLUMN_BACKGROUND_COLOR = "background_color";
     public static final String COLUMN_IMAGE_VIEW_RESOURCE = "image_view_resource";
-    public static final String COLUMN_IS_NUMERIC = "is_numeric";
+    public static final String COLUMN_DISPLAY_TYPE = "display_type";
     private static final String CREATE_TABLE_DIE_DESCRIPTION = "CREATE TABLE "
             + TABLE_DIE_DESCRIPTION + "("
             + COLUMN_ID + " integer primary key autoincrement, "
@@ -62,7 +62,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + COLUMN_BASE_IDENTIFIER_NAME + " text, "
             + COLUMN_BACKGROUND_COLOR + " integer not NULL, "
             + COLUMN_IMAGE_VIEW_RESOURCE + " integer, "
-            + COLUMN_IS_NUMERIC + " boolean "
+            + COLUMN_DISPLAY_TYPE + " text "
             + ");";
 
     // TABLE_DIE_RESULT
