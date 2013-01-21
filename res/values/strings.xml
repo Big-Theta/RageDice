@@ -9,7 +9,9 @@
     <string name="roll_dice_button">Roll the dice!</string>
     <string name="red_die">Red die</string>
     <string name="yellow_die">Yellow die</string>
+    <string name="ship_die">Ship die</string>
     <string name="current_player">1</string>
     <string name="ks_description"></string>
+    <string name="toast_msg_cannot_undo">No dice rolls left to undo!</string>
 
 </resources>

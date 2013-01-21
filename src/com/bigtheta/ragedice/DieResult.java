@@ -42,7 +42,7 @@ public class DieResult {
                 MySQLiteHelper.TABLE_DIE_RESULT,
                 tableDieResultColumns, MySQLiteHelper.COLUMN_ID + " = " + m_id,
                 null, null, null, null);
-        cursor.moveToFirst();        
+        cursor.moveToFirst();
         m_diceRollId = cursor.getLong(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_DICE_ROLL_ID));
         m_dieDescriptionId = cursor.getLong(
@@ -73,8 +73,25 @@ public class DieResult {
         Class<drawable> res = R.drawable.class;
         int retval;
         DieDescription dd = DieDescription.retrieve(getDieDescriptionId());
-        String description = dd.getBaseIdentifierName()
-                           + Integer.toString(getDieResult());
+
+        String description;
+        if (dd.getDisplayType().equals(DieDescription.NUMERIC)) {
+            Log.e("getImageResource", "1");
+            description = dd.getBaseIdentifierName()
+                        + Integer.toString(getDieResult());
+        } else if (dd.getDisplayType().equals(DieDescription.SHIP)) {
+            Log.e("getImageResource", "2");
+            if (getDieResult() <= 3) {
+                description = dd.getBaseIdentifierName() + "robber";
+            } else {
+                description = dd.getBaseIdentifierName() + "castle";
+            }
+        } else {
+            Log.e("getImageResource", "3");
+            Log.e("DieResult.getImageResource()", "error... displayType is: " + dd.getDisplayType());
+            description = "";
+        }
+
         try {
             Field field = res.getField(description);
             retval = field.getInt(null);
@@ -83,6 +100,30 @@ public class DieResult {
             throw err;
         }
         return retval;
+    }
+
+    public int getImageColorResource() {
+        DieDescription dd = DieDescription.retrieve(getDieDescriptionId());
+        String type = dd.getDisplayType();
+        if (type.equals(DieDescription.NUMERIC)) {
+            return dd.getBackgroundColorResource();
+        } else if (type.equals(DieDescription.SHIP)) {
+            if (getDieResult() <= 3) {
+                return R.color.ship_die_castle_blue;
+            } else if (getDieResult() == 4) {
+                return R.color.ship_die_castle_blue;
+            } else if (getDieResult() == 5) {
+                return R.color.ship_die_castle_green;
+            } else if (getDieResult() == 6) {
+                return R.color.ship_die_castle_yellow;
+            } else {
+                Log.e("DieResult.getImageColor()", "getDieResult not recognized: " +
+                                                   Integer.toString(getDieResult()));
+                return -1;
+            }
+        }
+        Log.e("DieResult.getImageColor()", "type not found: " + type);
+        return -1;
     }
 
     private int rollDie() {
