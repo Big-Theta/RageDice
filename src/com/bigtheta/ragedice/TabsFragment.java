@@ -16,9 +16,10 @@ public class TabsFragment extends Fragment {
         mTabHost = new FragmentTabHost(getActivity());
         mTabHost.setup(getActivity(), getFragmentManager(), R.id.tabs_content_container);
 
-        mTabHost.addTab(mTabHost.newTabSpec("ksdf").setIndicator("KSD"), KSDescriptionFragment.class, null);
+        mTabHost.addTab(mTabHost.newTabSpec("ksdf").setIndicator("Statistics"), KSDescriptionFragment.class, null);
         mTabHost.addTab(mTabHost.newTabSpec("glf").setIndicator("GLF"), GameLogFragment.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("hrf").setIndicator("HRF"), HistogramRollsFragment.class, null);
+        mTabHost.addTab(mTabHost.newTabSpec("hrf").setIndicator("Rolls Histogram"), HistogramRollsFragment.class, null);
+        mTabHost.addTab(mTabHost.newTabSpec("hptf").setIndicator("Player Time Histogram"), HistogramPlayerTimeFragment.class, null);
         return mTabHost;
     }
 }

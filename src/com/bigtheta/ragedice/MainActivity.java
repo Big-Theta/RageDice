@@ -21,6 +21,7 @@ public class MainActivity extends FragmentActivity
                    DiceDisplayFragment.DiceDisplayListener,
                    KSDescriptionFragment.KSDescriptionListener,
                    HistogramRollsFragment.HistogramRollsListener,
+                   HistogramPlayerTimeFragment.HistogramPlayerTimeListener,
                    GestureDetector.OnGestureListener,
                    GestureDetector.OnDoubleTapListener {
 
@@ -84,10 +85,6 @@ public class MainActivity extends FragmentActivity
         return true;
     }
 
-        // TODO These views need to exist somewhere.
-        //findViewById(R.id.histogram_rolls_view).invalidate();
-        //findViewById(R.id.histogram_player_time_view).invalidate();
-
     public void resetDiceRolls(View view) {
         DiceRoll.clear(m_game.getId());
         //displayInfo();
@@ -124,8 +121,11 @@ public class MainActivity extends FragmentActivity
         } else if (fm.findFragmentByTag("ksdf") != null &&
             fm.findFragmentByTag("ksdf").isVisible()) {
             //ft.replace(R.id.lower_ui_container, new GameLogFragment(), "glf");
-        } else if (fm.findFragmentByTag("hgf") != null &&
-            fm.findFragmentByTag("hgf").isVisible()) {
+        } else if (fm.findFragmentByTag("hrf") != null &&
+            fm.findFragmentByTag("hrf").isVisible()) {
+            //ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
+        } else if (fm.findFragmentByTag("hptf") != null &&
+            fm.findFragmentByTag("hptf").isVisible()) {
             //ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
         } else {
             throw new IllegalStateException("No fragment visible.");
@@ -153,26 +153,37 @@ public class MainActivity extends FragmentActivity
         Fragment c_fragment = fm.findFragmentById(R.id.tabs_content_container);
         if (c_fragment == null) {
             throw new IllegalStateException("Tabs container contains no fragments.");
-        }else {
+        } else {
             if (c_fragment instanceof KSDescriptionFragment) {
                 ((KSDescriptionFragment)c_fragment).displayInfo(m_game.getId());
             } else if (c_fragment instanceof GameLogFragment) {
                 ((GameLogFragment)c_fragment).displayInfo(nextPlayer, dr);
             } else if (c_fragment instanceof HistogramRollsFragment) {
                 ((HistogramRollsFragment)c_fragment).updateHistogram();
+            } else if (c_fragment instanceof HistogramPlayerTimeFragment) {
+                ((HistogramRollsFragment)c_fragment).updateHistogram();
             }
         }
     }
 
+    @Override
     public void onDiceSelected(int position) {
     }
+
+    @Override
     public void onGameLogSelected(int position) {
     }
 
+    @Override
     public void onKSDescriptionSelected(int position) {
     }
 
+    @Override
     public void onHistogramRollsSelected(int position) {
+    }
+
+    @Override
+    public void onHistogramPlayerTimeSelected(int position) {
     }
 
     public static Game getGame() {

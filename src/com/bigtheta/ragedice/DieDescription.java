@@ -250,9 +250,14 @@ public class DieDescription {
                     ArrayList<DieDescription> copy = new ArrayList<DieDescription>(
                             remainingDescriptions);
                     copy.remove(copy.size() - 1);
-                    for (int faceVal = currentDescription.getNumLowFace();
-                         faceVal <= currentDescription.getNumHighFace(); faceVal++) {
-                        recurse(copy, currentObservation + faceVal);
+
+                    if (currentDescription.getDisplayType().equals(DieDescription.NUMERIC)) {
+                        for (int faceVal = currentDescription.getNumLowFace();
+                             faceVal <= currentDescription.getNumHighFace(); faceVal++) {
+                            recurse(copy, currentObservation + faceVal);
+                        }
+                    } else {
+                        recurse(copy, currentObservation);
                     }
                 }
             }
