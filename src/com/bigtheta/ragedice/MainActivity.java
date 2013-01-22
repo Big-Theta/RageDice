@@ -2,6 +2,7 @@ package com.bigtheta.ragedice;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -136,15 +137,18 @@ public class MainActivity extends FragmentActivity
         DiceDisplayFragment ddf = (DiceDisplayFragment)
         		fm.findFragmentById(R.id.dice_fragment_ui);
         GameLogFragment glf = (GameLogFragment) fm.findFragmentByTag("glf");
-        KSDescriptionFragment ksdf = (KSDescriptionFragment) fm.findFragmentById(R.id.ksdescription_view);
-        
         if (ddf != null && ddf.isVisible()) {
             ddf.displayDiceRoll(dr);
         }
-        if (glf != null && glf.isVisible()) {
-            glf.displayInfo(nextPlayer, dr);
-        } else if (ksdf != null && ksdf.isVisible()) {
-            ksdf.displayInfo(m_game.getId());
+        Fragment c_fragment = fm.findFragmentById(R.id.tabs_content_container);
+        if (c_fragment == null) {
+        	throw new IllegalStateException("Tabs container contains no fragments.");
+        }else {
+        	if (c_fragment instanceof KSDescriptionFragment) {
+        		((KSDescriptionFragment) c_fragment).displayInfo(m_game.getId());
+        	}else if (c_fragment instanceof GameLogFragment) {
+        		((GameLogFragment) c_fragment).displayInfo(nextPlayer, dr);
+        	}
         }
     }
     

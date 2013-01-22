@@ -14,7 +14,7 @@ public class TabsFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mTabHost = new FragmentTabHost(getActivity());
-		mTabHost.setup(getActivity(), getChildFragmentManager(), R.id.tabs_content_container);
+		mTabHost.setup(getActivity(), getFragmentManager(), R.id.tabs_content_container);
 		
 		mTabHost.addTab(mTabHost.newTabSpec("ksdf").setIndicator("KSD"), KSDescriptionFragment.class, null);
 		mTabHost.addTab(mTabHost.newTabSpec("glf").setIndicator("GLF"), GameLogFragment.class, null);
