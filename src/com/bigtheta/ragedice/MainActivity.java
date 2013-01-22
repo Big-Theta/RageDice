@@ -61,9 +61,9 @@ public class MainActivity extends FragmentActivity
         new DieDescription(m_game, 1, 6, "ship_die_",
                            R.color.background, R.id.ship_die, DieDescription.SHIP);
         fm = getSupportFragmentManager();
-        //FragmentTransaction ft = fm.beginTransaction();
+        FragmentTransaction ft = fm.beginTransaction();
         //ft.add(R.id.lower_ui_container, new GameLogFragment(), "glf");
-        //ft.commit();
+        ft.commit();
     }
 
     @Override
@@ -113,28 +113,31 @@ public class MainActivity extends FragmentActivity
     }
 
     public void nextFragment() {
-    	TabsFragment tf = getTabsFragment();
-    	if (tf == null) {
-            throw new IllegalStateException("Tabs ui doesn't exist.");
-    	}else {
-    		tf.nextTab();
-    		refreshDisplay();
-    	}
+        Log.i("nextFragment", "triggered");
+        FragmentTransaction ft = fm.beginTransaction();
+        if (fm.findFragmentByTag("glf") != null &&
+            fm.findFragmentByTag("glf").isVisible()) {
+            //ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
+        } else if (fm.findFragmentByTag("ksdf") != null &&
+            fm.findFragmentByTag("ksdf").isVisible()) {
+            //ft.replace(R.id.lower_ui_container, new GameLogFragment(), "glf");
+        } else if (fm.findFragmentByTag("hrf") != null &&
+            fm.findFragmentByTag("hrf").isVisible()) {
+            //ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
+        } else if (fm.findFragmentByTag("hptf") != null &&
+            fm.findFragmentByTag("hptf").isVisible()) {
+            //ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
+        } else {
+            throw new IllegalStateException("No fragment visible.");
+        }
+        ft.commit();
+        refreshDisplay();
     }
 
     public void prevFragment() {
-    	TabsFragment tf = getTabsFragment();
-    	if (tf == null) {
-            throw new IllegalStateException("Tabs ui doesn't exist.");
-    	}else {
-    		tf.prevTab();
-    		refreshDisplay();
-    	}
-    }
-    
-    public TabsFragment getTabsFragment() {
-    	TabsFragment tf = (TabsFragment) fm.findFragmentById(R.id.tabs_fragment_ui);
-    	return tf;
+        Log.i("prevFragment", "triggered");
+        nextFragment();
+        refreshDisplay();
     }
 
     public void refreshDisplay() {
@@ -147,12 +150,20 @@ public class MainActivity extends FragmentActivity
         if (ddf != null && ddf.isVisible()) {
             ddf.displayDiceRoll(dr);
         }
-    	TabsFragment tf = getTabsFragment();
-    	if (tf == null) {
-            throw new IllegalStateException("Tabs ui doesn't exist.");
-    	}else {
-    		tf.refreshDisplay();
-    	}
+        Fragment c_fragment = fm.findFragmentById(R.id.tabs_content_container);
+        if (c_fragment == null) {
+            throw new IllegalStateException("Tabs container contains no fragments.");
+        } else {
+            if (c_fragment instanceof KSDescriptionFragment) {
+                ((KSDescriptionFragment)c_fragment).displayInfo(m_game.getId());
+            } else if (c_fragment instanceof GameLogFragment) {
+                ((GameLogFragment)c_fragment).displayInfo(nextPlayer, dr);
+            } else if (c_fragment instanceof HistogramRollsFragment) {
+                ((HistogramRollsFragment)c_fragment).updateHistogram();
+            } else if (c_fragment instanceof HistogramPlayerTimeFragment) {
+                ((HistogramRollsFragment)c_fragment).updateHistogram();
+            }
+        }
     }
 
     @Override
