@@ -56,7 +56,7 @@ public class MainActivity extends FragmentActivity
                            R.id.red_die, true);
         fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.add(R.id.lower_ui_container, new GameLogFragment(), "glf");
+        //ft.add(R.id.lower_ui_container, new GameLogFragment(), "glf");
         ft.commit();
     }
 
@@ -110,13 +110,13 @@ public class MainActivity extends FragmentActivity
         FragmentTransaction ft = fm.beginTransaction();
         if (fm.findFragmentByTag("glf") != null &&
             fm.findFragmentByTag("glf").isVisible()) {
-            ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
+            //ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
         } else if (fm.findFragmentByTag("ksdf") != null &&
             fm.findFragmentByTag("ksdf").isVisible()) {
-            ft.replace(R.id.lower_ui_container, new GameLogFragment(), "glf");
+            //ft.replace(R.id.lower_ui_container, new GameLogFragment(), "glf");
         } else if (fm.findFragmentByTag("hgf") != null &&
             fm.findFragmentByTag("hgf").isVisible()) {
-            ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
+            //ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
         } else {
             throw new IllegalStateException("No fragment visible.");
         }
@@ -136,7 +136,7 @@ public class MainActivity extends FragmentActivity
         DiceDisplayFragment ddf = (DiceDisplayFragment)
         		fm.findFragmentById(R.id.dice_fragment_ui);
         GameLogFragment glf = (GameLogFragment) fm.findFragmentByTag("glf");
-        KSDescriptionFragment ksdf = (KSDescriptionFragment) fm.findFragmentByTag("ksdf");
+        KSDescriptionFragment ksdf = (KSDescriptionFragment) fm.findFragmentById(R.id.ksdescription_view);
         
         if (ddf != null && ddf.isVisible()) {
             ddf.displayDiceRoll(dr);
