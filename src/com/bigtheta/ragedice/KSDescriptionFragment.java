@@ -12,43 +12,43 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class KSDescriptionFragment extends Fragment {
-	KSDescriptionListener mCallback;
-	
-	public interface KSDescriptionListener {
-		public void onKSDescriptionSelected(int position);
-		public View findViewById(int id);
-	}
-	
+    KSDescriptionListener mCallback;
+
+    public interface KSDescriptionListener {
+        public void onKSDescriptionSelected(int position);
+        public View findViewById(int id);
+    }
+
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, 
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                          Bundle savedInstanceState) {
     	//FragmentManager fm = getActivity().getSupportFragmentManager();
         return inflater.inflate(R.layout.ksdescription_layout, container, false);
     }
-    
+
     public void onViewCreated(View view, Bundle savedInstanceState) {
         displayInfo(MainActivity.getGame().getId());
     }
-    
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-    
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-        	mCallback = (KSDescriptionListener) activity;
+            mCallback = (KSDescriptionListener) activity;
         } catch (ClassCastException e) {
-        	throw new ClassCastException(activity.toString()
-        			+ " must implement KSDescriptionListener");
+            throw new ClassCastException(activity.toString()
+                    + " must implement KSDescriptionListener");
         }
     }
-    
+
     public void displayInfo(long gameId) {
-    	TextView tv = (TextView) mCallback.findViewById(R.id.ksdescription_view);
+        TextView tv = (TextView) mCallback.findViewById(R.id.ksdescription_view);
         String info = "";
         info += "numDiceRolls: " + Integer.toString(DiceRoll.getNumDiceRolls());
         HashMap<Integer, Double> pmf = DieDescription.getPMF(gameId);
@@ -72,6 +72,6 @@ public class KSDescriptionFragment extends Fragment {
         info += "\n=====\n";
         info += DieDescription.getCLTDescription(gameId);
         tv.setText(info);
-    	
+
     }
 }

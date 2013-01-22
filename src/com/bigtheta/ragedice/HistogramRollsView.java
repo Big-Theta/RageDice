@@ -44,19 +44,20 @@ public class HistogramRollsView extends View {
     public HistogramRollsView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
-    
+
     private void updateDataset() {
         XYSeries series = new XYSeries("Rolls");
         for (int i = 0; i < m_dataset.getSeriesCount(); i++) {
-            m_dataset.removeSeries(0);         
+            m_dataset.removeSeries(0);
         }
-        
+
         Game game = MainActivity.getGame();
         if (game != null) {
             HashMap<Integer, Double> pmf = DieDescription.getPMF(game.getId());
             HashMap<Integer, Integer> observedRolls = DiceRoll.getObservedRolls(game.getId());
             Integer min = null;
             Integer max = null;
+            Integer tallest = null;
             for (Integer key : pmf.keySet()) {
                 Integer val = observedRolls.get(key);
                 if (val == null) {
@@ -70,14 +71,20 @@ public class HistogramRollsView extends View {
                 if (max == null || key > max) {
                     max = key;
                 }
+                if (val != null && (tallest == null || val > tallest)) {
+                    tallest = val;
+                }
             }
             m_renderer.setXLabels(pmf.size());
             m_renderer.setXAxisMin((double)min - 0.5);
             m_renderer.setXAxisMax((double)max + 0.5);
+            if (tallest != null) {
+                m_renderer.setYAxisMax((double)tallest + 2.0);
+            }
         }
         m_dataset.addSeries(series);
     }
-    
+
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
