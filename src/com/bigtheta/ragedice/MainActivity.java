@@ -113,9 +113,9 @@ public class MainActivity extends FragmentActivity
     }
 
     public void nextFragment() {
-    	TabsFragment tf = (TabsFragment) fm.findFragmentById(R.id.tabs_fragment_ui);
+    	TabsFragment tf = getTabsFragment();
     	if (tf == null) {
-            throw new IllegalStateException("Tabs ui not visible.");
+            throw new IllegalStateException("Tabs ui doesn't exist.");
     	}else {
     		tf.nextTab();
     		refreshDisplay();
@@ -123,13 +123,18 @@ public class MainActivity extends FragmentActivity
     }
 
     public void prevFragment() {
-    	TabsFragment tf = (TabsFragment) fm.findFragmentById(R.id.tabs_fragment_ui);
+    	TabsFragment tf = getTabsFragment();
     	if (tf == null) {
-            throw new IllegalStateException("Tabs ui not visible.");
+            throw new IllegalStateException("Tabs ui doesn't exist.");
     	}else {
     		tf.prevTab();
     		refreshDisplay();
     	}
+    }
+    
+    public TabsFragment getTabsFragment() {
+    	TabsFragment tf = (TabsFragment) fm.findFragmentById(R.id.tabs_fragment_ui);
+    	return tf;
     }
 
     public void refreshDisplay() {
@@ -142,28 +147,12 @@ public class MainActivity extends FragmentActivity
         if (ddf != null && ddf.isVisible()) {
             ddf.displayDiceRoll(dr);
         }
-        TabsFragment tf = (TabsFragment) fm.findFragmentById(R.id.tabs_fragment_ui);
+    	TabsFragment tf = getTabsFragment();
     	if (tf == null) {
-            throw new IllegalStateException("Tabs ui not visible.");
+            throw new IllegalStateException("Tabs ui doesn't exist.");
     	}else {
     		tf.refreshDisplay();
     	}
-        /*
-        Fragment c_fragment = fm.findFragmentById(R.id.tabs_content_container);
-        if (c_fragment == null) {
-            throw new IllegalStateException("Tabs container contains no fragments.");
-        } else {
-            if (c_fragment instanceof KSDescriptionFragment) {
-                ((KSDescriptionFragment)c_fragment).displayInfo(m_game.getId());
-            } else if (c_fragment instanceof GameLogFragment) {
-                ((GameLogFragment)c_fragment).displayInfo(nextPlayer, dr);
-            } else if (c_fragment instanceof HistogramRollsFragment) {
-                ((HistogramRollsFragment)c_fragment).updateHistogram();
-            } else if (c_fragment instanceof HistogramPlayerTimeFragment) {
-                ((HistogramPlayerTimeFragment)c_fragment).updateHistogram();
-            }
-        }
-        */
     }
 
     @Override
