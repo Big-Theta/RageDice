@@ -3,15 +3,14 @@ package com.bigtheta.ragedice;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -84,6 +83,14 @@ public class MainActivity extends FragmentActivity
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_undo_dice_roll) {
+            undoDiceRoll(null);
+        }
+        return true;
+    }
 
     public void resetDiceRolls(View view) {
         DiceRoll.clear(m_game.getId());
@@ -152,7 +159,6 @@ public class MainActivity extends FragmentActivity
             throw new IllegalStateException("Tabs ui doesn't exist.");
     	}else {
     		tf.refreshDisplay();
-    		
     	}
     }
 
