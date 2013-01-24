@@ -152,6 +152,7 @@ public class MainActivity extends FragmentActivity
             throw new IllegalStateException("Tabs ui doesn't exist.");
     	}else {
     		tf.refreshDisplay();
+    		
     	}
     }
 
