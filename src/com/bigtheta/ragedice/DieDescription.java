@@ -183,17 +183,13 @@ public class DieDescription {
         Long sizeN = observedSummaryStatistics.getN();
         NormalDistribution normalDistribution = new NormalDistribution(sizeN * expectedSummaryStatistics.getMean(),
                                                                        Math.sqrt(sizeN) * expectedSummaryStatistics.getStandardDeviation());
-        update += " then the 95% confidence interval for the sum of all dice rolls is (";
+        update += ", the 95% confidence interval for the sum of all dice rolls is (";
         update += Double.toString(normalDistribution.inverseCumulativeProbability(0.025));
         update += ", ";
         update += Double.toString(normalDistribution.inverseCumulativeProbability(1.0 - 0.025));
         double delta = Math.abs(observedSummaryStatistics.getSum() - normalDistribution.getMean());
-        double low = normalDistribution.getMean() - delta;
-        double high = normalDistribution.getMean() + delta;
-        update += "). The likelihood that the sum of " + Long.toString(sizeN)
-                + " dice rolls will be between " + Double.toString(low)
-                + " and " + Double.toString(high)
-                + " is " + Double.toString(normalDistribution.cumulativeProbability(low, high)) + ".";
+        update += ").";
+
         return update;
     }
 

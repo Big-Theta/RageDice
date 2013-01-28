@@ -19,17 +19,17 @@ public class TabsFragment extends Fragment {
 
         //mTabHost.addTab(mTabHost.newTabSpec("glf").setIndicator("GLF"), GameLogFragment.class, null);
         mTabHost.addTab(mTabHost.newTabSpec("hgf").setIndicator(
-        		"Histogram", getResources().getDrawable(R.drawable.histo_tab_selected)), HistogramRollsFragment.class, null);
+                "Histogram", getResources().getDrawable(R.drawable.histo_tab_selected)), HistogramRollsFragment.class, null);
         mTabHost.addTab(mTabHost.newTabSpec("hptf").setIndicator(
-        		"Player Time Histogram"), HistogramPlayerTimeFragment.class, null);
+                "Player Time Histogram"), HistogramPlayerTimeFragment.class, null);
         mTabHost.addTab(mTabHost.newTabSpec("ksdf").setIndicator(
-        		"Statistics", getResources().getDrawable(R.drawable.stats_tab_selected)), KSDescriptionFragment.class, null);
+                "Statistics", getResources().getDrawable(R.drawable.stats_tab_selected)), KSDescriptionFragment.class, null);
         return mTabHost;
     }
-    
+
     public void refreshDisplay() {
-    	long gameId = MainActivity.getGame().getId();
-    	FragmentManager fm = getChildFragmentManager();
+        long gameId = MainActivity.getGame().getId();
+        FragmentManager fm = getChildFragmentManager();
         Fragment c_fragment = fm.findFragmentById(R.id.tabs_content_container);
         if (c_fragment == null) {
             throw new IllegalStateException("Tabs container contains no fragments.");
@@ -37,8 +37,8 @@ public class TabsFragment extends Fragment {
             if (c_fragment instanceof KSDescriptionFragment) {
                 ((KSDescriptionFragment)c_fragment).displayInfo(gameId);
             } else if (c_fragment instanceof GameLogFragment) {
-		    	DiceRoll dr = DiceRoll.getLastDiceRoll(gameId);
-		        Player nextPlayer = Player.getLastPlayer(gameId);
+                DiceRoll dr = DiceRoll.getLastDiceRoll(gameId);
+                Player nextPlayer = Player.getLastPlayer(gameId);
                 ((GameLogFragment)c_fragment).displayInfo(nextPlayer, dr);
             } else if (c_fragment instanceof HistogramRollsFragment) {
                 ((HistogramRollsFragment)c_fragment).updateHistogram();
@@ -47,12 +47,12 @@ public class TabsFragment extends Fragment {
             }
         }
     }
-    
+
     public void nextTab() {
-    	mTabHost.setCurrentTab(mTabHost.getCurrentTab() + 1);
+        mTabHost.setCurrentTab(mTabHost.getCurrentTab() + 1);
     }
-    
+
     public void prevTab() {
-    	mTabHost.setCurrentTab(mTabHost.getCurrentTab() - 1);
+        mTabHost.setCurrentTab(mTabHost.getCurrentTab() - 1);
     }
 }

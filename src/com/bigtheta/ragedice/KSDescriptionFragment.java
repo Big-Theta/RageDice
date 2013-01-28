@@ -23,7 +23,7 @@ public class KSDescriptionFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                          Bundle savedInstanceState) {
-    	//FragmentManager fm = getActivity().getSupportFragmentManager();
+        //FragmentManager fm = getActivity().getSupportFragmentManager();
         return inflater.inflate(R.layout.ksdescription_layout, container, false);
     }
 
@@ -50,28 +50,17 @@ public class KSDescriptionFragment extends Fragment {
     public void displayInfo(long gameId) {
         TextView tv = (TextView) mCallback.findViewById(R.id.ksdescription_view);
         String info = "";
-        info += "numDiceRolls: " + Integer.toString(DiceRoll.getNumDiceRolls());
-        HashMap<Integer, Double> pmf = DieDescription.getPMF(gameId);
-        for (Integer observation : pmf.keySet()) {
-            info += "\nObservation: " + Integer.toString(observation)
-                  + " Probability: " + pmf.get(observation);
+        if (DiceRoll.getNumDiceRolls() < 4) {
+            info = "Not enough rolls have been made to calculate statistics.";
+        } else {  
+            info += "\nThe probability the dice are fair based on the Kolmogorov-Smirnov distribution: " + Double.toString(DiceRoll.calculateKSPValue(gameId));
+            info += "\n";
+            info += DieDescription.getKSDescription(gameId);
+     
+            info += "\n\nThe probability the dice are fair based on the central limit theorem: " + Double.toString(DiceRoll.calculateCentralLimitProbabilityPValue(gameId));
+            info += "\n";
+            info += DieDescription.getCLTDescription(gameId);
         }
-        HashMap<Integer, Integer> dist = DiceRoll.getObservedRolls(gameId);
-        for (Integer observation : dist.keySet()) {
-            info += "\nObservation: " + Integer.toString(observation)
-                  + " Count: " + dist.get(observation);
-        }
-        double stat = DiceRoll.calculateKSTestStatistic(gameId);
-        info += "\nKS statistic: " + Double.toString(stat);
-        // Probability that these are different distributions.
-        info += "\nKS probability: " + Double.toString(DiceRoll.calculateKSPValue(gameId));
-        info += "\nCentral Limit Theorem probability: " + Double.toString(DiceRoll.calculateCentralLimitProbabilityPValue(gameId));
-
-        info += "\n=====\n";
-        info += DieDescription.getKSDescription(gameId);
-        info += "\n=====\n";
-        info += DieDescription.getCLTDescription(gameId);
         tv.setText(info);
-
     }
 }
