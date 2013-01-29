@@ -8,7 +8,6 @@
     android:background="@color/background"
     android:orientation="vertical" >
 
-    <!--
     <com.google.ads.AdView
         android:id="@+id/ad"
         android:layout_width="wrap_content"
@@ -18,7 +17,6 @@
         ads:adSize="BANNER"
         ads:adUnitId="a150f83943dc4de"
         ads:loadAdOnCreate="true"/>
-    -->
 
     <fragment
         android:id="@+id/dice_fragment_ui"
@@ -27,41 +25,11 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <LinearLayout
+    <fragment
+        android:id="@+id/tabs_fragment_ui"
+        android:name="com.bigtheta.ragedice.TabsFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".2" >
-
-        <ImageButton
-            android:id="@+id/imageButton1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/background"
-            android:src="@drawable/histo_tab_selected" />
-
-        <RadioButton
-            android:id="@+id/radioButton1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="RadioButton" />
-
-        <ImageButton
-            android:id="@+id/imageButton2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/background"
-            android:src="@drawable/stats_tab_unselected" />
-
-    </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/lower_ui_container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
-    </FrameLayout>
+        android:layout_weight="1" />
 
 </LinearLayout>

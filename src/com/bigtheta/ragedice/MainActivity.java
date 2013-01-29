@@ -5,12 +5,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -19,6 +19,8 @@ public class MainActivity extends FragmentActivity
         implements GameLogFragment.GameLogListener,
                    DiceDisplayFragment.DiceDisplayListener,
                    KSDescriptionFragment.KSDescriptionListener,
+                   HistogramRollsFragment.HistogramRollsListener,
+                   HistogramPlayerTimeFragment.HistogramPlayerTimeListener,
                    GestureDetector.OnGestureListener,
                    GestureDetector.OnDoubleTapListener {
 
@@ -35,7 +37,6 @@ public class MainActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_alternate);
 
         m_gestureDetector = new GestureDetectorCompat(this, this);
         m_gestureDetector.setOnDoubleTapListener(this);
@@ -52,18 +53,13 @@ public class MainActivity extends FragmentActivity
         new Player(m_game, 4, "player four");
 
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
-                           R.color.yellow_die,
-                           R.id.yellow_die, DieDescription.NUMERIC);
+                           R.color.yellow_die, R.id.yellow_die, DieDescription.NUMERIC);
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
-                           R.color.red_die,
-                           R.id.red_die, DieDescription.NUMERIC);
+                           R.color.red_die, R.id.red_die, DieDescription.NUMERIC);
         new DieDescription(m_game, 1, 6, "ship_die_",
-                           R.color.background,
-                           R.id.ship_die, DieDescription.SHIP);
+                           R.color.background, R.id.ship_die, DieDescription.SHIP);
         fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.add(R.id.lower_ui_container, new GameLogFragment(), "glf");
-        ft.commit();
+        setContentView(R.layout.activity_main_alternate);
     }
 
     @Override
@@ -85,9 +81,13 @@ public class MainActivity extends FragmentActivity
         return true;
     }
 
-        // TODO These views need to exist somewhere.
-        //findViewById(R.id.histogram_rolls_view).invalidate();
-        //findViewById(R.id.histogram_player_time_view).invalidate();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_undo_dice_roll) {
+            undoDiceRoll(null);
+        }
+        return true;
+    }
 
     public void resetDiceRolls(View view) {
         DiceRoll.clear(m_game.getId());
@@ -117,28 +117,28 @@ public class MainActivity extends FragmentActivity
     }
 
     public void nextFragment() {
-        Log.i("nextFragment", "triggered");
-        FragmentTransaction ft = fm.beginTransaction();
-        if (fm.findFragmentByTag("glf") != null &&
-            fm.findFragmentByTag("glf").isVisible()) {
-            ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
-        } else if (fm.findFragmentByTag("ksdf") != null &&
-            fm.findFragmentByTag("ksdf").isVisible()) {
-            ft.replace(R.id.lower_ui_container, new GameLogFragment(), "glf");
-        } else if (fm.findFragmentByTag("hgf") != null &&
-            fm.findFragmentByTag("hgf").isVisible()) {
-            ft.replace(R.id.lower_ui_container, new KSDescriptionFragment(), "ksdf");
-        } else {
-            throw new IllegalStateException("No fragment visible.");
+        TabsFragment tf = getTabsFragment();
+        if (tf == null) {
+            throw new IllegalStateException("Tabs ui doesn't exist.");
+        }else {
+            tf.nextTab();
+            refreshDisplay();
         }
-        ft.commit();
-        refreshDisplay();
     }
 
     public void prevFragment() {
-        Log.i("prevFragment", "triggered");
-        nextFragment();
-        refreshDisplay();
+        TabsFragment tf = getTabsFragment();
+        if (tf == null) {
+            throw new IllegalStateException("Tabs ui doesn't exist.");
+        }else {
+            tf.prevTab();
+            refreshDisplay();
+        }
+    }
+
+    public TabsFragment getTabsFragment() {
+        TabsFragment tf = (TabsFragment) fm.findFragmentById(R.id.tabs_fragment_ui);
+        return tf;
     }
 
     public void refreshDisplay() {
@@ -147,24 +147,36 @@ public class MainActivity extends FragmentActivity
         DiceDisplayFragment ddf = (DiceDisplayFragment)
                 fm.findFragmentById(R.id.dice_fragment_ui);
         GameLogFragment glf = (GameLogFragment) fm.findFragmentByTag("glf");
-        KSDescriptionFragment ksdf = (KSDescriptionFragment) fm.findFragmentByTag("ksdf");
 
         if (ddf != null && ddf.isVisible()) {
             ddf.displayDiceRoll(dr);
         }
-        if (glf != null && glf.isVisible()) {
-            glf.displayInfo(nextPlayer, dr);
-        } else if (ksdf != null && ksdf.isVisible()) {
-            ksdf.displayInfo(m_game.getId());
+        TabsFragment tf = getTabsFragment();
+        if (tf == null) {
+            throw new IllegalStateException("Tabs ui doesn't exist.");
+        }else {
+            tf.refreshDisplay();
         }
     }
 
+    @Override
     public void onDiceSelected(int position) {
     }
+
+    @Override
     public void onGameLogSelected(int position) {
     }
 
+    @Override
     public void onKSDescriptionSelected(int position) {
+    }
+
+    @Override
+    public void onHistogramRollsSelected(int position) {
+    }
+
+    @Override
+    public void onHistogramPlayerTimeSelected(int position) {
     }
 
     public static Game getGame() {
