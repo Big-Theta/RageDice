@@ -80,7 +80,7 @@ public class MainActivity extends FragmentActivity
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_undo_dice_roll) {
@@ -117,28 +117,28 @@ public class MainActivity extends FragmentActivity
     }
 
     public void nextFragment() {
-    	TabsFragment tf = getTabsFragment();
-    	if (tf == null) {
+        TabsFragment tf = getTabsFragment();
+        if (tf == null) {
             throw new IllegalStateException("Tabs ui doesn't exist.");
-    	}else {
-    		tf.nextTab();
-    		refreshDisplay();
-    	}
+        }else {
+            tf.nextTab();
+            refreshDisplay();
+        }
     }
 
     public void prevFragment() {
-    	TabsFragment tf = getTabsFragment();
-    	if (tf == null) {
+        TabsFragment tf = getTabsFragment();
+        if (tf == null) {
             throw new IllegalStateException("Tabs ui doesn't exist.");
-    	}else {
-    		tf.prevTab();
-    		refreshDisplay();
-    	}
+        }else {
+            tf.prevTab();
+            refreshDisplay();
+        }
     }
-    
+
     public TabsFragment getTabsFragment() {
-    	TabsFragment tf = (TabsFragment) fm.findFragmentById(R.id.tabs_fragment_ui);
-    	return tf;
+        TabsFragment tf = (TabsFragment) fm.findFragmentById(R.id.tabs_fragment_ui);
+        return tf;
     }
 
     public void refreshDisplay() {
@@ -151,12 +151,12 @@ public class MainActivity extends FragmentActivity
         if (ddf != null && ddf.isVisible()) {
             ddf.displayDiceRoll(dr);
         }
-    	TabsFragment tf = getTabsFragment();
-    	if (tf == null) {
+        TabsFragment tf = getTabsFragment();
+        if (tf == null) {
             throw new IllegalStateException("Tabs ui doesn't exist.");
-    	}else {
-    		tf.refreshDisplay();
-    	}
+        }else {
+            tf.refreshDisplay();
+        }
     }
 
     @Override

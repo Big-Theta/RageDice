@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class KSDescriptionFragment extends Fragment {
-    KSDescriptionListener mCallback;
+    KSDescriptionListener m_callback;
 
     public interface KSDescriptionListener {
         public void onKSDescriptionSelected(int position);
@@ -40,7 +40,7 @@ public class KSDescriptionFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mCallback = (KSDescriptionListener) activity;
+            m_callback = (KSDescriptionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement KSDescriptionListener");
@@ -48,15 +48,15 @@ public class KSDescriptionFragment extends Fragment {
     }
 
     public void displayInfo(long gameId) {
-        TextView tv = (TextView) mCallback.findViewById(R.id.ksdescription_view);
+        TextView tv = (TextView) m_callback.findViewById(R.id.ksdescription_view);
         String info = "";
         if (DiceRoll.getNumDiceRolls() < 4) {
             info = "Not enough rolls have been made to calculate statistics.";
-        } else {  
+        } else {
             info += "\nThe probability the dice are fair based on the Kolmogorov-Smirnov distribution: " + Double.toString(DiceRoll.calculateKSPValue(gameId));
             info += "\n";
             info += DieDescription.getKSDescription(gameId);
-     
+
             info += "\n\nThe probability the dice are fair based on the central limit theorem: " + Double.toString(DiceRoll.calculateCentralLimitProbabilityPValue(gameId));
             info += "\n";
             info += DieDescription.getCLTDescription(gameId);

@@ -9,22 +9,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class TabsFragment extends Fragment {
-    private FragmentTabHost mTabHost;
+    private FragmentTabHost m_tabHost;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        mTabHost = new FragmentTabHost(getActivity());
-        mTabHost.setup(getActivity(), getChildFragmentManager(), R.id.tabs_content_container);
+        m_tabHost = new FragmentTabHost(getActivity());
+        m_tabHost.setup(getActivity(), getChildFragmentManager(), R.id.tabs_content_container);
 
-        //mTabHost.addTab(mTabHost.newTabSpec("glf").setIndicator("GLF"), GameLogFragment.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("hgf").setIndicator(
+        //m_tabHost.addTab(m_tabHost.newTabSpec("glf").setIndicator("GLF"), GameLogFragment.class, null);
+        m_tabHost.addTab(m_tabHost.newTabSpec("hgf").setIndicator(
                 "Histogram", getResources().getDrawable(R.drawable.histo_tab_selected)), HistogramRollsFragment.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("hptf").setIndicator(
+        m_tabHost.addTab(m_tabHost.newTabSpec("hptf").setIndicator(
                 "Player Time Histogram"), HistogramPlayerTimeFragment.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("ksdf").setIndicator(
+        m_tabHost.addTab(m_tabHost.newTabSpec("ksdf").setIndicator(
                 "Statistics", getResources().getDrawable(R.drawable.stats_tab_selected)), KSDescriptionFragment.class, null);
-        return mTabHost;
+        return m_tabHost;
     }
 
     public void refreshDisplay() {
@@ -49,10 +49,10 @@ public class TabsFragment extends Fragment {
     }
 
     public void nextTab() {
-        mTabHost.setCurrentTab(mTabHost.getCurrentTab() + 1);
+        m_tabHost.setCurrentTab(m_tabHost.getCurrentTab() + 1);
     }
 
     public void prevTab() {
-        mTabHost.setCurrentTab(mTabHost.getCurrentTab() - 1);
+        m_tabHost.setCurrentTab(m_tabHost.getCurrentTab() - 1);
     }
 }

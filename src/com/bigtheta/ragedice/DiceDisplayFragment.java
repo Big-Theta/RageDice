@@ -28,7 +28,7 @@ public class DiceDisplayFragment extends Fragment  {
                          Bundle savedInstanceState) {
         return inflater.inflate(R.layout.dice_layout, container, false);
     }
-    
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -47,7 +47,7 @@ public class DiceDisplayFragment extends Fragment  {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-    	refreshStatusText();
+        refreshStatusText();
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -117,13 +117,13 @@ public class DiceDisplayFragment extends Fragment  {
         }
         refreshStatusText();
     }
-    
+
     private void refreshStatusText() {
         TextView tv = (TextView) m_callback.findViewById(R.id.whose_turn_text);
         Game g = MainActivity.getGame();
         String nextPlayerName = Player.getNextPlayer(g.getId()).getPlayerName();
         if (tv != null) {
-	        tv.setText(nextPlayerName + "'s turn.");
+            tv.setText(nextPlayerName + "'s turn.");
         }
     }
 }

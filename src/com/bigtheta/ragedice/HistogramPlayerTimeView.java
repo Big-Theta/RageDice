@@ -47,11 +47,11 @@ public class HistogramPlayerTimeView extends View {
     public HistogramPlayerTimeView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
-    
+
     private void updateDataset() {
         XYSeries series = new XYSeries("Average time");
         for (int i = 0; i < m_dataset.getSeriesCount(); i++) {
-            m_dataset.removeSeries(0);         
+            m_dataset.removeSeries(0);
         }
 
         Game game = MainActivity.getGame();
@@ -87,7 +87,7 @@ public class HistogramPlayerTimeView extends View {
         }
         m_dataset.addSeries(series);
     }
-    
+
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);

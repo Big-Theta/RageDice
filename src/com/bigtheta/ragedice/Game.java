@@ -30,7 +30,7 @@ public class Game {
                 tableGameColumns,
                 MySQLiteHelper.COLUMN_ID + " = " + Long.toString(m_id),
                 null, null, null, null);
-        cursor.moveToFirst();    
+        cursor.moveToFirst();
         m_randomNumber = cursor.getInt(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_RANDOM_NUMBER));
         cursor.moveToFirst();

@@ -64,6 +64,11 @@ public class Player {
         }
     }
 
+    /*
+     * Deletes the player entry and all dice rolls associated with the player.
+     *
+     * This is very much untested.
+     */
     public void delete() {
         MainActivity.getDatabase().delete(
                 MySQLiteHelper.TABLE_PLAYER, MySQLiteHelper.COLUMN_ID + " = " + m_id, null);

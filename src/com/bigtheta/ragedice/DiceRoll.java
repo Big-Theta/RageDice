@@ -103,6 +103,7 @@ public class DiceRoll {
         }
         return result;
     }
+
     public void delete() {
         long key = Player.retrieve(m_playerId).getGameId();
 
@@ -319,7 +320,7 @@ public class DiceRoll {
     }
 
     /*
-     * Determines how likely it is that the dice are fair.
+     * Determines the Kolmogorov-Smirnov test statistics.
      *
      * References:
      *     http://www.physics.csbsju.edu/stats/KS-test.html
