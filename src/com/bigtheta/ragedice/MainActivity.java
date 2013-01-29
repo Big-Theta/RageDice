@@ -37,7 +37,6 @@ public class MainActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_alternate);
 
         m_gestureDetector = new GestureDetectorCompat(this, this);
         m_gestureDetector.setOnDoubleTapListener(this);
@@ -60,9 +59,7 @@ public class MainActivity extends FragmentActivity
         new DieDescription(m_game, 1, 6, "ship_die_",
                            R.color.background, R.id.ship_die, DieDescription.SHIP);
         fm = getSupportFragmentManager();
-        //FragmentTransaction ft = fm.beginTransaction();
-        //ft.add(R.id.lower_ui_container, new GameLogFragment(), "glf");
-        //ft.commit();
+        setContentView(R.layout.activity_main_alternate);
     }
 
     @Override

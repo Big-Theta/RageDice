@@ -1,35 +1,49 @@
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@id/dice_fragment_ui"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@color/background"
-        android:clickable="true"
-        android:gravity="center"
-        android:onClick="rollDice" >
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" >
 
-        <ImageView
-            android:id="@+id/red_die"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/red_die"
-            android:contentDescription="@string/red_die"
-            android:src="@drawable/alea_transface_colbg_3" />
-
-        <ImageView
-            android:id="@+id/yellow_die"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/yellow_die"
-            android:contentDescription="@string/yellow_die"
-            android:src="@drawable/alea_transface_colbg_4" />
+        <LinearLayout
+	        android:id="@id/dice_fragment_ui"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:background="@color/background"
+	        android:clickable="true"
+	        android:gravity="center"
+	        android:onClick="rollDice" >
+	
+	        <ImageView
+	            android:id="@+id/red_die"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:background="@color/red_die"
+	            android:contentDescription="@string/red_die"
+	            android:src="@drawable/alea_transface_colbg_3" />
+	
+	        <ImageView
+	            android:id="@+id/yellow_die"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:background="@color/yellow_die"
+	            android:contentDescription="@string/yellow_die"
+	            android:src="@drawable/alea_transface_colbg_4" />
+	        
+	        <ImageView
+	            android:id="@+id/ship_die"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:background="@color/ship_die_castle_green"
+	            android:contentDescription="@string/ship_die"
+	            android:src="@drawable/ship_die_castle" />
+	
+        </LinearLayout>
         
-        <ImageView
-            android:id="@+id/ship_die"
+        <TextView
+            android:id="@+id/whose_turn_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/ship_die_castle_green"
-            android:contentDescription="@string/ship_die"
-            android:src="@drawable/ship_die_castle" />
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="40dp"
+            android:text="diceFragment status text" />
 
-    </LinearLayout>
+    </FrameLayout>
