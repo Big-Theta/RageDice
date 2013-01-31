@@ -1,6 +1,7 @@
 package com.bigtheta.ragedice;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -178,6 +179,11 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onHistogramPlayerTimeSelected(int position) {
+    }
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        refreshDisplay();
     }
 
     public static Game getGame() {

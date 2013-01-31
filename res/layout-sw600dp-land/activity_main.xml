@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:orientation="vertical" >
+    android:orientation="horizontal" >
 
     <!--  
     <com.google.ads.AdView
@@ -24,14 +24,14 @@
         android:id="@+id/dice_fragment_ui"
         android:name="com.bigtheta.ragedice.DiceDisplayFragment"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1" />
 
     <fragment
         android:id="@+id/tabs_fragment_ui"
         android:name="com.bigtheta.ragedice.TabsFragment"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1" />
 
 </LinearLayout>
