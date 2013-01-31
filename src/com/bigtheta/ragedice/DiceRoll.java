@@ -43,8 +43,10 @@ public class DiceRoll {
 
         if (lastRoll != null &&
             cacheGetTotalTimes != null &&
+            cacheGetRollsPerPlayer != null &&
             cacheGetTotalTimes.containsKey(player.getGameId()) &&
             cacheGetTotalTimes.get(player.getGameId()).containsKey(lastRoll.getPlayerId())) {
+
             HashMap<Long, Long> updateTimes = cacheGetTotalTimes.get(player.getGameId());
             updateTimes.put(lastRoll.getPlayerId(),
                             updateTimes.get(lastRoll.getPlayerId()) +
@@ -52,6 +54,7 @@ public class DiceRoll {
                                     lastRoll.getTimeCreated().getTime());
             HashMap<Long, Long> updateRollCount = cacheGetRollsPerPlayer.get(
                                                                         player.getGameId());
+            Log.e("lastRoll.getPlayerId()", Long.toString(lastRoll.getPlayerId()));
             updateRollCount.put(lastRoll.getPlayerId(),
                                 updateRollCount.get(lastRoll.getPlayerId()) + 1);
         } else {
@@ -172,7 +175,11 @@ public class DiceRoll {
         HashMap<Long, Long> moves = getRollsPerPlayer(gameId);
         HashMap<Long, Long> ret = new HashMap<Long, Long>();
         for (Long playerId : times.keySet()) {
-            ret.put(playerId, times.get(playerId) / moves.get(playerId));
+            try {
+                ret.put(playerId, times.get(playerId) / moves.get(playerId));
+            } catch (Exception err) {
+                ret.put(playerId, 0L);
+            }
         }
         return ret;
     }
@@ -189,17 +196,19 @@ public class DiceRoll {
         DiceRoll current = getFirstDiceRoll(gameId);
         DiceRoll next = getNextDiceRoll(current);
 
+        for (Player player : Player.getPlayers(gameId)) {
+            Log.e("Player id:", Long.toString(player.getId()));
+            times.put(player.getId(), 0L);
+            moves.put(player.getId(), 0L);
+        }
+
         long delta = 0;
         while (next != null) {
             long key = current.getPlayerId();
+            Log.e("Key:", Long.toString(key));
             delta = next.getTimeCreated().getTime() - current.getTimeCreated().getTime();
-            if (times.containsKey(key)) {
-                times.put(key, times.get(key) + delta);
-                moves.put(key, moves.get(key) + 1);
-            } else {
-                times.put(key, delta);
-                moves.put(key, 1L);
-            }
+            times.put(key, times.get(key) + delta);
+            moves.put(key, moves.get(key) + 1);
             current = next;
             next = getNextDiceRoll(current);
         }

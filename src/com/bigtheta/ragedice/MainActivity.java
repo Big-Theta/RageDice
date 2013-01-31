@@ -43,6 +43,7 @@ public class MainActivity extends FragmentActivity
         m_gestureDetector = new GestureDetectorCompat(this, this);
         m_gestureDetector.setOnDoubleTapListener(this);
         m_dbHelper = new MySQLiteHelper(this);
+        this.deleteDatabase("rage_dice.db");
 
         m_database = m_dbHelper.getWritableDatabase();
         m_game = new Game();
@@ -112,6 +113,7 @@ public class MainActivity extends FragmentActivity
 
     public void rollDice(View view) {
         Player nextPlayer = Player.getNextPlayer(m_game.getId());
+        Log.e("player id at 116:", Long.toString(nextPlayer.getId()));
         DiceRoll dr = new DiceRoll(nextPlayer);
         refreshDisplay();
     }
