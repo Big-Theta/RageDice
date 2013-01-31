@@ -21,6 +21,7 @@ public class MainActivity extends FragmentActivity
                    KSDescriptionFragment.KSDescriptionListener,
                    HistogramRollsFragment.HistogramRollsListener,
                    HistogramPlayerTimeFragment.HistogramPlayerTimeListener,
+                   TabsFragment.TabsFragmentListener,
                    GestureDetector.OnGestureListener,
                    GestureDetector.OnDoubleTapListener {
 
@@ -59,7 +60,7 @@ public class MainActivity extends FragmentActivity
         new DieDescription(m_game, 1, 6, "ship_die_",
                            R.color.background, R.id.ship_die, DieDescription.SHIP);
         fm = getSupportFragmentManager();
-        setContentView(R.layout.activity_main_alternate);
+        setContentView(R.layout.activity_main);
     }
 
     @Override

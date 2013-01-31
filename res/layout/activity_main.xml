@@ -1,74 +1,30 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity" >
+    android:background="@color/background"
+    android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/player_number"
+    <!--  
+    <com.google.ads.AdView
+        android:id="@+id/ad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true" />
+        android:layout_weight="0"
+        android:background="@color/background"
+        ads:adSize="BANNER"
+        ads:adUnitId="a150f83943dc4de"
+        ads:loadAdOnCreate="true"/>
+        -->
 
-    <LinearLayout
-        android:id="@+id/dice_box"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/player_number" >
+    <fragment
+        android:id="@+id/tabs_fragment_ui"
+        android:name="com.bigtheta.ragedice.TabsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-        <ImageView
-            android:id="@+id/red_die"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:contentDescription="@string/red_die" />
-
-        <ImageView
-            android:id="@+id/yellow_die"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:contentDescription="@string/yellow_die" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/debug_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <com.bigtheta.ragedice.HistogramView
-        android:id="@+id/histogram_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/debug_info"
-        android:background="@color/red_die" />
-    
-    <Button
-        android:id="@+id/reset_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/undo_dice_roll_button"
-        android:layout_alignParentRight="true"
-        android:onClick="resetDiceRolls"
-        android:text="@string/reset_button" />
-
-    <Button
-        android:id="@+id/undo_dice_roll_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/roll_dice_button"
-        android:layout_alignParentRight="true"
-        android:onClick="undoDiceRoll"
-        android:text="@string/undo_dice_roll_button" />
-
-    <Button
-        android:id="@+id/roll_dice_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:onClick="rollDice"
-        android:text="@string/roll_dice_button" />
-
-</RelativeLayout>
+</LinearLayout>
