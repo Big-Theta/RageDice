@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">RageDice</string>
-    <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="reset_button">Reset the values.</string>
     <string name="undo_dice_roll_button">Undo last dice roll.</string>
