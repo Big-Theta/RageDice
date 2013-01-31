@@ -157,7 +157,9 @@ public class DieDescription {
                 + "how likely it is that this collection of dice rolls came "
                 + "from a fair distribution. The KS statistic is the maximum "
                 + "difference between the observed and the expected cumulative "
-                + "fraction function (cff). Currently, this value is ";
+                + "fraction function (cff).";
+        update += "After " + Integer.toString(DiceRoll.getNumDiceRolls())
+                + " dice rolls, this value is ";
         update += Double.toString(DiceRoll.calculateKSTestStatistic(gameId));
         update += ". As the maximum difference between the two cffs becomes small, "
                 + "the likelihood that the observed dice rolls were produced by 'fair' "
@@ -187,7 +189,6 @@ public class DieDescription {
         update += Double.toString(normalDistribution.inverseCumulativeProbability(0.025));
         update += ", ";
         update += Double.toString(normalDistribution.inverseCumulativeProbability(1.0 - 0.025));
-        double delta = Math.abs(observedSummaryStatistics.getSum() - normalDistribution.getMean());
         update += ").";
 
         return update;
