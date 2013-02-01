@@ -44,10 +44,9 @@ public class MainActivity extends FragmentActivity
         m_gestureDetector.setOnDoubleTapListener(this);
         m_dbHelper = new MySQLiteHelper(this);
 
-        initializeGame();
-        addPlayer();
-        addPlayer();
-        addPlayer();
+        if (savedInstanceState == null) {
+            initializeGame(false);
+        }
 
         m_database = m_dbHelper.getWritableDatabase();
 
@@ -55,9 +54,15 @@ public class MainActivity extends FragmentActivity
         setContentView(R.layout.activity_main);
     }
 
-    private void initializeGame() {
-        this.deleteDatabase("rage_dice.db");
+    /*
+     * If this is used for a game reset, use refresh = true. If the view isn't completed yet,
+     * this will crash the app.
+     */
+    private void initializeGame(boolean refresh) {
+        //this.deleteDatabase("rage_dice.db");
         m_database = m_dbHelper.getWritableDatabase();
+        m_dbHelper.resetDatabase(m_database);
+
         m_game = new Game();
         addPlayer();
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
@@ -66,6 +71,13 @@ public class MainActivity extends FragmentActivity
                            R.color.red_die, R.id.red_die, DieDescription.NUMERIC);
         new DieDescription(m_game, 1, 6, "ship_die_",
                            R.color.background, R.id.ship_die, DieDescription.SHIP);
+
+        //  addPlayer();
+        //  addPlayer();
+        //  addPlayer();
+        if (refresh) {
+            refreshDisplay();
+        }
     }
 
     static void addPlayer() {
@@ -84,6 +96,18 @@ public class MainActivity extends FragmentActivity
         super.onPause();
         m_dbHelper.close();
     }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //this.deleteDatabase("rage_dice.db");
+    }
+    
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //in onCreate, get with savedInstanceState.getBoolean("db_exists")
+        outState.putBoolean("db_exists", true);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -95,7 +119,9 @@ public class MainActivity extends FragmentActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_undo_dice_roll) {
-            undoDiceRoll(null);
+            undoDiceRoll();
+        } else if (item.getItemId() == R.id.menu_reset_game) {
+            initializeGame(true);
         }
         return true;
     }
@@ -106,7 +132,7 @@ public class MainActivity extends FragmentActivity
         refreshDisplay();
     }
 
-    public void undoDiceRoll(View view) {
+    public void undoDiceRoll() {
         DiceRoll dr = DiceRoll.getLastDiceRoll(m_game.getId());
         if (dr == null) {
             Context context = getApplicationContext();
@@ -123,7 +149,6 @@ public class MainActivity extends FragmentActivity
 
     public void rollDice(View view) {
         Player nextPlayer = Player.getNextPlayer(m_game.getId());
-        Log.e("player id at 116:", Long.toString(nextPlayer.getId()));
         DiceRoll dr = new DiceRoll(nextPlayer);
         refreshDisplay();
     }
@@ -193,6 +218,7 @@ public class MainActivity extends FragmentActivity
     
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        
         refreshDisplay();
     }
 

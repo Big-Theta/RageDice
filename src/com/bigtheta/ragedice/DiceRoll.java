@@ -172,7 +172,6 @@ public class DiceRoll {
         DiceRoll next = getNextDiceRoll(current);
 
         for (Player player : Player.getPlayers(gameId)) {
-            Log.e("Player id:", Long.toString(player.getId()));
             cacheGetTotalTimes.put(player.getId(), 0L);
             cacheGetRollsPerPlayer.put(player.getId(), 0L);
         }
@@ -180,7 +179,6 @@ public class DiceRoll {
         long delta = 0;
         while (next != null) {
             long key = current.getPlayerId();
-            Log.e("Key:", Long.toString(key));
             delta = next.getTimeCreated().getTime() - current.getTimeCreated().getTime();
             cacheGetTotalTimes.put(key, cacheGetTotalTimes.get(key) + delta);
             cacheGetRollsPerPlayer.put(key, cacheGetRollsPerPlayer.get(key) + 1);
@@ -275,6 +273,23 @@ public class DiceRoll {
     }
 
     public static HashMap<Integer, Integer> getObservedRolls(long gameId) {
+        if (cacheGetObservedRolls != null) {
+            // Consistency check. This catches the issue of the database being deleted.
+            int numRollsCache = 0;
+            int numRollsDB = getNumDiceRolls();
+
+            for (Integer result : cacheGetObservedRolls.keySet()) {
+                numRollsCache += cacheGetObservedRolls.get(result);
+            }
+
+            if (numRollsCache != numRollsDB) {
+                Log.e("getObservedRolls Cache inconsistent ",
+                      "numRollsCache: " + Integer.toString(numRollsCache) +
+                      " numRollsDB: " + Integer.toString(numRollsDB));
+                cacheGetObservedRolls = null;
+            }
+        }
+
         if (cacheGetObservedRolls == null) {
             cacheGetObservedRolls = new HashMap<Integer, Integer>();
             Cursor cursor = MainActivity.getDatabase().query(

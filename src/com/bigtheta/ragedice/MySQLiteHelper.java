@@ -99,12 +99,26 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Log.w(MySQLiteHelper.class.getName(),
                 "Upgrading database from version " + oldVersion + " to "
                 + newVersion + ", which will destroy all old data");
+        resetDatabase(db);
+        /*
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_GAME);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DICE_ROLL);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DIE_DESCRIPTION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DIE_RESULT);
         onCreate(db);
+        */
+    }
+
+    public void resetDatabase(SQLiteDatabase database) {
+        Log.e("got here", "1");
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_DIE_RESULT);
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_DIE_DESCRIPTION);
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_DICE_ROLL);
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYER);
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_GAME);
+        onCreate(database);
+        Log.e("got here", "2");
     }
 }
 

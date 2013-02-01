@@ -60,8 +60,6 @@ public class HistogramRollsView extends View {
             Integer max = null;
             Integer tallest = null;
             for (Integer key : pmf.keySet()) {
-                Log.e("key", Integer.toString(key));
-                Log.e("observedRolls", observedRolls.toString());
                 Integer val = observedRolls.get(key);
                 if (val == null) {
                     series.add((double)key, 0.0);
