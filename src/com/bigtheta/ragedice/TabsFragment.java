@@ -80,4 +80,12 @@ public class TabsFragment extends Fragment {
     public void prevTab() {
         m_tabHost.setCurrentTab(m_tabHost.getCurrentTab() - 1);
     }
+
+    public void setTab(int tabNumber) {
+        m_tabHost.setCurrentTab(tabNumber);
+    }
+
+    public int getTabNumber() {
+        return m_tabHost.getCurrentTab();
+    }
 }

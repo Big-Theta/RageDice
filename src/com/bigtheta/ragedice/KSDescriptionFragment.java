@@ -1,11 +1,10 @@
 package com.bigtheta.ragedice;
 
-import java.util.HashMap;
+import java.text.DecimalFormat;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,12 +52,15 @@ public class KSDescriptionFragment extends Fragment {
         if (DiceRoll.getNumDiceRolls() < 4) {
             info = "Not enough rolls have been made to calculate statistics.";
         } else {
+            /*
             info += "\nThe probability the dice are fair based on the Kolmogorov-Smirnov distribution: " + Double.toString(DiceRoll.calculateKSPValue(gameId));
             info += "\n";
             info += DieDescription.getKSDescription(gameId);
+            */
 
-            info += "\n\nThe probability the dice are fair based on the central limit theorem: " + Double.toString(DiceRoll.calculateCentralLimitProbabilityPValue(gameId));
-            info += "\n";
+            info += "\n\nThe probability the dice are fair based on the central limit theorem: ";
+            info += new DecimalFormat("#.##").format(DiceRoll.calculateCentralLimitProbabilityPValue(gameId));
+            info += "\n\n";
             info += DieDescription.getCLTDescription(gameId);
         }
         tv.setText(info);

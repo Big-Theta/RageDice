@@ -121,9 +121,15 @@ public class DiceDisplayFragment extends Fragment  {
     private void refreshStatusText() {
         TextView tv = (TextView) m_callback.findViewById(R.id.whose_turn_text);
         Game g = MainActivity.getGame();
+        String currentPlayerName = Player.getLastPlayer(g.getId()).getPlayerName();
         String nextPlayerName = Player.getNextPlayer(g.getId()).getPlayerName();
         if (tv != null) {
-            tv.setText(nextPlayerName + "'s turn.");
+            if (Player.getNumPlayers() > 1) {
+                tv.setText(currentPlayerName + "'s turn.\n" +
+                           nextPlayerName + " is next.");
+            } else {
+                tv.setText("");
+            }
         }
     }
 }

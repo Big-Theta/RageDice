@@ -36,7 +36,12 @@ public class HistogramPlayerTimeView extends View {
         m_renderer.setYAxisMin(0.0);
         m_renderer.setBackgroundColor(getResources().getColor(R.color.histogram_background));
         m_renderer.setApplyBackgroundColor(true);
-        m_renderer.setLabelsTextSize(20);
+        m_renderer.setLabelsTextSize(40);
+        m_renderer.setLegendTextSize(40);
+        // Order is top, left, bottom, right
+        int[] margins = {60, 80, 80, 20};
+        m_renderer.setMargins(margins);
+        m_renderer.setFitLegend(true);
         m_renderer.setXLabelsColor(getResources().getColor(R.color.histogram_labels));
         m_renderer.setYLabelsColor(0, getResources().getColor(R.color.histogram_labels));
         m_renderer.setYLabelsAlign(Paint.Align.RIGHT);
@@ -49,7 +54,7 @@ public class HistogramPlayerTimeView extends View {
     }
 
     private void updateDataset() {
-        XYSeries series = new XYSeries("Average time");
+        XYSeries series = new XYSeries("Average time (seconds)");
         for (int i = 0; i < m_dataset.getSeriesCount(); i++) {
             m_dataset.removeSeries(0);
         }

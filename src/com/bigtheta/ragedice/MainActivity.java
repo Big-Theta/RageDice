@@ -46,14 +46,16 @@ public class MainActivity extends FragmentActivity
         m_gestureDetector.setOnDoubleTapListener(this);
         m_dbHelper = new MySQLiteHelper(this);
 
-        if (savedInstanceState == null) {
-            initializeGame(false);
-        }
-
         m_database = m_dbHelper.getWritableDatabase();
 
         fm = getSupportFragmentManager();
         setContentView(R.layout.activity_main);
+
+        if (savedInstanceState == null) {
+            initializeGame(false);
+        } else {
+            getTabsFragment().setTab(savedInstanceState.getInt("current_tab"));
+        }
     }
 
     /*
@@ -80,11 +82,12 @@ public class MainActivity extends FragmentActivity
         }
     }
 
-    private void addPlayer(boolean displayToast) {
+    private void addPlayer(boolean display) {
         int playerNum = Player.getNumPlayers() + 1;
         String playerName = "Player " + Integer.toString(playerNum);
         new Player(m_game, playerNum, playerName);
-        if (displayToast) {
+        if (display) {
+            refreshDisplay();
             defaultToast(playerName + " added.");
         }
     }
@@ -100,17 +103,18 @@ public class MainActivity extends FragmentActivity
         super.onPause();
         m_dbHelper.close();
     }
-    
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         //this.deleteDatabase("rage_dice.db");
     }
-    
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         //in onCreate, get with savedInstanceState.getBoolean("db_exists")
         outState.putBoolean("db_exists", true);
+        outState.putInt("current_tab", getTabsFragment().getTabNumber());
     }
 
     @Override
@@ -182,7 +186,7 @@ public class MainActivity extends FragmentActivity
         TabsFragment tf = getTabsFragment();
         if (tf == null) {
             throw new IllegalStateException("Tabs ui doesn't exist.");
-        }else {
+        } else {
             tf.nextTab();
             refreshDisplay();
         }
@@ -192,7 +196,7 @@ public class MainActivity extends FragmentActivity
         TabsFragment tf = getTabsFragment();
         if (tf == null) {
             throw new IllegalStateException("Tabs ui doesn't exist.");
-        }else {
+        } else {
             tf.prevTab();
             refreshDisplay();
         }
@@ -216,7 +220,7 @@ public class MainActivity extends FragmentActivity
         TabsFragment tf = getTabsFragment();
         if (tf == null) {
             throw new IllegalStateException("Tabs ui doesn't exist.");
-        }else {
+        } else {
             tf.refreshDisplay();
         }
     }
@@ -243,7 +247,6 @@ public class MainActivity extends FragmentActivity
     
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        
         refreshDisplay();
     }
 

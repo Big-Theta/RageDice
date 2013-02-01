@@ -1,5 +1,6 @@
 package com.bigtheta.ragedice;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -178,17 +179,17 @@ public class DieDescription {
                 + "as it is. This test works because the Central Limit Theorem "
                 + "states that the sum of all dice rolls is a standard random "
                 + "variable. The current sum is ";
-        update += Double.toString(observedSummaryStatistics.getSum());
+        update += new DecimalFormat("#.##").format(observedSummaryStatistics.getSum());
         update += ". Assuming that the average value for a roll is ";
         SummaryStatistics expectedSummaryStatistics = DiceRoll.getExpectedSummaryStatistics(gameId);
-        update += Double.toString(expectedSummaryStatistics.getMean());
+        update += new DecimalFormat("#.##").format(expectedSummaryStatistics.getMean());
         Long sizeN = observedSummaryStatistics.getN();
         NormalDistribution normalDistribution = new NormalDistribution(sizeN * expectedSummaryStatistics.getMean(),
                                                                        Math.sqrt(sizeN) * expectedSummaryStatistics.getStandardDeviation());
         update += ", the 95% confidence interval for the sum of all dice rolls is (";
-        update += Double.toString(normalDistribution.inverseCumulativeProbability(0.025));
+        update += new DecimalFormat("#.##").format(normalDistribution.inverseCumulativeProbability(0.025));
         update += ", ";
-        update += Double.toString(normalDistribution.inverseCumulativeProbability(1.0 - 0.025));
+        update += new DecimalFormat("#.##").format(normalDistribution.inverseCumulativeProbability(1.0 - 0.025));
         update += ").";
 
         return update;
