@@ -14,7 +14,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 public class HistogramRollsView extends View {

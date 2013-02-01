@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GestureDetectorCompat;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
@@ -177,7 +176,6 @@ public class MainActivity extends FragmentActivity
 
     public void rollDice(View view) {
         Player nextPlayer = Player.getNextPlayer(m_game.getId());
-        Log.e("rollDice nextPlayer.getPlayerName()", nextPlayer.getPlayerName());
         DiceRoll dr = new DiceRoll(nextPlayer);
         refreshDisplay();
     }

@@ -12,7 +12,6 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-import android.util.Log;
 
 public class DiceRoll {
     private static String[] tableDiceRollColumns = {
@@ -285,9 +284,6 @@ public class DiceRoll {
             }
 
             if (numRollsCache != numRollsDB) {
-                Log.e("getObservedRolls Cache inconsistent ",
-                      "numRollsCache: " + Integer.toString(numRollsCache) +
-                      " numRollsDB: " + Integer.toString(numRollsDB));
                 cacheGetObservedRolls = null;
             }
         }
@@ -390,10 +386,8 @@ public class DiceRoll {
      * (X_bar - mu) / (sigma/sqrt(n)) ~~ Norm(0, 1)
      */
     public static double calculateCentralLimitProbabilityPValue(long gameId) {
-        Log.i(" > calculateCentralLimitProbability()", "...");
         SummaryStatistics observedSummaryStatistics = getObservedSummaryStatistics(gameId);
         if (getNumDiceRolls() < 4) {
-            Log.i(" < calculateCentralLimitProbability()", "...");
             return 1.0;
         }
         SummaryStatistics expectedSummaryStatistics = getExpectedSummaryStatistics(gameId);
@@ -402,12 +396,8 @@ public class DiceRoll {
         double mu = expectedSummaryStatistics.getMean();
         double sigma = expectedSummaryStatistics.getStandardDeviation();
         double statistic = Math.abs((X_bar - mu) / (sigma / Math.sqrt(getNumDiceRolls())));
-        Log.i("stat is", Double.toString(statistic));
-        Log.i("getN() is", Long.toString(observedSummaryStatistics.getN()));
-        Log.i("getNumDiceRolls() is", Integer.toString(getNumDiceRolls()));
         NormalDistribution standardNormal = new NormalDistribution();
         double pValue = 1.0 - standardNormal.cumulativeProbability(-statistic, statistic);
-        Log.i(" < calculateCentralLimitProbability()", "...");
         return pValue;
     }
 

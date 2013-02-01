@@ -16,7 +16,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 public class HistogramPlayerTimeView extends View {
@@ -82,7 +81,6 @@ public class HistogramPlayerTimeView extends View {
                     max = playerId;
                 }
                 m_renderer.addXTextLabel(space, Player.retrieve(playerId).getPlayerName());
-                Log.e("label", Player.retrieve(playerId).getPlayerName());
                 space += 1.0;
             }
             if (min != null && max != null) {

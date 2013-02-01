@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,11 +107,9 @@ public class DiceDisplayFragment extends Fragment  {
             ImageView iv = (ImageView)m_callback.findViewById(dd.getImageViewResource());
             try {
                 iv.setImageResource(result.getImageResource());
-                Log.e("res is: ", Integer.toString(result.getImageColorResource()));
                 //getResources().getColor(result.getImageColorResource());
                 iv.setBackgroundColor(getResources().getColor(result.getImageColorResource()));
             } catch (Exception err) {
-                Log.e("MainActivity::displayDiceRoll", err.getCause().getMessage());
             }
         }
         refreshStatusText();

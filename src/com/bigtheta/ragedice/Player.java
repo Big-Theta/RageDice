@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.util.Log;
 
 public class Player {
     private static String[] tablePlayerColumns = {
@@ -112,11 +111,9 @@ public class Player {
     }
 
     public static Player getNextPlayer(long gameId) {
-        Log.e("> getNextPlayer", "top");
         DiceRoll lastRoll = DiceRoll.getLastDiceRoll(gameId);
         Player nextPlayer;
         if (lastRoll == null) {
-            Log.e("getNextPlayer", "one");
             Cursor cursor = MainActivity.getDatabase().query(
                     MySQLiteHelper.TABLE_PLAYER,
                     tablePlayerColumns,
@@ -128,10 +125,8 @@ public class Player {
 
             nextPlayer = null;
             Player lastPlayer = getLastPlayer(gameId);
-            Log.e("getNextPlayer", "lastPlayer: " + lastPlayer.getPlayerName());
 
             for (Player candidate : getPlayers(gameId)) {
-                Log.e("candidate", candidate.getPlayerName());
                 if (nextPlayer == null) {
                     nextPlayer = candidate;
                 // Find minimum candidate that has greater playerNumber...
@@ -147,11 +142,8 @@ public class Player {
                 }
             }
         } else {
-            Log.e("getNextPlayer", "three");
             nextPlayer = null;
         }
-        Log.e("< getNextPlayer", "next: " + nextPlayer.getPlayerName());
-        Log.e("< getNextPlayer", "next playerId: " + Long.toString(nextPlayer.getId()));
         return nextPlayer;
     }
 
