@@ -302,7 +302,12 @@ public class DiceRoll {
     }
 
     public static HashMap<Integer, Integer> getObservedRolls(long gameId) {
-        if (cacheGetObservedRolls == null || !cacheGetObservedRolls.containsKey(gameId)) {
+        // Consistency check
+
+        if (cacheGetObservedRolls == null ||
+            !cacheGetObservedRolls.containsKey(gameId) ||
+            ) {
+
             HashMap<Integer, Integer> ret = new HashMap<Integer, Integer>();
             Cursor cursor = MainActivity.getDatabase().query(
                     MySQLiteHelper.TABLE_DICE_ROLL,

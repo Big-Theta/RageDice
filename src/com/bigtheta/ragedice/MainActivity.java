@@ -56,7 +56,6 @@ public class MainActivity extends FragmentActivity
     }
 
     private void initializeGame() {
-        Log.e("> initializeGame()", "");
         this.deleteDatabase("rage_dice.db");
         m_database = m_dbHelper.getWritableDatabase();
         m_game = new Game();
