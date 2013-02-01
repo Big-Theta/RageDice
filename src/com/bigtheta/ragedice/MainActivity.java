@@ -1,13 +1,14 @@
 package com.bigtheta.ragedice;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GestureDetectorCompat;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
@@ -64,7 +65,7 @@ public class MainActivity extends FragmentActivity
         m_dbHelper.resetDatabase(m_database);
 
         m_game = new Game();
-        addPlayer();
+        addPlayer(false);
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
                            R.color.yellow_die, R.id.yellow_die, DieDescription.NUMERIC);
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
@@ -72,17 +73,19 @@ public class MainActivity extends FragmentActivity
         new DieDescription(m_game, 1, 6, "ship_die_",
                            R.color.background, R.id.ship_die, DieDescription.SHIP);
 
-        //  addPlayer();
-        //  addPlayer();
-        //  addPlayer();
         if (refresh) {
             refreshDisplay();
+            defaultToast(getResources().getText(R.string.toast_game_reset));
         }
     }
 
-    static void addPlayer() {
+    private void addPlayer(boolean displayToast) {
         int playerNum = Player.getNumPlayers() + 1;
-        new Player(m_game, playerNum, "Player " + Integer.toString(playerNum));
+        String playerName = "Player " + Integer.toString(playerNum);
+        new Player(m_game, playerNum, playerName);
+        if (displayToast) {
+            defaultToast(playerName + " added.");
+        }
     }
 
     @Override
@@ -121,7 +124,21 @@ public class MainActivity extends FragmentActivity
         if (item.getItemId() == R.id.menu_undo_dice_roll) {
             undoDiceRoll();
         } else if (item.getItemId() == R.id.menu_reset_game) {
-            initializeGame(true);
+          new AlertDialog.Builder(this)
+                  .setIcon(android.R.drawable.ic_dialog_alert)
+                  .setTitle(getResources().getText(R.string.reset_game_title))
+                  .setMessage(getResources().getText(R.string.really_reset_game))
+                  .setPositiveButton(getResources().getText(R.string.yes),
+                                     new DialogInterface.OnClickListener() {
+
+                      @Override
+                      public void onClick(DialogInterface dialog, int which) {
+                          initializeGame(true);
+                      }
+
+                  })
+                  .setNegativeButton(getResources().getText(R.string.no), null)
+                  .show();
         }
         return true;
     }
@@ -135,16 +152,20 @@ public class MainActivity extends FragmentActivity
     public void undoDiceRoll() {
         DiceRoll dr = DiceRoll.getLastDiceRoll(m_game.getId());
         if (dr == null) {
-            Context context = getApplicationContext();
-            CharSequence text = getResources().getText(R.string.toast_msg_cannot_undo);
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.setGravity(Gravity.TOP, 0, 200);
-            toast.show();
-            return;
+            defaultToast(getResources().getText(R.string.toast_cannot_undo));
+        } else {
+            defaultToast(getResources().getText(R.string.toast_roll_undone));
+            dr.delete();
+            refreshDisplay();
         }
-        dr.delete();
-        refreshDisplay();
+    }
+
+    public void defaultToast(CharSequence text) {
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.setGravity(Gravity.TOP, 0, 200);
+        toast.show();
     }
 
     public void rollDice(View view) {
