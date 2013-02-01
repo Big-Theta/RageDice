@@ -44,6 +44,11 @@ public class MainActivity extends FragmentActivity
         m_gestureDetector.setOnDoubleTapListener(this);
         m_dbHelper = new MySQLiteHelper(this);
 
+        initializeGame();
+        addPlayer();
+        addPlayer();
+        addPlayer();
+
         m_database = m_dbHelper.getWritableDatabase();
 
         fm = getSupportFragmentManager();
@@ -51,7 +56,9 @@ public class MainActivity extends FragmentActivity
     }
 
     private void initializeGame() {
+        Log.e("> initializeGame()", "");
         this.deleteDatabase("rage_dice.db");
+        m_database = m_dbHelper.getWritableDatabase();
         m_game = new Game();
         addPlayer();
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
