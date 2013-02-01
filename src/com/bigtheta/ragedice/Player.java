@@ -161,6 +161,14 @@ public class Player {
         return ret;
     }
 
+    public static int getNumPlayers() {
+        Cursor cursor = MainActivity.getDatabase().query(MySQLiteHelper.TABLE_PLAYER,
+                                                         null, null, null, null, null, null);
+        int retval = cursor.getCount();
+        cursor.close();
+        return retval;
+    }
+
     private static boolean isEmpty(long gameId) {
         boolean retval;
         Cursor cursor = MainActivity.getDatabase().query(
