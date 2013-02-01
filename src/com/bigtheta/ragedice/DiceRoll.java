@@ -43,7 +43,9 @@ public class DiceRoll {
 
         if (lastRoll != null &&
             cacheGetTotalTimes != null &&
-            cacheGetRollsPerPlayer != null) {
+            cacheGetTotalTimes.containsKey(lastRoll.getPlayerId()) &&
+            cacheGetRollsPerPlayer != null &&
+            cacheGetRollsPerPlayer.containsKey(lastRoll.getPlayerId())) {
 
             cacheGetTotalTimes.put(lastRoll.getPlayerId(),
                                    cacheGetTotalTimes.get(lastRoll.getPlayerId()) +
