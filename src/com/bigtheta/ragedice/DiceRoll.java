@@ -25,9 +25,9 @@ public class DiceRoll {
     long m_playerId;
     Timestamp m_timeCreated;
 
-    private static HashMap<Long, HashMap<Integer, Integer> > cacheGetObservedRolls = null;
-    private static HashMap<Long, HashMap<Long, Long> > cacheGetTotalTimes = null;
-    private static HashMap<Long, HashMap<Long, Long> > cacheGetRollsPerPlayer = null;
+    private static HashMap<Integer, Integer> cacheGetObservedRolls = null;
+    private static HashMap<Long, Long> cacheGetTotalTimes = null;
+    private static HashMap<Long, Long> cacheGetRollsPerPlayer = null;
 
     public DiceRoll(Player player) {
         m_playerId = player.getId();
@@ -43,20 +43,14 @@ public class DiceRoll {
 
         if (lastRoll != null &&
             cacheGetTotalTimes != null &&
-            cacheGetRollsPerPlayer != null &&
-            cacheGetTotalTimes.containsKey(player.getGameId()) &&
-            cacheGetTotalTimes.get(player.getGameId()).containsKey(lastRoll.getPlayerId())) {
+            cacheGetRollsPerPlayer != null) {
 
-            HashMap<Long, Long> updateTimes = cacheGetTotalTimes.get(player.getGameId());
-            updateTimes.put(lastRoll.getPlayerId(),
-                            updateTimes.get(lastRoll.getPlayerId()) +
-                                    m_timeCreated.getTime() -
-                                    lastRoll.getTimeCreated().getTime());
-            HashMap<Long, Long> updateRollCount = cacheGetRollsPerPlayer.get(
-                                                                        player.getGameId());
-            Log.e("lastRoll.getPlayerId()", Long.toString(lastRoll.getPlayerId()));
-            updateRollCount.put(lastRoll.getPlayerId(),
-                                updateRollCount.get(lastRoll.getPlayerId()) + 1);
+            cacheGetTotalTimes.put(lastRoll.getPlayerId(),
+                                   cacheGetTotalTimes.get(lastRoll.getPlayerId()) +
+                                   m_timeCreated.getTime() -
+                                   lastRoll.getTimeCreated().getTime());
+            cacheGetRollsPerPlayer.put(lastRoll.getPlayerId(),
+                                       cacheGetRollsPerPlayer.get(lastRoll.getPlayerId()) + 1);
         } else {
             initializeCachesForAverageTimes(player.getGameId());
         }
@@ -66,14 +60,12 @@ public class DiceRoll {
             new DieResult(this, dd);
         }
 
-        long key = Player.retrieve(m_playerId).getGameId();
-        if (cacheGetObservedRolls != null && cacheGetObservedRolls.containsKey(key)) {
+        if (cacheGetObservedRolls != null) {
             int result = getTotalResult();
-            HashMap<Integer, Integer> toUpdate = cacheGetObservedRolls.get(key);
-            if (!toUpdate.containsKey(result)) {
-                toUpdate.put(result, 1);
+            if (!cacheGetObservedRolls.containsKey(result)) {
+                cacheGetObservedRolls.put(result, 1);
             } else {
-                toUpdate.put(result, toUpdate.get(result) + 1);
+                cacheGetObservedRolls.put(result, cacheGetObservedRolls.get(result) + 1);
             }
         }
     }
@@ -108,23 +100,9 @@ public class DiceRoll {
     }
 
     public void delete() {
-        long key = Player.retrieve(m_playerId).getGameId();
-
-        if (cacheGetObservedRolls != null && cacheGetObservedRolls.containsKey(key)) {
-            cacheGetObservedRolls.remove(Player.retrieve(m_playerId).getGameId());
-        }
-        if (cacheGetTotalTimes != null && cacheGetTotalTimes.containsKey(key)) {
-            cacheGetTotalTimes.remove(Player.retrieve(m_playerId).getGameId());
-        }
-        if (cacheGetTotalTimes != null && cacheGetRollsPerPlayer.containsKey(key)) {
-            cacheGetRollsPerPlayer.remove(Player.retrieve(m_playerId).getGameId());
-        }
-
-        if (cacheGetObservedRolls != null && cacheGetObservedRolls.containsKey(key)) {
-            int result = getTotalResult();
-            HashMap<Integer, Integer> toUpdate = cacheGetObservedRolls.get(key);
-            toUpdate.put(result, toUpdate.get(result) - 1);
-        }
+        cacheGetObservedRolls = null;
+        cacheGetTotalTimes = null;
+        cacheGetRollsPerPlayer = null;
 
         MainActivity.getDatabase().delete(
                 MySQLiteHelper.TABLE_DICE_ROLL,
@@ -132,9 +110,9 @@ public class DiceRoll {
     }
 
     public static void clear(long gameId) {
-        cacheGetObservedRolls.remove(gameId);
-        cacheGetTotalTimes.remove(gameId);
-        cacheGetRollsPerPlayer.remove(gameId);
+        cacheGetObservedRolls = null;
+        cacheGetTotalTimes = null;
+        cacheGetRollsPerPlayer = null;
 
         MainActivity.getDatabase().delete(MySQLiteHelper.TABLE_DICE_ROLL, null, null);
     }
@@ -186,20 +164,17 @@ public class DiceRoll {
 
     private static void initializeCachesForAverageTimes(long gameId) {
         if (cacheGetTotalTimes == null) {
-            cacheGetTotalTimes = new HashMap<Long, HashMap<Long, Long> >();
-            cacheGetRollsPerPlayer = new HashMap<Long, HashMap<Long, Long> >();
+            cacheGetTotalTimes = new HashMap<Long, Long>();
+            cacheGetRollsPerPlayer = new HashMap<Long, Long>();
         }
-
-        HashMap<Long, Long> times = new HashMap<Long, Long>();
-        HashMap<Long, Long> moves = new HashMap<Long, Long>();
 
         DiceRoll current = getFirstDiceRoll(gameId);
         DiceRoll next = getNextDiceRoll(current);
 
         for (Player player : Player.getPlayers(gameId)) {
             Log.e("Player id:", Long.toString(player.getId()));
-            times.put(player.getId(), 0L);
-            moves.put(player.getId(), 0L);
+            cacheGetTotalTimes.put(player.getId(), 0L);
+            cacheGetRollsPerPlayer.put(player.getId(), 0L);
         }
 
         long delta = 0;
@@ -207,35 +182,33 @@ public class DiceRoll {
             long key = current.getPlayerId();
             Log.e("Key:", Long.toString(key));
             delta = next.getTimeCreated().getTime() - current.getTimeCreated().getTime();
-            times.put(key, times.get(key) + delta);
-            moves.put(key, moves.get(key) + 1);
+            cacheGetTotalTimes.put(key, cacheGetTotalTimes.get(key) + delta);
+            cacheGetRollsPerPlayer.put(key, cacheGetRollsPerPlayer.get(key) + 1);
             current = next;
             next = getNextDiceRoll(current);
         }
 
         if (cacheGetTotalTimes == null) {
-            cacheGetTotalTimes = new HashMap<Long, HashMap<Long, Long> >();
+            cacheGetTotalTimes = new HashMap<Long, Long>();
         }
 
         if (cacheGetRollsPerPlayer == null) {
-            cacheGetRollsPerPlayer = new HashMap<Long, HashMap<Long, Long> >();
+            cacheGetRollsPerPlayer = new HashMap<Long, Long>();
         }
-        cacheGetTotalTimes.put(gameId, times);
-        cacheGetRollsPerPlayer.put(gameId, moves);
     }
 
     private static HashMap<Long, Long> getTotalTimes(long gameId) {
         if (cacheGetTotalTimes == null) {
             initializeCachesForAverageTimes(gameId);
         }
-        return cacheGetTotalTimes.get(gameId);
+        return cacheGetTotalTimes;
     }
 
     private static HashMap<Long, Long> getRollsPerPlayer(long gameId) {
         if (cacheGetTotalTimes == null) {
             initializeCachesForAverageTimes(gameId);
         }
-        return cacheGetRollsPerPlayer.get(gameId);
+        return cacheGetRollsPerPlayer;
     }
 
     public static DiceRoll getFirstDiceRoll(long gameId) {
@@ -302,37 +275,27 @@ public class DiceRoll {
     }
 
     public static HashMap<Integer, Integer> getObservedRolls(long gameId) {
-        // Consistency check
-
-        if (cacheGetObservedRolls == null ||
-            !cacheGetObservedRolls.containsKey(gameId) ||
-            ) {
-
-            HashMap<Integer, Integer> ret = new HashMap<Integer, Integer>();
+        if (cacheGetObservedRolls == null) {
+            cacheGetObservedRolls = new HashMap<Integer, Integer>();
             Cursor cursor = MainActivity.getDatabase().query(
                     MySQLiteHelper.TABLE_DICE_ROLL,
                     null, null, null, null, null, null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                DiceRoll roll = new DiceRoll(cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.COLUMN_ID)));
+                DiceRoll roll = new DiceRoll(
+                            cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.COLUMN_ID)));
                 int result = roll.getTotalResult();
 
-                if (ret.containsKey(result)) {
-                    ret.put(result, ret.get(result) + 1);
+                if (cacheGetObservedRolls.containsKey(result)) {
+                    cacheGetObservedRolls.put(result, cacheGetObservedRolls.get(result) + 1);
                 } else {
-                    ret.put(result, 1);
+                    cacheGetObservedRolls.put(result, 1);
                 }
                 cursor.moveToNext();
             }
             cursor.close();
-            if (cacheGetObservedRolls == null) {
-                cacheGetObservedRolls = new HashMap<Long, HashMap<Integer, Integer> >();
-            }
-            cacheGetObservedRolls.put(gameId, ret);
-            return ret;
-        } else {
-            return cacheGetObservedRolls.get(gameId);
         }
+        return cacheGetObservedRolls;
     }
 
     /*

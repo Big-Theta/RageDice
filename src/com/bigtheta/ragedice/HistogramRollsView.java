@@ -14,6 +14,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 public class HistogramRollsView extends View {
@@ -59,6 +60,8 @@ public class HistogramRollsView extends View {
             Integer max = null;
             Integer tallest = null;
             for (Integer key : pmf.keySet()) {
+                Log.e("key", Integer.toString(key));
+                Log.e("observedRolls", observedRolls.toString());
                 Integer val = observedRolls.get(key);
                 if (val == null) {
                     series.add((double)key, 0.0);
