@@ -43,7 +43,6 @@ public class MainActivity extends FragmentActivity
         m_gestureDetector = new GestureDetectorCompat(this, this);
         m_gestureDetector.setOnDoubleTapListener(this);
         m_dbHelper = new MySQLiteHelper(this);
-        // REMOVEME
         this.deleteDatabase("rage_dice.db");
 
         m_database = m_dbHelper.getWritableDatabase();
@@ -114,6 +113,7 @@ public class MainActivity extends FragmentActivity
 
     public void rollDice(View view) {
         Player nextPlayer = Player.getNextPlayer(m_game.getId());
+        Log.e("player id at 116:", Long.toString(nextPlayer.getId()));
         DiceRoll dr = new DiceRoll(nextPlayer);
         refreshDisplay();
     }
@@ -199,14 +199,12 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public boolean onDown(MotionEvent event) {
-        Log.e("debug...","onDown: " + event.toString());
         return true;
     }
 
     @Override
     public boolean onFling(MotionEvent start, MotionEvent finish,
                            float velocityX, float velocityY) {
-        Log.e("debug...", "onFling: ");
         float deltaX = Math.abs(finish.getRawX() - start.getRawX());
         float deltaY = Math.abs(finish.getRawY() - start.getRawY());
         if (deltaX > deltaY) {
@@ -222,42 +220,35 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onLongPress(MotionEvent event) {
-        Log.e("debug...", "onLongPress: " + event.toString());
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-            float distanceY) {
-        Log.e("debug...", "onScroll: " + e1.toString()+e2.toString());
+                            float distanceY) {
         return true;
     }
 
     @Override
     public void onShowPress(MotionEvent event) {
-        Log.e("debug...", "onShowPress: " + event.toString());
     }
 
     @Override
     public boolean onSingleTapUp(MotionEvent event) {
-        Log.e("debug...", "onSingleTapUp: " + event.toString());
         return true;
     }
 
     @Override
     public boolean onDoubleTap(MotionEvent event) {
-        Log.e("debug...", "onDoubleTap: " + event.toString());
         return true;
     }
 
     @Override
     public boolean onDoubleTapEvent(MotionEvent event) {
-        Log.e("debug...", "onDoubleTapEvent: " + event.toString());
         return true;
     }
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent event) {
-        Log.e("debug...", "onSingleTapConfirmed: " + event.toString());
         return true;
     }
 }
