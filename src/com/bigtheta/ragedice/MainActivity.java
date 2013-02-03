@@ -43,24 +43,28 @@ public class MainActivity extends FragmentActivity
         m_gestureDetector = new GestureDetectorCompat(this, this);
         m_gestureDetector.setOnDoubleTapListener(this);
         m_dbHelper = new MySQLiteHelper(this);
-        this.deleteDatabase("rage_dice.db");
 
         m_database = m_dbHelper.getWritableDatabase();
+
+        fm = getSupportFragmentManager();
+        setContentView(R.layout.activity_main);
+    }
+
+    private void initializeGame() {
+        this.deleteDatabase("rage_dice.db");
         m_game = new Game();
-
-        new Player(m_game, 1, "player one");
-        new Player(m_game, 2, "player two");
-        new Player(m_game, 3, "player three");
-        new Player(m_game, 4, "player four");
-
+        addPlayer();
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
                            R.color.yellow_die, R.id.yellow_die, DieDescription.NUMERIC);
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
                            R.color.red_die, R.id.red_die, DieDescription.NUMERIC);
         new DieDescription(m_game, 1, 6, "ship_die_",
                            R.color.background, R.id.ship_die, DieDescription.SHIP);
-        fm = getSupportFragmentManager();
-        setContentView(R.layout.activity_main);
+    }
+
+    static void addPlayer() {
+        int playerNum = Player.getNumPlayers() + 1;
+        new Player(m_game, playerNum, "Player " + Integer.toString(playerNum));
     }
 
     @Override
@@ -97,8 +101,8 @@ public class MainActivity extends FragmentActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_undo_dice_roll) {
             undoDiceRoll(null);
-        }else if (item.getItemId() == R.id.menu_reset_game) {
-            resetGame();
+        //}else if (item.getItemId() == R.id.menu_reset_game) {
+            //resetGame();
         }
         return true;
     }

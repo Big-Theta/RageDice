@@ -296,7 +296,9 @@ public class DiceRoll {
     public static int getNumDiceRolls() {
         Cursor cursor = MainActivity.getDatabase().query(MySQLiteHelper.TABLE_DICE_ROLL,
                                                          null, null, null, null, null, null);
-        return cursor.getCount();
+        int retval = cursor.getCount();
+        cursor.close();
+        return retval;
     }
 
     public static HashMap<Integer, Integer> getObservedRolls(long gameId) {
