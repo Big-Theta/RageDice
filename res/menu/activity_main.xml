@@ -6,5 +6,6 @@
         android:showAsAction="never"
         android:title="@string/menu_settings"/>
     <item android:id="@+id/menu_undo_dice_roll" android:showAsAction="never" android:title="Undo Roll"></item>
+    <item android:id="@+id/menu_reset_game" android:title="Reset Game" android:showAsAction="never"></item>
 
 </menu>

@@ -85,6 +85,17 @@ public class MainActivity extends FragmentActivity
         super.onPause();
         m_dbHelper.close();
     }
+    
+    @Override
+    protected void onDestroy() {
+        //this.deleteDatabase("rage_dice.db");
+    }
+    
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //in onCreate, get with savedInstanceState.getBoolean("db_exists")
+        outState.putBoolean("db_exists", true);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -97,6 +108,8 @@ public class MainActivity extends FragmentActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_undo_dice_roll) {
             undoDiceRoll(null);
+        //}else if (item.getItemId() == R.id.menu_reset_game) {
+            //resetGame();
         }
         return true;
     }
@@ -194,6 +207,7 @@ public class MainActivity extends FragmentActivity
     
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        
         refreshDisplay();
     }
 
