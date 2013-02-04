@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -51,8 +52,17 @@ public class MainActivity extends FragmentActivity
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
-            initializeGame(false);
+            DiceRoll.resetCaches();
+            try {
+                // Restart
+                m_game = Game.getLastGame();
+            } catch (CursorIndexOutOfBoundsException err) {
+                // Initial
+                initializeGame(false);
+            }
         } else {
+            // Reload
+            m_game = Game.retrieve(savedInstanceState.getLong("gameId"));
             getTabsFragment().setTab(savedInstanceState.getInt("current_tab"));
         }
     }
@@ -62,8 +72,6 @@ public class MainActivity extends FragmentActivity
      * this will crash the app.
      */
     private void initializeGame(boolean refresh) {
-        //this.deleteDatabase("rage_dice.db");
-        m_database = m_dbHelper.getWritableDatabase();
         m_dbHelper.resetDatabase(m_database);
 
         m_game = new Game();
@@ -98,6 +106,7 @@ public class MainActivity extends FragmentActivity
     protected void onResume() {
         super.onResume();
         m_database = m_dbHelper.getWritableDatabase();
+        refreshDisplay();
     }
 
     @Override
@@ -117,6 +126,13 @@ public class MainActivity extends FragmentActivity
         //in onCreate, get with savedInstanceState.getBoolean("db_exists")
         outState.putBoolean("db_exists", true);
         outState.putInt("current_tab", getTabsFragment().getTabNumber());
+        outState.putLong("gameId", m_game.getId());
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        refreshDisplay();
     }
 
     @Override
@@ -222,7 +238,10 @@ public class MainActivity extends FragmentActivity
         if (tf == null) {
             throw new IllegalStateException("Tabs ui doesn't exist.");
         } else {
-            tf.refreshDisplay();
+            try {
+                tf.refreshDisplay();
+            } catch (IllegalStateException err) {
+            }
         }
     }
 
