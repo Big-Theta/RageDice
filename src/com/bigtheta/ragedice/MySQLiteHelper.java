@@ -1,6 +1,7 @@
 package com.bigtheta.ragedice;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -117,6 +118,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYER);
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_GAME);
         onCreate(database);
+    }
+
+    public boolean isEmpty(SQLiteDatabase database) {
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_GAME,
+                                       null, null, null, null, null, null);
+        int retval = cursor.getCount();
+        cursor.close();
+        return (retval > 0) ? true : false;
     }
 }
 

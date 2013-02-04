@@ -51,7 +51,9 @@ public class MainActivity extends FragmentActivity
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
-            initializeGame(false);
+            if (m_dbHelper.isEmpty(m_database)) {
+                initializeGame(false);
+            }
         } else {
             getTabsFragment().setTab(savedInstanceState.getInt("current_tab"));
         }
