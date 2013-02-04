@@ -89,6 +89,7 @@ public class MainActivity extends FragmentActivity
             refreshDisplay();
             defaultToast(playerName + " added.");
         }
+        DiceRoll.resetCaches();
     }
 
     @Override

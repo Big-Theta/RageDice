@@ -100,21 +100,21 @@ public class DiceRoll {
         return result;
     }
 
-    public void delete() {
+    public static void resetCaches() {
         cacheGetObservedRolls = null;
         cacheGetTotalTimes = null;
         cacheGetRollsPerPlayer = null;
+    }
 
+    public void delete() {
+        resetCaches();
         MainActivity.getDatabase().delete(
                 MySQLiteHelper.TABLE_DICE_ROLL,
                 MySQLiteHelper.COLUMN_ID + " = " + m_id, null);
     }
 
     public static void clear(long gameId) {
-        cacheGetObservedRolls = null;
-        cacheGetTotalTimes = null;
-        cacheGetRollsPerPlayer = null;
-
+        resetCaches();
         MainActivity.getDatabase().delete(MySQLiteHelper.TABLE_DICE_ROLL, null, null);
     }
 
