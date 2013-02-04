@@ -111,14 +111,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void resetDatabase(SQLiteDatabase database) {
-        Log.e("got here", "1");
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_DIE_RESULT);
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_DIE_DESCRIPTION);
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_DICE_ROLL);
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYER);
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_GAME);
         onCreate(database);
-        Log.e("got here", "2");
     }
 }
 
