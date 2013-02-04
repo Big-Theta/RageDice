@@ -79,6 +79,8 @@ public class MainActivity extends FragmentActivity
             refreshDisplay();
             defaultToast(getResources().getText(R.string.toast_game_reset));
         }
+
+        DiceRoll.resetCaches();
     }
 
     private void addPlayer(boolean display) {
