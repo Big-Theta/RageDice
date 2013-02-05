@@ -8,28 +8,23 @@
     android:background="@color/background"
     android:orientation="vertical" >
 
-    <LinearLayout 
+
+    <com.google.ads.AdView
+        android:id="@+id/ad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        ads:adSize="BANNER"
+        ads:adUnitId="a150f83943dc4de"
+        ads:loadAdOnCreate="true" />
+
+    <!--
+    <fragment
+        android:id="@+id/dice_fragment_ui"
+        android:name="com.bigtheta.ragedice.DiceDisplayFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical" >
-
-        <com.google.ads.AdView
-            android:id="@+id/ad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/background"
-            ads:adSize="BANNER"
-            ads:adUnitId="a150f83943dc4de"
-            ads:loadAdOnCreate="true" />
-
-        <fragment
-            android:id="@+id/dice_fragment_ui"
-            android:name="com.bigtheta.ragedice.DiceDisplayFragment"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent" />
-
-    </LinearLayout>
+        android:layout_height="fill_parent" />
+        -->
 
     <fragment
         android:id="@+id/tabs_fragment_ui"
