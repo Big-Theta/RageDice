@@ -226,15 +226,7 @@ public class MainActivity extends FragmentActivity
     }
 
     public void refreshDisplay() {
-        DiceRoll dr = DiceRoll.getLastDiceRoll(m_game.getId());
-        Player nextPlayer = Player.getLastPlayer(m_game.getId());
-        DiceDisplayFragment ddf = (DiceDisplayFragment)
-                fm.findFragmentById(R.id.dice_fragment_ui);
-        GameLogFragment glf = (GameLogFragment) fm.findFragmentByTag("glf");
 
-        if (ddf != null && ddf.isVisible()) {
-            ddf.displayDiceRoll(dr);
-        }
         TabsFragment tf = getTabsFragment();
         if (tf == null) {
             throw new IllegalStateException("Tabs ui doesn't exist.");
@@ -243,6 +235,13 @@ public class MainActivity extends FragmentActivity
                 tf.refreshDisplay();
             } catch (IllegalStateException err) {
             }
+        }
+        DiceRoll dr = DiceRoll.getLastDiceRoll(m_game.getId());
+        DiceDisplayFragment ddf = (DiceDisplayFragment)
+                fm.findFragmentById(R.id.dice_fragment_ui);
+
+        if (ddf != null && ddf.isVisible()) {
+            ddf.displayDiceRoll(dr);
         }
     }
 
