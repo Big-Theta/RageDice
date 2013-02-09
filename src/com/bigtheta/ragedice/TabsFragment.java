@@ -13,11 +13,14 @@ import android.view.ViewGroup;
 public class TabsFragment extends Fragment implements FragmentTabHost.OnTabChangeListener {
     private FragmentTabHost m_tabHost;
     TabsFragmentListener m_callback;
+    boolean m_isTablet;
+    String m_tabId;
 
     public interface TabsFragmentListener {
         //public void onGameLogSelected(int position);
         public View findViewById(int id);
         public FragmentManager getSupportFragmentManager();
+        public void manageAds(boolean display);
     }
     
     @Override
@@ -34,9 +37,11 @@ public class TabsFragment extends Fragment implements FragmentTabHost.OnTabChang
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        m_isTablet = true;
         m_tabHost = new FragmentTabHost(getActivity());
         m_tabHost.setup(getActivity(), getChildFragmentManager(), R.id.tabs_content_container);
         if (m_callback.getSupportFragmentManager().findFragmentById(R.id.dice_fragment_ui) == null) {
+            m_isTablet = false;
             m_tabHost.addTab(m_tabHost.newTabSpec("ddf").setIndicator(
                     "Dice", getResources().getDrawable(R.drawable.dice_tab_selected)), DiceDisplayFragment.class, null);
         }
@@ -50,7 +55,16 @@ public class TabsFragment extends Fragment implements FragmentTabHost.OnTabChang
         return m_tabHost;
     }
     
-
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (m_tabId.equals("ddf") || m_isTablet) {
+            m_callback.manageAds(true);
+        } else {
+            m_callback.manageAds(false);
+        }
+    }
+    
     public void refreshDisplay() {
         long gameId = MainActivity.getGame().getId();
         FragmentManager fm = getChildFragmentManager();
@@ -90,7 +104,7 @@ public class TabsFragment extends Fragment implements FragmentTabHost.OnTabChang
     public int getTabNumber() {
         return m_tabHost.getCurrentTab();
     }
-    
+   
     public void onTabChanged(String tabId) {
     }
 }
