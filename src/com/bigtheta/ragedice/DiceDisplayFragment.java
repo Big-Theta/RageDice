@@ -98,18 +98,21 @@ public class DiceDisplayFragment extends Fragment  {
         //Player currentPlayer = Player.retrieve(dr.getPlayerId());
         //tv.setText(currentPlayer.getPlayerName());
         if (dr == null) {
-            return;
-        }
-
-        Class<drawable> res = R.drawable.class;
-        for (DieResult result : DieResult.getDieResults(dr)) {
-            DieDescription dd = DieDescription.retrieve(result.getDieDescriptionId());
-            ImageView iv = (ImageView)m_callback.findViewById(dd.getImageViewResource());
-            try {
-                iv.setImageResource(result.getImageResource());
-                //getResources().getColor(result.getImageColorResource());
-                iv.setBackgroundColor(getResources().getColor(result.getImageColorResource()));
-            } catch (Exception err) {
+            Player initPlayer = Player.getNextPlayer(MainActivity.getGame().getId());
+            dr = new DiceRoll(initPlayer);
+            displayDiceRoll(dr);
+            dr.delete();
+        }else {
+            Class<drawable> res = R.drawable.class;
+            for (DieResult result : DieResult.getDieResults(dr)) {
+                DieDescription dd = DieDescription.retrieve(result.getDieDescriptionId());
+                ImageView iv = (ImageView)m_callback.findViewById(dd.getImageViewResource());
+                try {
+                    iv.setImageResource(result.getImageResource());
+                    //getResources().getColor(result.getImageColorResource());
+                    iv.setBackgroundColor(getResources().getColor(result.getImageColorResource()));
+                } catch (Exception err) {
+                }
             }
         }
         refreshStatusText();
