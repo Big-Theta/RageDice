@@ -1,12 +1,11 @@
 package com.bigtheta.ragedice;
 
-import com.bigtheta.ragedice.GameLogFragment.GameLogListener;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +13,15 @@ import android.view.ViewGroup;
 public class TabsFragment extends Fragment {
     private FragmentTabHost m_tabHost;
     TabsFragmentListener m_callback;
+    boolean m_isTablet;
 
     public interface TabsFragmentListener {
         //public void onGameLogSelected(int position);
         public View findViewById(int id);
         public FragmentManager getSupportFragmentManager();
+        public void manageAds(boolean display);
     }
-    
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -35,9 +36,11 @@ public class TabsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        m_isTablet = true;
         m_tabHost = new FragmentTabHost(getActivity());
         m_tabHost.setup(getActivity(), getChildFragmentManager(), R.id.tabs_content_container);
         if (m_callback.getSupportFragmentManager().findFragmentById(R.id.dice_fragment_ui) == null) {
+            m_isTablet = false;
             m_tabHost.addTab(m_tabHost.newTabSpec("ddf").setIndicator(
                     "Dice", getResources().getDrawable(R.drawable.dice_tab_selected)), DiceDisplayFragment.class, null);
         }
@@ -51,6 +54,7 @@ public class TabsFragment extends Fragment {
     }
 
     public void refreshDisplay() {
+        Log.e("> refreshDisplay", "m_isTablet: " + Boolean.toString(m_isTablet));
         long gameId = MainActivity.getGame().getId();
         FragmentManager fm = getChildFragmentManager();
         Fragment c_fragment = fm.findFragmentById(R.id.tabs_content_container);
@@ -59,16 +63,29 @@ public class TabsFragment extends Fragment {
         } else {
             if (c_fragment instanceof DiceDisplayFragment) {
                 ((DiceDisplayFragment)c_fragment).displayDiceRoll(DiceRoll.getLastDiceRoll(gameId));
+                m_callback.manageAds(true);
             } else if (c_fragment instanceof KSDescriptionFragment) {
                 ((KSDescriptionFragment)c_fragment).displayInfo(gameId);
+                m_callback.manageAds(true);
             } else if (c_fragment instanceof GameLogFragment) {
                 DiceRoll dr = DiceRoll.getLastDiceRoll(gameId);
                 Player nextPlayer = Player.getLastPlayer(gameId);
                 ((GameLogFragment)c_fragment).displayInfo(nextPlayer, dr);
+                m_callback.manageAds(true);
             } else if (c_fragment instanceof HistogramRollsFragment) {
                 ((HistogramRollsFragment)c_fragment).updateHistogram();
+                if (m_isTablet) {
+                    m_callback.manageAds(true);
+                } else {
+                    m_callback.manageAds(false);
+                }
             } else if (c_fragment instanceof HistogramPlayerTimeFragment) {
                 ((HistogramPlayerTimeFragment)c_fragment).updateHistogram();
+                if (m_isTablet) {
+                    m_callback.manageAds(true);
+                } else {
+                    m_callback.manageAds(false);
+                }
             }
         }
     }
