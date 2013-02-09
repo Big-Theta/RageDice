@@ -13,6 +13,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 
+import com.google.ads.w;
+
 public class DiceRoll {
     private static String[] tableDiceRollColumns = {
         MySQLiteHelper.COLUMN_ID,

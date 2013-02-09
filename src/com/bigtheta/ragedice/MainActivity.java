@@ -54,17 +54,23 @@ public class MainActivity extends FragmentActivity
         if (savedInstanceState == null) {
             DiceRoll.resetCaches();
             try {
-                // Restart
+                // Restart with a game database in existence.
                 m_game = Game.getLastGame();
             } catch (CursorIndexOutOfBoundsException err) {
-                // Initial
+                // Initial start.
                 initializeGame(false);
             }
         } else {
-            // Reload
+            // Reload... presumably from a rotate.
             m_game = Game.retrieve(savedInstanceState.getLong("gameId"));
             getTabsFragment().setTab(savedInstanceState.getInt("current_tab"));
         }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        refreshDisplay();
     }
 
     /*
@@ -130,15 +136,10 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        refreshDisplay();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_main, menu);
+        refreshDisplay();
         return true;
     }
 

@@ -16,25 +16,19 @@
                 android:id="@+id/yellow_die"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/yellow_die"
-                android:contentDescription="@string/yellow_die"
-                android:src="@drawable/alea_transface_colbg_4" />
+                android:contentDescription="@string/yellow_die" />
 
             <ImageView
                 android:id="@+id/red_die"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/red_die"
-                android:contentDescription="@string/red_die"
-                android:src="@drawable/alea_transface_colbg_3" />
+                android:contentDescription="@string/red_die" />
 
             <ImageView
                 android:id="@+id/ship_die"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/ship_die_castle_green"
-                android:contentDescription="@string/ship_die"
-                android:src="@drawable/ship_die_castle" />
+                android:contentDescription="@string/ship_die" />
 
         </LinearLayout>
 
