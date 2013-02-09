@@ -56,6 +56,7 @@ public class DiceDisplayFragment extends Fragment  {
 
     @Override
     public void onResume() {
+        displayDiceRoll(DiceRoll.getLastDiceRoll(MainActivity.getGame().getId()));
         super.onResume();
     }
 
@@ -96,11 +97,13 @@ public class DiceDisplayFragment extends Fragment  {
         //TextView tv = (TextView) m_callback.findViewById(R.id.player_number);
         //Player currentPlayer = Player.retrieve(dr.getPlayerId());
         //tv.setText(currentPlayer.getPlayerName());
+        Log.e("DDF", "gets here 1");
         if (dr == null) {
             Player initPlayer = Player.getNextPlayer(MainActivity.getGame().getId());
             dr = new DiceRoll(initPlayer);
             displayDiceRoll(dr);
             dr.delete();
+            Log.e("DDF", "gets here 2");
         }else {
             Class<drawable> res = R.drawable.class;
             for (DieResult result : DieResult.getDieResults(dr)) {
@@ -113,6 +116,7 @@ public class DiceDisplayFragment extends Fragment  {
                 } catch (Exception err) {
                 }
             }
+            Log.e("DDF", "gets here 3");
         }
         refreshStatusText();
     }

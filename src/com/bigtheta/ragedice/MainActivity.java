@@ -10,19 +10,13 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GestureDetectorCompat;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.google.ads.AdRequest;
-import com.google.ads.AdSize;
-import com.google.ads.AdView;
 
 public class MainActivity extends FragmentActivity
         implements GameLogFragment.GameLogListener,
@@ -39,7 +33,6 @@ public class MainActivity extends FragmentActivity
     private MySQLiteHelper m_dbHelper;
     private static Game m_game;
     private FragmentManager fm;
-    private AdView m_adView = null;
 
     public static SQLiteDatabase getDatabase() {
         return m_database;
@@ -89,7 +82,6 @@ public class MainActivity extends FragmentActivity
 
         m_game = new Game();
         addPlayer(false);
-
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
                            R.color.yellow_die, R.id.yellow_die, DieDescription.NUMERIC);
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
@@ -133,9 +125,6 @@ public class MainActivity extends FragmentActivity
     protected void onDestroy() {
         super.onDestroy();
         //this.deleteDatabase("rage_dice.db");
-        if (m_adView != null) {
-            m_adView.destroy();
-        }
     }
 
     @Override
@@ -178,33 +167,6 @@ public class MainActivity extends FragmentActivity
             addPlayer(true);
         }
         return true;
-    }
-
-    public void manageAds(boolean display) {
-        Log.e("> manageAds", Boolean.toString(display));
-        LinearLayout layout = (LinearLayout)findViewById(R.id.ad_slot);
-        if (display) {
-            // Create an ad.
-            if (m_adView == null) {
-                m_adView = new AdView(this, AdSize.BANNER, "a150f83943dc4de");
-
-                // Add the AdView to the view hierarchy. The view will have no size
-                // until the ad is loaded.
-            }
-
-            if (layout.getChildCount() == 0) {
-                layout.addView(m_adView);
-                // Create an ad request. Check logcat output for the hashed device ID to
-                // get test ads on a physical device.
-                AdRequest adRequest = new AdRequest();
-                adRequest.addTestDevice(AdRequest.TEST_EMULATOR);
-
-                // Start loading the ad in the background.
-                m_adView.loadAd(adRequest);
-            }
-        } else {
-            layout.removeAllViews();
-        }
     }
 
     public void resetDiceRolls(View view) {
@@ -264,6 +226,7 @@ public class MainActivity extends FragmentActivity
     }
 
     public void refreshDisplay() {
+
         TabsFragment tf = getTabsFragment();
         if (tf == null) {
             throw new IllegalStateException("Tabs ui doesn't exist.");
@@ -301,7 +264,7 @@ public class MainActivity extends FragmentActivity
     @Override
     public void onHistogramPlayerTimeSelected(int position) {
     }
-
+    
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         refreshDisplay();
