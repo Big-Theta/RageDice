@@ -1,6 +1,7 @@
 package com.bigtheta.ragedice;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -100,14 +101,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 "Upgrading database from version " + oldVersion + " to "
                 + newVersion + ", which will destroy all old data");
         resetDatabase(db);
-        /*
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_GAME);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYER);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DICE_ROLL);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DIE_DESCRIPTION);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DIE_RESULT);
-        onCreate(db);
-        */
     }
 
     public void resetDatabase(SQLiteDatabase database) {
@@ -117,6 +110,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYER);
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_GAME);
         onCreate(database);
+    }
+
+    public boolean isEmpty(SQLiteDatabase database) {
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_GAME,
+                                       null, null, null, null, null, null);
+        int retval = cursor.getCount();
+        cursor.close();
+        return (retval > 0) ? true : false;
     }
 }
 
