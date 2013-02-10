@@ -20,7 +20,6 @@ public class TabsFragment extends Fragment implements FragmentTabHost.OnTabChang
         //public void onGameLogSelected(int position);
         public View findViewById(int id);
         public FragmentManager getSupportFragmentManager();
-        public void manageAds(boolean display);
     }
     
     @Override

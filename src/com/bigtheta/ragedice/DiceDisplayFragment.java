@@ -106,6 +106,7 @@ public class DiceDisplayFragment extends Fragment  {
             Class<drawable> res = R.drawable.class;
             for (DieResult result : DieResult.getDieResults(dr)) {
                 DieDescription dd = DieDescription.retrieve(result.getDieDescriptionId());
+                Log.e("displayDiceRoll getting", Long.toHexString(dd.getImageViewResource()));
                 ImageView iv = (ImageView)m_callback.findViewById(dd.getImageViewResource());
                 try {
                     iv.setImageResource(result.getImageResource());
