@@ -45,7 +45,7 @@ public class DiceDisplayFragment extends Fragment  {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        refreshStatusText();
+        //refreshStatusText();
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -115,10 +115,12 @@ public class DiceDisplayFragment extends Fragment  {
                 }
             }
         }
-        refreshStatusText();
+        //refreshStatusText();
     }
 
     private void refreshStatusText() {
+        return;
+        /*
         TextView tv = (TextView) m_callback.findViewById(R.id.whose_turn_text);
         Game g = MainActivity.getGame();
         String currentPlayerName = Player.getLastPlayer(g.getId()).getPlayerName();
@@ -131,6 +133,7 @@ public class DiceDisplayFragment extends Fragment  {
                 tv.setText("");
             }
         }
+        */
     }
 }
 
