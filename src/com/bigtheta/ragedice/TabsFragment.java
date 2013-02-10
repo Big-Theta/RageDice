@@ -16,6 +16,7 @@ public class TabsFragment extends Fragment implements FragmentTabHost.OnTabChang
     boolean m_isTablet;
     String m_tabId;
 
+    
     public interface TabsFragmentListener {
         //public void onGameLogSelected(int position);
         public View findViewById(int id);
@@ -54,17 +55,7 @@ public class TabsFragment extends Fragment implements FragmentTabHost.OnTabChang
         m_tabHost.setOnTabChangedListener(this);
         return m_tabHost;
     }
-    
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (m_tabId.equals("ddf") || m_isTablet) {
-            m_callback.manageAds(true);
-        } else {
-            m_callback.manageAds(false);
-        }
-    }
-    
+
     public void refreshDisplay() {
         long gameId = MainActivity.getGame().getId();
         FragmentManager fm = getChildFragmentManager();
