@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 public class TabsFragment extends Fragment implements FragmentTabHost.OnTabChangeListener {
     private FragmentTabHost m_tabHost;
     TabsFragmentListener m_callback;
-    boolean m_isTablet;
     String m_tabId;
 
     
@@ -38,11 +37,9 @@ public class TabsFragment extends Fragment implements FragmentTabHost.OnTabChang
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        m_isTablet = true;
         m_tabHost = new FragmentTabHost(getActivity());
         m_tabHost.setup(getActivity(), getChildFragmentManager(), R.id.tabs_content_container);
         if (m_callback.getSupportFragmentManager().findFragmentById(R.id.dice_fragment_ui) == null) {
-            m_isTablet = false;
             m_tabHost.addTab(m_tabHost.newTabSpec("ddf").setIndicator(
                     "Dice", getResources().getDrawable(R.drawable.dice_tab_selected)), DiceDisplayFragment.class, null);
         }
