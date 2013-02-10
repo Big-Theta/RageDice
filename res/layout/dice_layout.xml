@@ -1,45 +1,54 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent" >
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.google.ads.AdView
         android:layout_width="wrap_content"
-        android:layout_height="match_parent" >
+        android:layout_height="wrap_content"
+        android:background="@color/yellow_die"
+        android:gravity="top"
+        ads:adSize="BANNER"
+        ads:adUnitId="a150f83943dc4de"
+        ads:loadAdOnCreate="true" />
 
-        <LinearLayout
-            android:id="@id/dice_fragment_ui"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@color/background"
-            android:clickable="true"
-            android:gravity="center"
-            android:onClick="rollDice" >
+    <LinearLayout
+        android:id="@id/dice_fragment_ui"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/background"
+        android:clickable="true"
+        android:gravity="center"
+        android:onClick="rollDice" >
 
-            <ImageView
-                android:id="@+id/yellow_die"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/yellow_die" />
-
-            <ImageView
-                android:id="@+id/red_die"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/red_die" />
-
-            <ImageView
-                android:id="@+id/ship_die"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/ship_die" />
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/whose_turn_text"
+        <ImageView
+            android:id="@+id/yellow_die"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="40dp"
-            android:textSize="30sp"
-            android:textStyle="bold|normal"
-            android:text="diceFragment status text" />
+            android:contentDescription="@string/yellow_die" />
 
-    </FrameLayout>
+        <ImageView
+            android:id="@+id/red_die"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/red_die" />
+
+        <ImageView
+            android:id="@+id/ship_die"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/ship_die" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/whose_turn_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="40dp"
+        android:textSize="30sp"
+        android:textStyle="bold|normal"
+        android:text="diceFragment status text" />
+
+</FrameLayout>

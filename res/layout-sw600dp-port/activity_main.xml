@@ -13,22 +13,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical" >
-    <LinearLayout
-        android:id="@+id/ad_slot"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/background" />
 
-    <!--
-    <com.google.ads.AdView
-        android:id="@+id/ad"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/background"
-        ads:adSize="BANNER"
-        ads:adUnitId="a150f83943dc4de"
-        ads:loadAdOnCreate="true" />
-    -->
         <fragment
             android:id="@+id/dice_fragment_ui"
             android:name="com.bigtheta.ragedice.DiceDisplayFragment"
