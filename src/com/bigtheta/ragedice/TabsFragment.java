@@ -52,16 +52,14 @@ public class TabsFragment extends Fragment implements FragmentTabHost.OnTabChang
     
 
     public void refreshDisplay() {
-        Log.e("in TabsFragment", "refreshDisplay was called");
         long gameId = MainActivity.getGame().getId();
         FragmentManager fm = getChildFragmentManager();
-        Fragment c_fragment = fm.findFragmentById(R.layout.tabs_content_layout);
+        Fragment c_fragment = fm.findFragmentById(R.id.tabs_content_container);
         if (c_fragment == null) {
             throw new IllegalStateException("Tabs container contains no fragments.");
         } else {
             if (c_fragment instanceof DiceDisplayFragment) {
                 ((DiceDisplayFragment)c_fragment).displayDiceRoll(DiceRoll.getLastDiceRoll(gameId));
-                Log.e("in TabsFragment", "refreshDisplay called displayDiceRoll");
             } else if (c_fragment instanceof KSDescriptionFragment) {
                 ((KSDescriptionFragment)c_fragment).displayInfo(gameId);
             } else if (c_fragment instanceof GameLogFragment) {
@@ -73,8 +71,6 @@ public class TabsFragment extends Fragment implements FragmentTabHost.OnTabChang
                 Log.e("in TabsFragment", "c_fragment is hgf");
             } else if (c_fragment instanceof HistogramPlayerTimeFragment) {
                 ((HistogramPlayerTimeFragment)c_fragment).updateHistogram();
-            }else {
-                Log.e("in TabsFragment", "did not refresh any tabs");
             }
         }
     }
