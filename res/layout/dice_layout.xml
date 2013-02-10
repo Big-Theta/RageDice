@@ -1,54 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
-        
-        <LinearLayout
-        android:id="@+id/ad_slot"
+    <com.google.ads.AdView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/background" />
-        <!--
-        <TextView
-            android:id="@+id/whose_turn_text"
+        android:background="@color/background"
+        android:gravity="top"
+        ads:adSize="BANNER"
+        ads:adUnitId="a150f83943dc4de"
+        ads:loadAdOnCreate="true" />
+
+    <!--
+    <TextView
+        android:id="@+id/whose_turn_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:textSize="30sp"
+        android:textStyle="bold|normal"
+        android:text="diceFragment status text" />
+        android:layout_marginTop="40dp"-->
+
+    <LinearLayout
+        android:id="@id/dice_fragment_ui"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/background"
+        android:clickable="true"
+        android:gravity="center"
+        android:onClick="rollDice" >
+
+        <ImageView
+            android:id="@+id/yellow_die"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:textSize="30sp"
-            android:textStyle="bold|normal"
-            android:text="diceFragment status text" />
-            android:layout_marginTop="40dp"-->
+            android:contentDescription="@string/yellow_die" />
 
-        <LinearLayout
-            android:id="@id/dice_fragment_ui"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@color/background"
-            android:clickable="true"
-            android:gravity="center"
-            android:onClick="rollDice" >
+        <ImageView
+            android:id="@+id/red_die"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/red_die" />
 
-            <ImageView
-                android:id="@+id/yellow_die"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/yellow_die" />
-
-            <ImageView
-                android:id="@+id/red_die"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/red_die" />
-
-            <ImageView
-                android:id="@+id/ship_die"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/ship_die" />
-
-        </LinearLayout>
-
+        <ImageView
+            android:id="@+id/ship_die"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/ship_die" />
 
     </LinearLayout>
+
+
+</LinearLayout>
 

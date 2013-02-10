@@ -177,16 +177,27 @@ public class DieDescription {
         update += "This test adds up all dice rolls in this game and detemines "
                 + "how likely it is that the sum is as extreme, or more extreme, "
                 + "as it is. This test works because the Central Limit Theorem "
-                + "states that the sum of all dice rolls is a standard random "
-                + "variable. The current sum is ";
+                + "states that the sum of all dice rolls is a normal random "
+                + "variable.";
+
+        update += "\n\nAfter " + Long.toString(observedSummaryStatistics.getN()) + " rolls, the current sum is ";
         update += new DecimalFormat("#.##").format(observedSummaryStatistics.getSum());
-        update += ". Assuming that the average value for a roll is ";
+        update += " and the observed average is ";
+        update += new DecimalFormat("#.##").format(observedSummaryStatistics.getMean());
+        update += ".";
+
         SummaryStatistics expectedSummaryStatistics = DiceRoll.getExpectedSummaryStatistics(gameId);
+
+        update += "\n\nAssuming that the dice are fair, the expected sum would be ";
+        update += new DecimalFormat("#.##").format(expectedSummaryStatistics.getMean() * observedSummaryStatistics.getN());
+        update += " and the expected average would be ";
         update += new DecimalFormat("#.##").format(expectedSummaryStatistics.getMean());
+        update += ".";
+
         Long sizeN = observedSummaryStatistics.getN();
         NormalDistribution normalDistribution = new NormalDistribution(sizeN * expectedSummaryStatistics.getMean(),
                                                                        Math.sqrt(sizeN) * expectedSummaryStatistics.getStandardDeviation());
-        update += ", the 95% confidence interval for the sum of all dice rolls is (";
+        update += "\n\nThe 95% confidence interval for the sum of all dice rolls is (";
         update += new DecimalFormat("#.##").format(normalDistribution.inverseCumulativeProbability(0.025));
         update += ", ";
         update += new DecimalFormat("#.##").format(normalDistribution.inverseCumulativeProbability(1.0 - 0.025));
