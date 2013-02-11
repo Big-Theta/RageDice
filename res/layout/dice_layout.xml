@@ -1,12 +1,12 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<LinearLayout
+    <LinearLayout
       xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content" >
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1" >
 
       <com.google.ads.AdView
           android:layout_width="wrap_content"
@@ -18,46 +18,62 @@
           ads:loadAdOnCreate="true" />
     </LinearLayout>
 
-    <!--
-    <TextView
-        android:id="@+id/whose_turn_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|center_horizontal"
-        android:textSize="30sp"
-        android:textStyle="bold|normal"
-        android:text="diceFragment status text" />
-        android:layout_marginTop="40dp"-->
-
     <LinearLayout
-        android:id="@id/dice_fragment_ui"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@color/background"
-        android:clickable="true"
-        android:gravity="center"
-        android:onClick="rollDice" >
-
-        <ImageView
-            android:id="@+id/yellow_die"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/yellow_die" />
-
-        <ImageView
-            android:id="@+id/red_die"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/red_die" />
-
-        <ImageView
-            android:id="@+id/ship_die"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/ship_die" />
-
-    </LinearLayout>
-
+      xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+	  android:orientation="vertical"
+      android:layout_weight="6" >
+	    <TextView
+	        android:id="@+id/whose_turn_now"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="top|center_horizontal"
+	        android:textSize="30sp"
+	        android:textStyle="bold|normal"
+	        android:layout_weight="1"
+	        android:text="diceFragment status text" />
+	
+	    <LinearLayout
+	        android:id="@id/dice_fragment_ui"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:background="@color/background"
+	        android:clickable="true"
+	        android:gravity="center"
+	        android:layout_weight="1"
+	        android:onClick="rollDice" >
+	
+	        <ImageView
+	            android:id="@+id/yellow_die"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:contentDescription="@string/yellow_die" />
+	
+	        <ImageView
+	            android:id="@+id/red_die"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:contentDescription="@string/red_die" />
+	
+	        <ImageView
+	            android:id="@+id/ship_die"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:contentDescription="@string/ship_die" />
+	
+	    </LinearLayout>
+	    <TextView
+	        android:id="@+id/whose_turn_next"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="bottom|center_horizontal"
+	        android:textSize="30sp"
+	        android:textStyle="bold|normal"
+	        android:layout_weight="1"
+	        android:text="diceFragment status text" />
+	
+	</LinearLayout>
 
 </LinearLayout>
 

@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity
@@ -50,7 +49,6 @@ public class MainActivity extends FragmentActivity
         m_database = m_dbHelper.getWritableDatabase();
 
         fm = getSupportFragmentManager();
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {

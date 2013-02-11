@@ -121,7 +121,6 @@ public class DiceDisplayFragment extends Fragment  {
     }
 
     private void refreshStatusText() {
-        return;
         /*
         TextView tv = (TextView) m_callback.findViewById(R.id.whose_turn_text);
         Game g = MainActivity.getGame();
