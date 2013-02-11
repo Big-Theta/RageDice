@@ -67,7 +67,6 @@ public class TabsFragment extends Fragment implements FragmentTabHost.OnTabChang
                 ((GameLogFragment)c_fragment).displayInfo(nextPlayer, dr);
             } else if (c_fragment instanceof HistogramRollsFragment) {
                 ((HistogramRollsFragment)c_fragment).updateHistogram();
-                Log.e("in TabsFragment", "c_fragment is hgf");
             } else if (c_fragment instanceof HistogramPlayerTimeFragment) {
                 ((HistogramPlayerTimeFragment)c_fragment).updateHistogram();
             }
