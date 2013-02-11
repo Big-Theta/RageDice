@@ -2,14 +2,21 @@
 <resources>
 
     <string name="app_name">RageDice</string>
-    <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="reset_button">Reset the values.</string>
     <string name="undo_dice_roll_button">Undo last dice roll.</string>
     <string name="roll_dice_button">Roll the dice!</string>
     <string name="red_die">Red die</string>
     <string name="yellow_die">Yellow die</string>
+    <string name="ship_die">Ship die</string>
     <string name="current_player">1</string>
     <string name="ks_description"></string>
+    <string name="toast_cannot_undo">No dice rolls left to undo!</string>
+    <string name="toast_roll_undone">Roll undone.</string>
+    <string name="toast_game_reset">Game reset.</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="reset_game_title">Reset game</string>
+    <string name="really_reset_game">Really reset the game?</string>
 
 </resources>

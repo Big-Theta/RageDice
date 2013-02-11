@@ -6,7 +6,6 @@ import java.util.Random;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.bigtheta.ragedice.R.drawable;
 
@@ -42,7 +41,7 @@ public class DieResult {
                 MySQLiteHelper.TABLE_DIE_RESULT,
                 tableDieResultColumns, MySQLiteHelper.COLUMN_ID + " = " + m_id,
                 null, null, null, null);
-        cursor.moveToFirst();        
+        cursor.moveToFirst();
         m_diceRollId = cursor.getLong(
                 cursor.getColumnIndexOrThrow(MySQLiteHelper.COLUMN_DICE_ROLL_ID));
         m_dieDescriptionId = cursor.getLong(
@@ -73,16 +72,49 @@ public class DieResult {
         Class<drawable> res = R.drawable.class;
         int retval;
         DieDescription dd = DieDescription.retrieve(getDieDescriptionId());
-        String description = dd.getBaseIdentifierName()
-                           + Integer.toString(getDieResult());
+
+        String description;
+        if (dd.getDisplayType().equals(DieDescription.NUMERIC)) {
+            description = dd.getBaseIdentifierName()
+                        + Integer.toString(getDieResult());
+        } else if (dd.getDisplayType().equals(DieDescription.SHIP)) {
+            if (getDieResult() <= 3) {
+                description = dd.getBaseIdentifierName() + "robber";
+            } else {
+                description = dd.getBaseIdentifierName() + "castle";
+            }
+        } else {
+            description = "";
+        }
+
         try {
             Field field = res.getField(description);
             retval = field.getInt(null);
         } catch (Exception err){
-            Log.e("DieResult::getImageResource()", err.getCause().getMessage());
             throw err;
         }
         return retval;
+    }
+
+    public int getImageColorResource() {
+        DieDescription dd = DieDescription.retrieve(getDieDescriptionId());
+        String type = dd.getDisplayType();
+        if (type.equals(DieDescription.NUMERIC)) {
+            return dd.getBackgroundColorResource();
+        } else if (type.equals(DieDescription.SHIP)) {
+            if (getDieResult() <= 3) {
+                return R.color.ship_die_castle_blue;
+            } else if (getDieResult() == 4) {
+                return R.color.ship_die_castle_blue;
+            } else if (getDieResult() == 5) {
+                return R.color.ship_die_castle_green;
+            } else if (getDieResult() == 6) {
+                return R.color.ship_die_castle_yellow;
+            } else {
+                return -1;
+            }
+        }
+        return -1;
     }
 
     private int rollDie() {

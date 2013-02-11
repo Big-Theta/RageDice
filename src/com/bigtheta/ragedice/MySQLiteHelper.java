@@ -1,6 +1,7 @@
 package com.bigtheta.ragedice;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -52,7 +53,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_BASE_IDENTIFIER_NAME = "base_identifier_name";
     public static final String COLUMN_BACKGROUND_COLOR = "background_color";
     public static final String COLUMN_IMAGE_VIEW_RESOURCE = "image_view_resource";
-    public static final String COLUMN_IS_NUMERIC = "is_numeric";
+    public static final String COLUMN_DISPLAY_TYPE = "display_type";
     private static final String CREATE_TABLE_DIE_DESCRIPTION = "CREATE TABLE "
             + TABLE_DIE_DESCRIPTION + "("
             + COLUMN_ID + " integer primary key autoincrement, "
@@ -62,7 +63,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + COLUMN_BASE_IDENTIFIER_NAME + " text, "
             + COLUMN_BACKGROUND_COLOR + " integer not NULL, "
             + COLUMN_IMAGE_VIEW_RESOURCE + " integer, "
-            + COLUMN_IS_NUMERIC + " boolean "
+            + COLUMN_DISPLAY_TYPE + " text "
             + ");";
 
     // TABLE_DIE_RESULT
@@ -99,12 +100,24 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Log.w(MySQLiteHelper.class.getName(),
                 "Upgrading database from version " + oldVersion + " to "
                 + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_GAME);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYER);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DICE_ROLL);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DIE_DESCRIPTION);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DIE_RESULT);
-        onCreate(db);
+        resetDatabase(db);
+    }
+
+    public void resetDatabase(SQLiteDatabase database) {
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_DIE_RESULT);
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_DIE_DESCRIPTION);
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_DICE_ROLL);
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_PLAYER);
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_GAME);
+        onCreate(database);
+    }
+
+    public boolean isEmpty(SQLiteDatabase database) {
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_GAME,
+                                       null, null, null, null, null, null);
+        int retval = cursor.getCount();
+        cursor.close();
+        return (retval > 0) ? true : false;
     }
 }
 

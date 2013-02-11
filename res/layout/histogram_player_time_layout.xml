@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.bigtheta.ragedice.HistogramPlayerTimeView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/histogram_player_time_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background" />
+

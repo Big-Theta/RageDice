@@ -64,6 +64,11 @@ public class Player {
         }
     }
 
+    /*
+     * Deletes the player entry and all dice rolls associated with the player.
+     *
+     * This is very much untested.
+     */
     public void delete() {
         MainActivity.getDatabase().delete(
                 MySQLiteHelper.TABLE_PLAYER, MySQLiteHelper.COLUMN_ID + " = " + m_id, null);
@@ -117,8 +122,10 @@ public class Player {
             nextPlayer = new Player(cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.COLUMN_ID)));
             cursor.close();
         } else if (!isEmpty(gameId)) {
+
             nextPlayer = null;
             Player lastPlayer = getLastPlayer(gameId);
+
             for (Player candidate : getPlayers(gameId)) {
                 if (nextPlayer == null) {
                     nextPlayer = candidate;
@@ -154,6 +161,14 @@ public class Player {
         }
         cursor.close();
         return ret;
+    }
+
+    public static int getNumPlayers() {
+        Cursor cursor = MainActivity.getDatabase().query(MySQLiteHelper.TABLE_PLAYER,
+                                                         null, null, null, null, null, null);
+        int retval = cursor.getCount();
+        cursor.close();
+        return retval;
     }
 
     private static boolean isEmpty(long gameId) {

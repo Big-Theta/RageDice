@@ -16,7 +16,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 public class HistogramPlayerTimeView extends View {
@@ -36,7 +36,17 @@ public class HistogramPlayerTimeView extends View {
         m_renderer.setYAxisMin(0.0);
         m_renderer.setBackgroundColor(getResources().getColor(R.color.histogram_background));
         m_renderer.setApplyBackgroundColor(true);
-        m_renderer.setLabelsTextSize(20);
+        
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int pxPerDp = metrics.densityDpi / 160;
+       
+        m_renderer.setLabelsTextSize(25 * pxPerDp);
+        m_renderer.setLegendTextSize(20 * pxPerDp);
+        // Order is top, left, bottom, right
+        int[] margins = {40 * pxPerDp, 45 * pxPerDp, 30 * pxPerDp, 20 * pxPerDp};
+        
+        m_renderer.setMargins(margins);
+        m_renderer.setFitLegend(true);
         m_renderer.setXLabelsColor(getResources().getColor(R.color.histogram_labels));
         m_renderer.setYLabelsColor(0, getResources().getColor(R.color.histogram_labels));
         m_renderer.setYLabelsAlign(Paint.Align.RIGHT);
@@ -47,11 +57,11 @@ public class HistogramPlayerTimeView extends View {
     public HistogramPlayerTimeView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
-    
+
     private void updateDataset() {
-        XYSeries series = new XYSeries("Average time");
+        XYSeries series = new XYSeries("Average time (seconds)");
         for (int i = 0; i < m_dataset.getSeriesCount(); i++) {
-            m_dataset.removeSeries(0);         
+            m_dataset.removeSeries(0);
         }
 
         Game game = MainActivity.getGame();
@@ -77,7 +87,6 @@ public class HistogramPlayerTimeView extends View {
                     max = playerId;
                 }
                 m_renderer.addXTextLabel(space, Player.retrieve(playerId).getPlayerName());
-                Log.e("label", Player.retrieve(playerId).getPlayerName());
                 space += 1.0;
             }
             if (min != null && max != null) {
@@ -87,7 +96,7 @@ public class HistogramPlayerTimeView extends View {
         }
         m_dataset.addSeries(series);
     }
-    
+
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
