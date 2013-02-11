@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,7 @@ public class KSDescriptionFragment extends Fragment {
 
     public void displayInfo(long gameId) {
         TextView tv = (TextView) m_callback.findViewById(R.id.ksdescription_view);
+        tv.setMovementMethod(new ScrollingMovementMethod());
         String info = "";
         if (DiceRoll.getNumDiceRolls() < 4) {
             info = "Not enough rolls have been made to calculate statistics.";
