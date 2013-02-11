@@ -4,6 +4,7 @@ import java.util.Random;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 
 public class Game {
     private static String[] tableGameColumns = {
@@ -39,6 +40,21 @@ public class Game {
 
     public static Game retrieve(long id) {
         return new Game(id);
+    }
+
+    public static Game getLastGame() {
+        Game game;
+        String query_str = "SELECT MAX(" + MySQLiteHelper.COLUMN_ID + ") "
+                         + "AS _id FROM " + MySQLiteHelper.TABLE_GAME;
+        try {
+            Cursor cursor = MainActivity.getDatabase().rawQuery(query_str, null);
+            cursor.moveToFirst();
+            game = Game.retrieve(cursor.getLong(0));
+            cursor.close();
+        } catch (SQLiteException err) {
+            return null;
+        }
+        return game;
     }
 
     public long getId() {

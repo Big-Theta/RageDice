@@ -1,12 +1,15 @@
 package com.bigtheta.ragedice;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.Configuration;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GestureDetectorCompat;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
@@ -21,6 +24,7 @@ public class MainActivity extends FragmentActivity
                    KSDescriptionFragment.KSDescriptionListener,
                    HistogramRollsFragment.HistogramRollsListener,
                    HistogramPlayerTimeFragment.HistogramPlayerTimeListener,
+                   TabsFragment.TabsFragmentListener,
                    GestureDetector.OnGestureListener,
                    GestureDetector.OnDoubleTapListener {
 
@@ -37,20 +41,47 @@ public class MainActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+ 
         m_gestureDetector = new GestureDetectorCompat(this, this);
         m_gestureDetector.setOnDoubleTapListener(this);
         m_dbHelper = new MySQLiteHelper(this);
-        // REMOVEME
-        this.deleteDatabase("rage_dice.db");
 
         m_database = m_dbHelper.getWritableDatabase();
-        m_game = new Game();
 
-        new Player(m_game, 1, "player one");
-        new Player(m_game, 2, "player two");
-        new Player(m_game, 3, "player three");
-        new Player(m_game, 4, "player four");
+        fm = getSupportFragmentManager();
+        setContentView(R.layout.activity_main);
+
+        if (savedInstanceState == null) {
+            DiceRoll.resetCaches();
+            try {
+                // Restart with a game database in existence.
+                m_game = Game.getLastGame();
+            } catch (CursorIndexOutOfBoundsException err) {
+                // Initial start.
+                initializeGame(false);
+            }
+        } else {
+            // Reload... presumably from a rotate.
+            m_game = Game.retrieve(savedInstanceState.getLong("gameId"));
+            getTabsFragment().setTab(savedInstanceState.getInt("current_tab"));
+        }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        refreshDisplay();
+    }
+
+    /*
+     * If this is used for a game reset, use refresh = true. If the view isn't completed yet,
+     * this will crash the app.
+     */
+    public void initializeGame(boolean refresh) {
+        m_dbHelper.resetDatabase(m_database);
+
+        m_game = new Game();
+        addPlayer(false);
 
         new DieDescription(m_game, 1, 6, "alea_transface_colbg_",
                            R.color.yellow_die, R.id.yellow_die, DieDescription.NUMERIC);
@@ -58,14 +89,31 @@ public class MainActivity extends FragmentActivity
                            R.color.red_die, R.id.red_die, DieDescription.NUMERIC);
         new DieDescription(m_game, 1, 6, "ship_die_",
                            R.color.background, R.id.ship_die, DieDescription.SHIP);
-        fm = getSupportFragmentManager();
-        setContentView(R.layout.activity_main_alternate);
+
+        if (refresh) {
+            refreshDisplay();
+            defaultToast(getResources().getText(R.string.toast_game_reset));
+        }
+
+        DiceRoll.resetCaches();
+    }
+
+    private void addPlayer(boolean display) {
+        int playerNum = Player.getNumPlayers() + 1;
+        String playerName = "Player " + Integer.toString(playerNum);
+        new Player(m_game, playerNum, playerName);
+        if (display) {
+            refreshDisplay();
+            defaultToast(playerName + " added.");
+        }
+        DiceRoll.resetCaches();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         m_database = m_dbHelper.getWritableDatabase();
+        refreshDisplay();
     }
 
     @Override
@@ -75,16 +123,48 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //in onCreate, get with savedInstanceState.getBoolean("db_exists")
+        outState.putBoolean("db_exists", true);
+        outState.putInt("current_tab", getTabsFragment().getTabNumber());
+        outState.putLong("gameId", m_game.getId());
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_main, menu);
+        refreshDisplay();
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_undo_dice_roll) {
-            undoDiceRoll(null);
+            undoDiceRoll();
+        } else if (item.getItemId() == R.id.menu_reset_game) {
+          new AlertDialog.Builder(this)
+                  .setIcon(android.R.drawable.ic_dialog_alert)
+                  .setTitle(getResources().getText(R.string.reset_game_title))
+                  .setMessage(getResources().getText(R.string.really_reset_game))
+                  .setPositiveButton(getResources().getText(R.string.yes),
+                                     new DialogInterface.OnClickListener() {
+
+                      @Override
+                      public void onClick(DialogInterface dialog, int which) {
+                          initializeGame(true);
+                      }
+
+                  })
+                  .setNegativeButton(getResources().getText(R.string.no), null)
+                  .show();
+        } else if (item.getItemId() == R.id.menu_add_player) {
+            addPlayer(true);
         }
         return true;
     }
@@ -95,19 +175,23 @@ public class MainActivity extends FragmentActivity
         refreshDisplay();
     }
 
-    public void undoDiceRoll(View view) {
+    public void undoDiceRoll() {
         DiceRoll dr = DiceRoll.getLastDiceRoll(m_game.getId());
         if (dr == null) {
-            Context context = getApplicationContext();
-            CharSequence text = getResources().getText(R.string.toast_msg_cannot_undo);
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.setGravity(Gravity.TOP, 0, 200);
-            toast.show();
-            return;
+            defaultToast(getResources().getText(R.string.toast_cannot_undo));
+        } else {
+            defaultToast(getResources().getText(R.string.toast_roll_undone));
+            dr.delete();
+            refreshDisplay();
         }
-        dr.delete();
-        refreshDisplay();
+    }
+
+    public void defaultToast(CharSequence text) {
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.setGravity(Gravity.TOP, 0, 200);
+        toast.show();
     }
 
     public void rollDice(View view) {
@@ -120,7 +204,7 @@ public class MainActivity extends FragmentActivity
         TabsFragment tf = getTabsFragment();
         if (tf == null) {
             throw new IllegalStateException("Tabs ui doesn't exist.");
-        }else {
+        } else {
             tf.nextTab();
             refreshDisplay();
         }
@@ -130,7 +214,7 @@ public class MainActivity extends FragmentActivity
         TabsFragment tf = getTabsFragment();
         if (tf == null) {
             throw new IllegalStateException("Tabs ui doesn't exist.");
-        }else {
+        } else {
             tf.prevTab();
             refreshDisplay();
         }
@@ -142,20 +226,21 @@ public class MainActivity extends FragmentActivity
     }
 
     public void refreshDisplay() {
-        DiceRoll dr = DiceRoll.getLastDiceRoll(m_game.getId());
-        Player nextPlayer = Player.getLastPlayer(m_game.getId());
-        DiceDisplayFragment ddf = (DiceDisplayFragment)
-                fm.findFragmentById(R.id.dice_fragment_ui);
-        GameLogFragment glf = (GameLogFragment) fm.findFragmentByTag("glf");
-
-        if (ddf != null && ddf.isVisible()) {
-            ddf.displayDiceRoll(dr);
-        }
         TabsFragment tf = getTabsFragment();
         if (tf == null) {
             throw new IllegalStateException("Tabs ui doesn't exist.");
-        }else {
-            tf.refreshDisplay();
+        } else {
+            try {
+                tf.refreshDisplay();
+            } catch (IllegalStateException err) {
+            }
+        }
+        DiceRoll dr = DiceRoll.getLastDiceRoll(m_game.getId());
+        DiceDisplayFragment ddf = (DiceDisplayFragment)
+                fm.findFragmentById(R.id.dice_fragment_ui);
+
+        if (ddf != null && ddf.isVisible()) {
+            ddf.displayDiceRoll(dr);
         }
     }
 
@@ -179,6 +264,11 @@ public class MainActivity extends FragmentActivity
     public void onHistogramPlayerTimeSelected(int position) {
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        refreshDisplay();
+    }
+
     public static Game getGame() {
         return m_game;
     }
@@ -192,14 +282,12 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public boolean onDown(MotionEvent event) {
-        Log.e("debug...","onDown: " + event.toString());
         return true;
     }
 
     @Override
     public boolean onFling(MotionEvent start, MotionEvent finish,
                            float velocityX, float velocityY) {
-        Log.e("debug...", "onFling: ");
         float deltaX = Math.abs(finish.getRawX() - start.getRawX());
         float deltaY = Math.abs(finish.getRawY() - start.getRawY());
         if (deltaX > deltaY) {
@@ -215,42 +303,35 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onLongPress(MotionEvent event) {
-        Log.e("debug...", "onLongPress: " + event.toString());
     }
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-            float distanceY) {
-        Log.e("debug...", "onScroll: " + e1.toString()+e2.toString());
+                            float distanceY) {
         return true;
     }
 
     @Override
     public void onShowPress(MotionEvent event) {
-        Log.e("debug...", "onShowPress: " + event.toString());
     }
 
     @Override
     public boolean onSingleTapUp(MotionEvent event) {
-        Log.e("debug...", "onSingleTapUp: " + event.toString());
         return true;
     }
 
     @Override
     public boolean onDoubleTap(MotionEvent event) {
-        Log.e("debug...", "onDoubleTap: " + event.toString());
         return true;
     }
 
     @Override
     public boolean onDoubleTapEvent(MotionEvent event) {
-        Log.e("debug...", "onDoubleTapEvent: " + event.toString());
         return true;
     }
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent event) {
-        Log.e("debug...", "onSingleTapConfirmed: " + event.toString());
         return true;
     }
 }

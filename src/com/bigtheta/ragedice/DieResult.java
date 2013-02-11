@@ -6,7 +6,6 @@ import java.util.Random;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.bigtheta.ragedice.R.drawable;
 
@@ -76,19 +75,15 @@ public class DieResult {
 
         String description;
         if (dd.getDisplayType().equals(DieDescription.NUMERIC)) {
-            Log.e("getImageResource", "1");
             description = dd.getBaseIdentifierName()
                         + Integer.toString(getDieResult());
         } else if (dd.getDisplayType().equals(DieDescription.SHIP)) {
-            Log.e("getImageResource", "2");
             if (getDieResult() <= 3) {
                 description = dd.getBaseIdentifierName() + "robber";
             } else {
                 description = dd.getBaseIdentifierName() + "castle";
             }
         } else {
-            Log.e("getImageResource", "3");
-            Log.e("DieResult.getImageResource()", "error... displayType is: " + dd.getDisplayType());
             description = "";
         }
 
@@ -96,7 +91,6 @@ public class DieResult {
             Field field = res.getField(description);
             retval = field.getInt(null);
         } catch (Exception err){
-            Log.e("DieResult::getImageResource()", err.getCause().getMessage());
             throw err;
         }
         return retval;
@@ -117,12 +111,9 @@ public class DieResult {
             } else if (getDieResult() == 6) {
                 return R.color.ship_die_castle_yellow;
             } else {
-                Log.e("DieResult.getImageColor()", "getDieResult not recognized: " +
-                                                   Integer.toString(getDieResult()));
                 return -1;
             }
         }
-        Log.e("DieResult.getImageColor()", "type not found: " + type);
         return -1;
     }
 

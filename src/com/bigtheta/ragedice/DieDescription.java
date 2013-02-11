@@ -1,5 +1,6 @@
 package com.bigtheta.ragedice;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -143,6 +144,10 @@ public class DieDescription {
         return m_backgroundColorResource;
     }
 
+    /*
+     * TODO
+     * Change to getImageViewTag()
+     */
     public int getImageViewResource() {
         return m_imageViewResource;
     }
@@ -157,7 +162,9 @@ public class DieDescription {
                 + "how likely it is that this collection of dice rolls came "
                 + "from a fair distribution. The KS statistic is the maximum "
                 + "difference between the observed and the expected cumulative "
-                + "fraction function (cff). Currently, this value is ";
+                + "fraction function (cff).";
+        update += "After " + Integer.toString(DiceRoll.getNumDiceRolls())
+                + " dice rolls, this value is ";
         update += Double.toString(DiceRoll.calculateKSTestStatistic(gameId));
         update += ". As the maximum difference between the two cffs becomes small, "
                 + "the likelihood that the observed dice rolls were produced by 'fair' "
@@ -174,20 +181,30 @@ public class DieDescription {
         update += "This test adds up all dice rolls in this game and detemines "
                 + "how likely it is that the sum is as extreme, or more extreme, "
                 + "as it is. This test works because the Central Limit Theorem "
-                + "states that the sum of all dice rolls is a standard random "
-                + "variable. The current sum is ";
-        update += Double.toString(observedSummaryStatistics.getSum());
-        update += ". Assuming that the average value for a roll is ";
+                + "states that the sum of all dice rolls is a normal random "
+                + "variable.";
+
+        update += "\n\nAfter " + Long.toString(observedSummaryStatistics.getN()) + " rolls, the current sum is ";
+        update += new DecimalFormat("#.##").format(observedSummaryStatistics.getSum());
+        update += " and the observed average is ";
+        update += new DecimalFormat("#.##").format(observedSummaryStatistics.getMean());
+        update += ".";
+
         SummaryStatistics expectedSummaryStatistics = DiceRoll.getExpectedSummaryStatistics(gameId);
-        update += Double.toString(expectedSummaryStatistics.getMean());
+
+        update += "\n\nAssuming that the dice are fair, the expected sum would be ";
+        update += new DecimalFormat("#.##").format(expectedSummaryStatistics.getMean() * observedSummaryStatistics.getN());
+        update += " and the expected average would be ";
+        update += new DecimalFormat("#.##").format(expectedSummaryStatistics.getMean());
+        update += ".";
+
         Long sizeN = observedSummaryStatistics.getN();
         NormalDistribution normalDistribution = new NormalDistribution(sizeN * expectedSummaryStatistics.getMean(),
                                                                        Math.sqrt(sizeN) * expectedSummaryStatistics.getStandardDeviation());
-        update += ", the 95% confidence interval for the sum of all dice rolls is (";
-        update += Double.toString(normalDistribution.inverseCumulativeProbability(0.025));
+        update += "\n\nThe 95% confidence interval for the sum of all dice rolls is (";
+        update += new DecimalFormat("#.##").format(normalDistribution.inverseCumulativeProbability(0.025));
         update += ", ";
-        update += Double.toString(normalDistribution.inverseCumulativeProbability(1.0 - 0.025));
-        double delta = Math.abs(observedSummaryStatistics.getSum() - normalDistribution.getMean());
+        update += new DecimalFormat("#.##").format(normalDistribution.inverseCumulativeProbability(1.0 - 0.025));
         update += ").";
 
         return update;

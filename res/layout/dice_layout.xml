@@ -1,49 +1,81 @@
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent" >
+    <LinearLayout
+      xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1" >
 
-        <LinearLayout
+      <com.google.ads.AdView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:background="@color/background"
+          android:gravity="top"
+          ads:adSize="BANNER"
+          ads:adUnitId="a150f83943dc4de"
+          ads:loadAdOnCreate="true" />
+    </LinearLayout>
+
+    <LinearLayout
+      xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+	  android:orientation="vertical"
+      android:layout_weight="6" >
+
+	    <TextView
+	        android:id="@+id/whose_turn_now"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:gravity="center"
+	        android:text="diceFragment status text"
+	        android:textSize="30sp"
+	        android:textStyle="bold|normal" />
+	
+	    <LinearLayout
 	        android:id="@id/dice_fragment_ui"
-	        android:layout_width="fill_parent"
-	        android:layout_height="fill_parent"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
 	        android:background="@color/background"
 	        android:clickable="true"
 	        android:gravity="center"
+	        android:layout_weight="1"
 	        android:onClick="rollDice" >
-	
-	        <ImageView
-	            android:id="@+id/red_die"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:background="@color/red_die"
-	            android:contentDescription="@string/red_die"
-	            android:src="@drawable/alea_transface_colbg_3" />
 	
 	        <ImageView
 	            android:id="@+id/yellow_die"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:background="@color/yellow_die"
-	            android:contentDescription="@string/yellow_die"
-	            android:src="@drawable/alea_transface_colbg_4" />
-	        
+	            android:contentDescription="@string/yellow_die" />
+	
+	        <ImageView
+	            android:id="@+id/red_die"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:contentDescription="@string/red_die" />
+	
 	        <ImageView
 	            android:id="@+id/ship_die"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:background="@color/ship_die_castle_green"
-	            android:contentDescription="@string/ship_die"
-	            android:src="@drawable/ship_die_castle" />
+	            android:contentDescription="@string/ship_die" />
 	
-        </LinearLayout>
-        
-        <TextView
-            android:id="@+id/whose_turn_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="40dp"
-            android:text="diceFragment status text" />
+	    </LinearLayout>
 
-    </FrameLayout>
+	    <TextView
+	        android:id="@+id/whose_turn_next"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:gravity="center"
+	        android:text="diceFragment status text"
+	        android:textSize="30sp"
+	        android:textStyle="bold|normal" />
+	
+	</LinearLayout>
+
+</LinearLayout>
+
