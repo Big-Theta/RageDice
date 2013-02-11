@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bigtheta.ragedice.R.drawable;
 
@@ -44,7 +45,7 @@ public class DiceDisplayFragment extends Fragment  {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        //refreshStatusText();
+        refreshStatusText();
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -117,24 +118,24 @@ public class DiceDisplayFragment extends Fragment  {
                 
             }
         }
-        //refreshStatusText();
+        refreshStatusText();
     }
 
     private void refreshStatusText() {
-        /*
-        TextView tv = (TextView) m_callback.findViewById(R.id.whose_turn_text);
+        TextView now_text = (TextView) m_callback.findViewById(R.id.whose_turn_now);
+        TextView next_text = (TextView) m_callback.findViewById(R.id.whose_turn_next);
         Game g = MainActivity.getGame();
         String currentPlayerName = Player.getLastPlayer(g.getId()).getPlayerName();
         String nextPlayerName = Player.getNextPlayer(g.getId()).getPlayerName();
-        if (tv != null) {
+        if (now_text != null) {
             if (Player.getNumPlayers() > 1) {
-                tv.setText(currentPlayerName + "'s turn.\n" +
-                           nextPlayerName + " is next.");
+                now_text.setText(currentPlayerName + "'s turn.");
+                next_text.setText(nextPlayerName + " is next.");
             } else {
-                tv.setText("");
+                now_text.setText("");
+                next_text.setText("");
             }
         }
-        */
     }
 }
 
