@@ -144,6 +144,10 @@ public class DieDescription {
         return m_backgroundColorResource;
     }
 
+    /*
+     * TODO
+     * Change to getImageViewTag()
+     */
     public int getImageViewResource() {
         return m_imageViewResource;
     }

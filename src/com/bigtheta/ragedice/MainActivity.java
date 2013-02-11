@@ -79,7 +79,7 @@ public class MainActivity extends FragmentActivity
      * If this is used for a game reset, use refresh = true. If the view isn't completed yet,
      * this will crash the app.
      */
-    private void initializeGame(boolean refresh) {
+    public void initializeGame(boolean refresh) {
         m_dbHelper.resetDatabase(m_database);
 
         m_game = new Game();

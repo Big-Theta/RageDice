@@ -3,12 +3,10 @@ package com.bigtheta.ragedice;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bigtheta.ragedice.R.drawable;
 
@@ -19,6 +17,7 @@ public class DiceDisplayFragment extends Fragment  {
     public interface DiceDisplayListener {
         public void onDiceSelected(int position);
         public View findViewById(int id);
+        public void initializeGame(boolean display);
     }
 
     @Override
@@ -106,14 +105,16 @@ public class DiceDisplayFragment extends Fragment  {
             Class<drawable> res = R.drawable.class;
             for (DieResult result : DieResult.getDieResults(dr)) {
                 DieDescription dd = DieDescription.retrieve(result.getDieDescriptionId());
-                Log.e("displayDiceRoll getting", Long.toHexString(dd.getImageViewResource()));
-                ImageView iv = (ImageView)m_callback.findViewById(dd.getImageViewResource());
                 try {
+                    ImageView iv = (ImageView)m_callback.findViewById(dd.getImageViewResource());
                     iv.setImageResource(result.getImageResource());
                     //getResources().getColor(result.getImageColorResource());
                     iv.setBackgroundColor(getResources().getColor(result.getImageColorResource()));
+                } catch (ClassCastException err) {
+                    m_callback.initializeGame(false);
                 } catch (Exception err) {
                 }
+                
             }
         }
         //refreshStatusText();
