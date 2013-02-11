@@ -43,7 +43,7 @@ public class HistogramPlayerTimeView extends View {
         m_renderer.setLabelsTextSize(25 * pxPerDp);
         m_renderer.setLegendTextSize(20 * pxPerDp);
         // Order is top, left, bottom, right
-        int[] margins = {40 * pxPerDp, 30 * pxPerDp, 30 * pxPerDp, 20 * pxPerDp};
+        int[] margins = {40 * pxPerDp, 45 * pxPerDp, 30 * pxPerDp, 20 * pxPerDp};
         
         m_renderer.setMargins(margins);
         m_renderer.setFitLegend(true);
